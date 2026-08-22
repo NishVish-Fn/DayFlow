@@ -5,7 +5,7 @@ import { Navbar } from './Navbar';
 
 export const AppLayout: React.FC = () => {
   return (
-    <div className="flex min-h-screen bg-[#f7f9fb] font-sans antialiased text-[#191c1e]">
+    <div className="flex min-h-screen bg-[#07090e] font-sans antialiased text-slate-100">
       {/* Sidebar Navigation */}
       <Sidebar />
 

@@ -39,27 +39,16 @@ export const Navbar: React.FC = () => {
     }
   };
 
-  const getRoleBadgeVariant = (role?: string) => {
-    switch (role) {
-      case 'ADMIN':
-        return 'danger';
-      case 'HR_MANAGER':
-        return 'purple';
-      default:
-        return 'primary';
-    }
-  };
-
   return (
     <>
       <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 bg-[#0a0d14]/90 backdrop-blur-xl border-b border-white/10 text-white shadow-sm">
-        {/* Corporate Logo & World Status */}
+        {/* WorkNest Logo & Google World Status */}
         <div className="flex items-center gap-4">
           <CorporateGlobeLogo size="sm" showText={false} />
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#00ffc2] animate-pulse" />
             <span className="text-xs font-black tracking-tight font-display text-white">
-              DAYFLOW <span className="text-cyan-400 font-extrabold uppercase text-[10px] bg-cyan-950/60 px-2 py-0.5 rounded-md border border-cyan-500/30">AI Workforce OS</span>
+              WORKNEST <span className="text-[#00f0ff] font-extrabold uppercase text-[10px] bg-[#00f0ff]/10 px-2 py-0.5 rounded-md border border-[#00f0ff]/30">AI Workforce OS</span>
             </span>
           </div>
         </div>
@@ -69,10 +58,10 @@ export const Navbar: React.FC = () => {
           {/* Dayflow AI Copilot Button */}
           <button
             onClick={() => setIsAIOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-slate-950 font-extrabold text-xs shadow-md shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all cursor-pointer group"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#00f0ff] hover:bg-[#38f8ff] text-slate-950 font-extrabold text-xs shadow-md shadow-[#00f0ff]/20 hover:shadow-[#00f0ff]/40 transition-all cursor-pointer group"
           >
             <Sparkles className="w-3.5 h-3.5 text-slate-950 animate-pulse" />
-            <span>Ask Open-Source AI</span>
+            <span>Ask WorkNest AI</span>
           </button>
 
           {/* Notifications Bell */}
@@ -84,7 +73,7 @@ export const Navbar: React.FC = () => {
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-400 text-[10px] font-extrabold text-slate-950 shadow-md">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#00f0ff] text-[10px] font-extrabold text-slate-950 shadow-md">
                   {unreadCount}
                 </span>
               )}
@@ -97,7 +86,7 @@ export const Navbar: React.FC = () => {
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllRead}
-                      className="flex items-center gap-1 text-[11px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#00f0ff] hover:underline cursor-pointer"
                     >
                       <CheckCheck className="w-3.5 h-3.5" /> Mark all read
                     </button>
@@ -114,7 +103,7 @@ export const Navbar: React.FC = () => {
                         className={`p-2.5 rounded-xl border text-xs transition-colors ${
                           n.isRead
                             ? 'bg-white/[0.02] border-white/5 text-slate-400'
-                            : 'bg-gradient-to-r from-blue-950/60 to-indigo-950/60 border-cyan-500/30 text-white font-semibold'
+                            : 'bg-gradient-to-r from-blue-950/60 to-indigo-950/60 border-[#00f0ff]/30 text-white font-semibold'
                         }`}
                       >
                         <div className="font-extrabold text-white">{n.title}</div>
@@ -135,13 +124,13 @@ export const Navbar: React.FC = () => {
                 `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`
               }
               alt="Avatar"
-              className="w-9 h-9 rounded-xl border border-cyan-500/30 bg-slate-800 object-cover"
+              className="w-9 h-9 rounded-xl border border-[#00f0ff]/30 bg-slate-800 object-cover"
             />
             <div className="hidden sm:block text-left">
               <div className="text-xs font-bold text-white leading-tight">
                 {user?.profile?.firstName} {user?.profile?.lastName}
               </div>
-              <div className="text-[10px] text-cyan-400 font-mono mt-0.5">
+              <div className="text-[10px] text-[#00f0ff] font-mono mt-0.5">
                 {user?.role}
               </div>
             </div>
@@ -157,7 +146,7 @@ export const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Dayflow AI Copilot Drawer */}
+      {/* WorkNest AI Copilot Drawer */}
       <AICopilotDrawer isOpen={isAIOpen} onClose={() => setIsAIOpen(false)} />
     </>
   );

@@ -20,7 +20,12 @@ import {
   Zap,
   Check,
   Cpu,
-  Flame,
+  Database,
+  Shield,
+  Layers,
+  Terminal,
+  Activity,
+  Code2,
 } from 'lucide-react';
 import { CorporateGlobeLogo } from '../components/common/CorporateGlobeLogo';
 import { AICopilotDrawer } from '../components/ai/AICopilotDrawer';
@@ -88,114 +93,200 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090e] text-slate-100 flex flex-col justify-between selection:bg-cyan-500 selection:text-slate-950 font-sans relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#07090e] text-slate-100 selection:bg-[#00f0ff] selection:text-slate-950 font-sans relative overflow-x-hidden">
       
-      {/* Background Micro-Dot Mesh & Cyber Gradients */}
-      <div className="fixed inset-0 pointer-events-none opacity-40">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-cyan-600/15 rounded-full blur-[140px]" />
-        <div className="absolute bottom-0 right-1/4 w-[600px] h-[600px] bg-orange-600/12 rounded-full blur-[140px]" />
+      {/* Background Dot-Matrix Mesh Overlay */}
+      <div className="fixed inset-0 pointer-events-none opacity-35">
+        <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-[#00f0ff]/10 rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#00ffc2]/10 rounded-full blur-[140px]" />
       </div>
 
-      {/* Top Cyber Navigation Bar */}
-      <header className="relative z-20 flex items-center justify-between px-6 sm:px-12 py-6 border-b border-white/5 bg-[#07090e]/80 backdrop-blur-md">
-        <CorporateGlobeLogo size="md" />
+      {/* Top Neo Navigation Bar */}
+      <header className="sticky top-0 z-40 flex items-center justify-between px-6 sm:px-12 h-16 border-b border-white/5 bg-[#07090e]/90 backdrop-blur-md">
+        <CorporateGlobeLogo size="sm" />
 
+        {/* Center Links */}
+        <nav className="hidden md:flex items-center gap-7 text-xs font-semibold text-slate-400">
+          <a href="#primitives" className="hover:text-white transition-colors">Primitives</a>
+          <a href="#telemetry" className="hover:text-white transition-colors">Autoscaling</a>
+          <a href="#branching" className="hover:text-white transition-colors">Workflows</a>
+          <button onClick={() => setIsAIOpen(true)} className="hover:text-[#00f0ff] transition-colors flex items-center gap-1">
+            <Sparkles className="w-3 h-3 text-[#00f0ff]" /> AI Gateway
+          </button>
+        </nav>
+
+        {/* Right CTA */}
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsAIOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-bold text-slate-200 transition-all cursor-pointer shadow-sm hover:border-cyan-400/40"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-200 transition-all cursor-pointer hover:border-[#00f0ff]/40"
           >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span>Launch AI Copilot ↗</span>
+            <Sparkles className="w-3.5 h-3.5 text-[#00f0ff]" />
+            <span>AI Copilot</span>
           </button>
+
+          <a
+            href="#auth-card"
+            className="px-4 py-1.5 rounded-full bg-[#00f0ff] hover:bg-[#33f3ff] text-slate-950 text-xs font-extrabold transition-all shadow-sm shadow-[#00f0ff]/30 cursor-pointer"
+          >
+            Sign In
+          </a>
         </div>
       </header>
 
       {/* ================================================================= */}
-      {/* MAIN HERO: CELESTIAL AI CONSTELLATION SPHERE & HEADLINE           */}
+      {/* HERO SECTION: GOOGLE-WORLD WIREFRAME GLOBE & NEO-SQL HEADLINE     */}
       {/* ================================================================= */}
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 w-full flex flex-col items-center text-center">
+      <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16 text-center flex flex-col items-center">
         
-        {/* Constellation Glow Aura Circle */}
-        <div className="relative w-full max-w-3xl flex flex-col items-center justify-center pt-2 pb-8">
-          
-          {/* Subtle Wireframe Constellation Sphere Graphic in Center */}
-          <div className="absolute inset-0 -top-12 flex items-center justify-center pointer-events-none opacity-30 select-none">
-            <svg viewBox="0 0 500 500" className="w-[440px] h-[440px] animate-[spin_60s_linear_infinite]">
-              <circle cx="250" cy="250" r="220" stroke="#38bdf8" strokeWidth="1" strokeDasharray="4 4" />
-              <ellipse cx="250" cy="250" rx="220" ry="80" stroke="#38bdf8" strokeWidth="1" />
-              <ellipse cx="250" cy="250" rx="80" ry="220" stroke="#f97316" strokeWidth="1" strokeOpacity="0.7" />
-              <line x1="250" y1="30" x2="250" y2="470" stroke="#38bdf8" strokeWidth="1" />
-              <line x1="30" y1="250" x2="470" y2="250" stroke="#38bdf8" strokeWidth="1" />
+        {/* Glowing Google-World Wireframe Globe Hero Icon */}
+        <div className="relative mb-6">
+          <div className="w-16 h-16 rounded-full bg-[#00f0ff]/10 flex items-center justify-center p-2.5 shadow-[0_0_30px_rgba(0,240,255,0.4)] border border-[#00f0ff]/40">
+            <svg viewBox="0 0 48 48" className="w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="24" cy="24" r="20" stroke="#00f0ff" strokeWidth="1.5" strokeOpacity="0.9" />
+              <ellipse cx="24" cy="24" rx="9" ry="20" stroke="#00f0ff" strokeWidth="1.25" strokeOpacity="0.8" />
+              <ellipse cx="24" cy="24" rx="16" ry="20" stroke="#00f0ff" strokeWidth="0.9" strokeOpacity="0.4" strokeDasharray="3 2" />
+              <line x1="4" y1="24" x2="44" y2="24" stroke="#00f0ff" strokeWidth="1.25" strokeOpacity="0.8" />
+              <ellipse cx="24" cy="24" rx="20" ry="9" stroke="#00f0ff" strokeWidth="1" strokeOpacity="0.6" />
+              <circle cx="24" cy="24" r="2.5" fill="#00ffc2" />
             </svg>
-          </div>
-
-          {/* Top Pill Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-cyan-300 text-xs font-bold tracking-wide uppercase mb-6 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
-            <span>• CURRENTLY BUILDING AI WORKFORCE OS</span>
-          </div>
-
-          {/* Bold Multicolored Headline Matching Reference Image */}
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white font-display leading-[1.1] max-w-4xl">
-            Building AI Systems <br className="hidden sm:inline" />
-            That Make <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-blue-400 to-indigo-300">AI</span>{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-400 to-yellow-300">
-              Unbreakable
-            </span>
-          </h1>
-
-          {/* High-Impact Subtitle */}
-          <p className="text-sm sm:text-base text-slate-400 mt-5 max-w-2xl font-medium leading-relaxed">
-            Dayflow HRMS &bull; Autonomous Workforce Telemetry &bull; Predictive Burnout Intelligence &bull; Open-Source Foundation Models (LLaMA 3.3 & DeepSeek-R1)
-          </p>
-
-          {/* Action CTA Pill Buttons */}
-          <div className="flex flex-wrap items-center justify-center gap-3.5 mt-8">
-            <a
-              href="#auth-card"
-              className="px-7 py-3 rounded-full bg-white hover:bg-slate-100 text-slate-950 text-xs sm:text-sm font-extrabold transition-all shadow-lg hover:shadow-cyan-500/20 cursor-pointer flex items-center gap-2"
-            >
-              <span>Sign In to Workplace ↓</span>
-            </a>
-
-            <button
-              type="button"
-              onClick={() => setIsAIOpen(true)}
-              className="px-7 py-3 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-white text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-2 hover:border-cyan-400/50"
-            >
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Ask Open-Source AI ↗</span>
-            </button>
           </div>
         </div>
 
-        {/* ================================================================= */}
-        {/* INTERACTIVE AUTHENTICATION CARD (Cyber Glass Aesthetic)          */}
-        {/* ================================================================= */}
-        <div
-          id="auth-card"
-          className="w-full max-w-md mt-12 bg-[#0c1017]/90 backdrop-blur-2xl rounded-3xl border border-white/10 p-6 sm:p-8 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-left"
-        >
-          {/* Switcher Tab */}
-          <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-5">
+        {/* Databricks / Neo-SQL Style Badge */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#00f0ff]/10 border border-[#00f0ff]/30 text-[#00f0ff] font-mono text-[11px] font-bold tracking-wider uppercase mb-5">
+          <span className="w-2 h-2 rounded-full bg-[#00ffc2] animate-pulse" />
+          <span>WORKNEST IS POWERED BY NEXT-GEN AI WORKFORCE ENGINE</span>
+        </div>
+
+        {/* Hero Headline */}
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white font-display leading-[1.15] max-w-4xl">
+          The workforce platform for apps and agents, <br className="hidden sm:inline" />
+          built to scale on <span className="text-[#00f0ff]">Neo-Workforce</span>.
+        </h1>
+
+        {/* Subtitle */}
+        <p className="text-xs sm:text-sm text-slate-400 mt-4 max-w-2xl font-medium leading-relaxed">
+          Serverless HRMS and workforce operating system with predictive burnout telemetry and autonomous open-source AI models. Powered by WorkNest.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex items-center gap-4 mt-7">
+          <a
+            href="#auth-card"
+            className="text-xs font-bold text-white hover:text-[#00f0ff] flex items-center gap-1.5 transition-colors"
+          >
+            <span>Get started</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </a>
+
+          <a
+            href="#primitives"
+            className="px-5 py-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/15 text-xs font-mono font-bold text-slate-200 transition-all hover:border-[#00f0ff]/40"
+          >
+            Read the docs
+          </a>
+        </div>
+      </section>
+
+      {/* ================================================================= */}
+      {/* CORE PRIMITIVES CARDS (Matching Neo-SQL Databricks Style)         */}
+      {/* ================================================================= */}
+      <section id="primitives" className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        <div className="mb-4">
+          <h2 className="text-base font-bold text-white font-display">Core Primitives</h2>
+          <p className="text-xs text-slate-500 font-medium">Workforce cloud primitives for the AI Engineering era.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          {/* Card 1: Lakebase Neo-Workforce */}
+          <div className="bg-[#0e1217] border border-white/10 hover:border-[#00f0ff]/40 rounded-2xl p-5 relative overflow-hidden transition-all group flex flex-col justify-between min-h-[190px]">
             <div>
-              <h2 className="text-lg font-bold text-white font-display">
-                {mode === 'signin' ? 'Sign In to Workspace' : 'Create Staff Profile'}
-              </h2>
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-mono text-[10px] font-bold text-[#00ffc2] bg-[#00ffc2]/10 px-2 py-0.5 rounded border border-[#00ffc2]/20">
+                  01 // 06
+                </span>
+                <Database className="w-5 h-5 text-slate-700 group-hover:text-[#00f0ff] transition-colors" />
+              </div>
+              <h3 className="text-sm font-bold text-white">Lakebase Neo-Workforce</h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Serverless database with instant branching. Separates compute and storage for infinite employee scale.
+              </p>
+            </div>
+            <div className="font-mono text-[11px] text-[#00f0ff] bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 mt-4">
+              $ worknest init db
+            </div>
+          </div>
+
+          {/* Card 2: Managed Auth */}
+          <div className="bg-[#0e1217] border border-white/10 hover:border-[#00f0ff]/40 rounded-2xl p-5 relative overflow-hidden transition-all group flex flex-col justify-between min-h-[190px]">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-mono text-[10px] font-bold text-slate-400 bg-white/5 px-2 py-0.5 rounded border border-white/10">
+                  02 // SEC
+                </span>
+                <Shield className="w-5 h-5 text-slate-700 group-hover:text-[#00ffc2] transition-colors" />
+              </div>
+              <h3 className="text-sm font-bold text-white">Managed Auth & RBAC</h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Enterprise JWT token rotation, cryptographic hashing, and role-based permissions built into your database.
+              </p>
+            </div>
+            <div className="font-mono text-[11px] text-slate-400 bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 mt-4">
+              Bcrypt Cost 12 &bull; 0% Leakage
+            </div>
+          </div>
+
+          {/* Card 3: AI Gateway */}
+          <div className="bg-[#0e1217] border border-[#00f0ff]/40 hover:border-[#00f0ff] rounded-2xl p-5 relative overflow-hidden transition-all group flex flex-col justify-between min-h-[190px] shadow-[0_0_25px_rgba(0,240,255,0.08)]">
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-mono text-[10px] font-bold text-[#00f0ff] bg-[#00f0ff]/10 px-2 py-0.5 rounded border border-[#00f0ff]/30">
+                  03 // AI
+                </span>
+                <Sparkles className="w-5 h-5 text-[#00f0ff]" />
+              </div>
+              <h3 className="text-sm font-bold text-[#00f0ff] flex items-center gap-1.5">
+                AI Gateway & Copilot
+              </h3>
+              <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                Meta LLaMA 3.3 & DeepSeek-R1 multi-model inference optimized for autonomous HR operations.
+              </p>
+            </div>
+            <div className="font-mono text-[11px] text-[#00ffc2] bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 mt-4">
+              One API for all models. &lt; 15ms
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ================================================================= */}
+      {/* INTERACTIVE WORKNEST AUTHENTICATION PORTAL                        */}
+      {/* ================================================================= */}
+      <section id="auth-card" className="max-w-xl mx-auto px-4 py-12">
+        <div className="bg-[#0e1217] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+          
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+            <div>
+              <h3 className="text-lg font-bold text-white font-display">
+                {mode === 'signin' ? 'Sign In to WorkNest' : 'Create Staff Account'}
+              </h3>
               <p className="text-xs text-slate-400 mt-0.5">
-                {mode === 'signin' ? 'Access your punch clock & salary ledger' : 'Join the Dayflow organization directory'}
+                {mode === 'signin' ? 'Enter corporate credentials to access workforce portal' : 'Join the WorkNest organization directory'}
               </p>
             </div>
 
-            {/* Segmented Control */}
-            <div className="flex p-1 rounded-xl bg-white/5 border border-white/10 text-xs">
+            {/* Segmented Switcher (Design system style from reference image) */}
+            <div className="flex p-1 rounded-xl bg-black/50 border border-white/10 text-xs">
               <button
                 type="button"
                 onClick={() => setMode('signin')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                   mode === 'signin'
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                    ? 'bg-[#00f0ff] text-slate-950 shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -204,9 +295,9 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setMode('signup')}
-                className={`px-3 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-all cursor-pointer ${
                   mode === 'signup'
-                    ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                    ? 'bg-[#00f0ff] text-slate-950 shadow-sm'
                     : 'text-slate-400 hover:text-white'
                 }`}
               >
@@ -220,17 +311,17 @@ export const LoginPage: React.FC = () => {
             <form onSubmit={handleSignIn} className="space-y-4 text-xs">
               <div>
                 <label className="block font-bold text-slate-300 mb-1.5 uppercase tracking-wider text-[11px]">
-                  Corporate Email or Staff Badge ID
+                  Corporate Email or Badge ID
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-cyan-400 absolute left-3.5 top-3" />
+                  <Mail className="w-4 h-4 text-[#00f0ff] absolute left-3.5 top-3" />
                   <input
                     type="text"
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="e.g. admin@dayflow.internal or EMP-0001"
-                    className="w-full bg-white/[0.04] border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all font-semibold"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#00f0ff] focus:ring-2 focus:ring-[#00f0ff]/20 font-semibold transition-all"
                   />
                 </div>
               </div>
@@ -238,19 +329,19 @@ export const LoginPage: React.FC = () => {
               <div>
                 <div className="flex justify-between items-center mb-1.5">
                   <label className="block font-bold text-slate-300 uppercase tracking-wider text-[11px]">Password</label>
-                  <span className="text-[11px] text-cyan-400 hover:text-cyan-300 cursor-pointer font-semibold">
+                  <span className="text-[11px] text-[#00f0ff] hover:underline cursor-pointer font-semibold">
                     Forgot Password?
                   </span>
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-cyan-400 absolute left-3.5 top-3" />
+                  <Lock className="w-4 h-4 text-[#00f0ff] absolute left-3.5 top-3" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full bg-white/[0.04] border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 transition-all font-semibold"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl pl-10 pr-10 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-[#00f0ff] focus:ring-2 focus:ring-[#00f0ff]/20 font-semibold transition-all"
                   />
                   <button
                     type="button"
@@ -262,10 +353,11 @@ export const LoginPage: React.FC = () => {
                 </div>
               </div>
 
+              {/* Primary Cyan Action Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold py-3 text-xs uppercase tracking-wider transition-all shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer mt-2"
+                className="w-full rounded-xl bg-[#00f0ff] hover:bg-[#38f8ff] text-slate-950 font-extrabold py-3 text-xs uppercase tracking-wider transition-all shadow-lg shadow-[#00f0ff]/25 flex items-center justify-center gap-2 cursor-pointer mt-2"
               >
                 {loading ? 'Authenticating...' : 'Sign In to Workplace'}
                 <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -285,7 +377,7 @@ export const LoginPage: React.FC = () => {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Alex"
-                    className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-[#00f0ff]"
                   />
                 </div>
                 <div>
@@ -296,7 +388,7 @@ export const LoginPage: React.FC = () => {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Chen"
-                    className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-[#00f0ff]"
                   />
                 </div>
               </div>
@@ -309,7 +401,7 @@ export const LoginPage: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@dayflow.internal"
-                  className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-cyan-400"
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-[#00f0ff]"
                 />
               </div>
 
@@ -322,7 +414,7 @@ export const LoginPage: React.FC = () => {
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     placeholder="EMP-1008"
-                    className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-[#00f0ff]"
                   />
                 </div>
                 <div>
@@ -330,7 +422,7 @@ export const LoginPage: React.FC = () => {
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/10 rounded-xl px-2.5 py-2 text-white font-semibold focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-slate-900 border border-white/10 rounded-xl px-2.5 py-2 text-white font-semibold focus:outline-none focus:border-[#00f0ff]"
                   >
                     <option value="ENGINEERING">Engineering</option>
                     <option value="PRODUCT">Product</option>
@@ -352,7 +444,7 @@ export const LoginPage: React.FC = () => {
                   value={designation}
                   onChange={(e) => setDesignation(e.target.value)}
                   placeholder="e.g. Senior Software Architect"
-                  className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-cyan-400"
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-[#00f0ff]"
                 />
               </div>
 
@@ -364,14 +456,14 @@ export const LoginPage: React.FC = () => {
                   value={signupPassword}
                   onChange={(e) => setSignupPassword(e.target.value)}
                   placeholder="Min 8 chars, 1 capital, 1 number"
-                  className="w-full bg-white/[0.04] border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-cyan-400"
+                  className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-white font-semibold focus:outline-none focus:border-[#00f0ff]"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold py-2.5 text-xs uppercase tracking-wider transition-all shadow-md shadow-cyan-500/25 flex items-center justify-center gap-2 cursor-pointer mt-1"
+                className="w-full rounded-xl bg-[#00ffc2] hover:bg-[#38ffd0] text-slate-950 font-extrabold py-2.5 text-xs uppercase tracking-wider transition-all shadow-md shadow-[#00ffc2]/25 flex items-center justify-center gap-2 cursor-pointer mt-1"
               >
                 {loading ? 'Creating...' : 'Create Account'}
                 <ArrowRight className="w-4 h-4 stroke-[2.5]" />
@@ -381,20 +473,20 @@ export const LoginPage: React.FC = () => {
 
           {/* Quick-Fill Persona Selector */}
           <div className="pt-4 border-t border-white/10 mt-5 space-y-2">
-            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              <span className="flex items-center gap-1 text-cyan-400">
+            <div className="flex items-center justify-between text-[10px] font-mono font-bold uppercase tracking-wider text-slate-400">
+              <span className="flex items-center gap-1 text-[#00f0ff]">
                 <Zap className="w-3 h-3 fill-current" /> Instant Test Personas
               </span>
-              <span className="font-mono text-slate-500">Password@123</span>
+              <span>pwd: Password@123</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left">
               <button
                 type="button"
                 onClick={() => setQuickFill('admin@dayflow.internal', 'EMP-0001')}
-                className="p-2 rounded-xl bg-white/[0.03] hover:bg-cyan-500/10 border border-white/10 hover:border-cyan-400/40 transition-all group cursor-pointer"
+                className="p-2 rounded-xl bg-white/[0.03] hover:bg-[#00f0ff]/10 border border-white/10 hover:border-[#00f0ff]/40 transition-all group cursor-pointer"
               >
-                <div className="font-bold text-[11px] text-white group-hover:text-cyan-300">👑 Admin</div>
+                <div className="font-bold text-[11px] text-white group-hover:text-[#00f0ff]">👑 Admin</div>
                 <div className="text-[10px] text-slate-400 truncate">Sarah Connor</div>
               </button>
 
@@ -410,9 +502,9 @@ export const LoginPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setQuickFill('alex.chen@dayflow.internal', 'EMP-1001')}
-                className="p-2 rounded-xl bg-white/[0.03] hover:bg-emerald-500/10 border border-white/10 hover:border-emerald-400/40 transition-all group cursor-pointer"
+                className="p-2 rounded-xl bg-white/[0.03] hover:bg-[#00ffc2]/10 border border-white/10 hover:border-[#00ffc2]/40 transition-all group cursor-pointer"
               >
-                <div className="font-bold text-[11px] text-white group-hover:text-emerald-300">💻 Engineer</div>
+                <div className="font-bold text-[11px] text-white group-hover:text-[#00ffc2]">💻 Engineer</div>
                 <div className="text-[10px] text-slate-400 truncate">Alex Chen</div>
               </button>
 
@@ -427,14 +519,87 @@ export const LoginPage: React.FC = () => {
             </div>
           </div>
         </div>
+      </section>
 
-      </main>
+      {/* ================================================================= */}
+      {/* LOWER SECTION: ADVANCED TELEMETRY & INSTANT BRANCHING SHOWCASE   */}
+      {/* ================================================================= */}
+      <section id="telemetry" className="max-w-6xl mx-auto px-4 sm:px-6 py-12 border-t border-white/5">
+        
+        {/* Autoscaling Card */}
+        <div className="bg-[#0e1217] border border-white/10 rounded-3xl p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-6">
+          <div className="lg:col-span-6 space-y-3">
+            <span className="font-mono text-[10px] font-bold text-[#00f0ff] uppercase tracking-wider">PERFORMANCE</span>
+            <h3 className="text-2xl font-bold text-white font-display">Advanced Autoscaling & Telemetry.</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              Keep workforce operations running without worrying about capacity. WorkNest autoscales CPU, memory, and database connection pools for real-time punch clocks.
+            </p>
+            <div className="flex gap-8 pt-3">
+              <div>
+                <div className="text-xl font-mono font-bold text-white">54,210</div>
+                <div className="text-[10px] text-slate-500 uppercase font-bold">Degradations Prevented</div>
+              </div>
+              <div>
+                <div className="text-xl font-mono font-bold text-[#00ffc2]">Zero</div>
+                <div className="text-[10px] text-slate-500 uppercase font-bold">Overprovisioning</div>
+              </div>
+            </div>
+          </div>
 
-      {/* Cyber Footer */}
-      <footer className="relative z-20 py-6 border-t border-white/5 text-center text-xs text-slate-500 font-medium">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <span>&copy; 2026 Dayflow HRMS &bull; Autonomous Workforce Operating System</span>
-          <span className="font-mono text-[11px] text-slate-400">PostgreSQL 3NF &bull; LLaMA 3.3 70B &bull; DeepSeek-R1</span>
+          <div className="lg:col-span-6 bg-black/60 border border-white/10 rounded-2xl p-5 text-center relative overflow-hidden">
+            <div className="flex items-center justify-between text-[11px] font-mono text-slate-400 border-b border-white/5 pb-2 mb-4">
+              <span>SERVER TRAFFIC LOAD (84cps)</span>
+              <span className="text-[#00ffc2]">● 100% HEALTH</span>
+            </div>
+            <div className="h-32 flex items-center justify-center text-xs font-mono text-[#00f0ff]/80 bg-[#00f0ff]/5 rounded-xl border border-[#00f0ff]/20">
+              [ Real-Time Workforce Telemetry Graph Active ]
+            </div>
+          </div>
+        </div>
+
+        {/* Instant Branching Card */}
+        <div id="branching" className="bg-[#0e1217] border border-white/10 rounded-3xl p-6 sm:p-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          <div className="lg:col-span-6 bg-black/60 border border-white/10 rounded-2xl p-5 font-mono text-xs text-slate-300 space-y-2">
+            <div className="text-slate-500">// Create an isolated workforce branch instantly</div>
+            <div className="text-[#00f0ff]">$ worknest branch create payroll-q3</div>
+            <div className="text-slate-400 pl-2">&bull; Branch created in 0.8s</div>
+            <div className="text-slate-400 pl-2">&bull; Copied relational 3NF schema</div>
+            <div className="text-slate-400 pl-2">&bull; Anonymized PII tokens</div>
+            <div className="text-[#00ffc2] pt-2">// Ready for staging simulation</div>
+          </div>
+
+          <div className="lg:col-span-6 space-y-3">
+            <span className="font-mono text-[10px] font-bold text-[#00ffc2] uppercase tracking-wider">WORKFLOW</span>
+            <h3 className="text-2xl font-bold text-white font-display">Instant Shift & Policy Branching.</h3>
+            <p className="text-xs text-slate-400 leading-relaxed font-medium">
+              Develop and test new compensation bands, PTO carry-forward policies, and shift rosters with isolated copies of your organizational schema.
+            </p>
+            <div className="space-y-2 pt-2 text-xs font-medium text-slate-300">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#00ffc2]" /> Copy-on-write simulation engines
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-[#00ffc2]" /> Automatic PII masking for safe staging
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-white/5 py-8 text-xs text-slate-500 font-medium">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <CorporateGlobeLogo size="sm" />
+            <span>&copy; 2026 WorkNest Inc. All rights reserved.</span>
+          </div>
+          <div className="flex items-center gap-6 text-slate-400">
+            <a href="#primitives" className="hover:text-white">Primitives</a>
+            <a href="#telemetry" className="hover:text-white">Telemetry</a>
+            <a href="#auth-card" className="hover:text-white">Sign In</a>
+            <span className="text-[#00f0ff] font-mono">v2.6.0-prod</span>
+          </div>
         </div>
       </footer>
 

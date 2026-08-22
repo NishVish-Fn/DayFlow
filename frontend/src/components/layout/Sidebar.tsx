@@ -68,7 +68,7 @@ export const Sidebar: React.FC = () => {
     {
       label: 'Skills & Learning',
       path: '/learning',
-      icon: <GraduationCap className="w-4 h-4 text-cyan-400" />,
+      icon: <GraduationCap className="w-4 h-4 text-[#00f0ff]" />,
     },
     ...(isAdminOrHr
       ? [
@@ -108,18 +108,18 @@ export const Sidebar: React.FC = () => {
             <CorporateGlobeLogo size="sm" />
           </div>
 
-          {/* AI Copilot Highlight Banner */}
+          {/* AI Copilot Highlight Button */}
           <div className="p-3.5 pb-1">
             <button
               type="button"
               onClick={() => setIsAIOpen(true)}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-indigo-500/20 text-cyan-300 border border-cyan-400/30 hover:border-cyan-400/60 font-bold text-xs shadow-lg transition-all cursor-pointer group"
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-[#00f0ff]/15 via-blue-500/15 to-indigo-500/15 text-[#00f0ff] border border-[#00f0ff]/30 hover:border-[#00f0ff]/60 font-bold text-xs shadow-lg transition-all cursor-pointer group"
             >
               <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-                <span>Open-Source AI</span>
+                <Sparkles className="w-3.5 h-3.5 text-[#00f0ff] animate-pulse" />
+                <span>WorkNest AI Copilot</span>
               </div>
-              <span className="text-[9px] bg-cyan-500 text-slate-950 px-1.5 py-0.5 rounded-md font-extrabold uppercase">
+              <span className="text-[9px] bg-[#00f0ff] text-slate-950 px-1.5 py-0.5 rounded font-mono font-extrabold uppercase">
                 LLaMA 3.3
               </span>
             </button>
@@ -127,7 +127,7 @@ export const Sidebar: React.FC = () => {
 
           {/* Section 1: Core Operations */}
           <nav className="p-3.5 space-y-1">
-            <div className="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+            <div className="px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
               Core Operations
             </div>
             {mainNav.map((item) => (
@@ -137,7 +137,7 @@ export const Sidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-cyan-500/15 to-blue-500/15 text-cyan-400 border border-cyan-500/30 shadow-xs'
+                      ? 'bg-gradient-to-r from-[#00f0ff]/15 to-blue-500/15 text-[#00f0ff] border border-[#00f0ff]/30 shadow-xs'
                       : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
                   }`
                 }
@@ -148,8 +148,8 @@ export const Sidebar: React.FC = () => {
             ))}
 
             {/* Section 2: AI Workforce Intelligence */}
-            <div className="pt-3 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
-              AI Intelligence Engine
+            <div className="pt-3 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
+              Workforce Intelligence
             </div>
             {intelligenceNav.map((item) => (
               <NavLink
@@ -158,7 +158,7 @@ export const Sidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-cyan-500/15 to-blue-500/15 text-cyan-400 border border-cyan-500/30 shadow-xs'
+                      ? 'bg-gradient-to-r from-[#00f0ff]/15 to-blue-500/15 text-[#00f0ff] border border-[#00f0ff]/30 shadow-xs'
                       : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
                   }`
                 }
@@ -168,7 +168,7 @@ export const Sidebar: React.FC = () => {
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
-                  <span className="text-[9px] bg-cyan-950 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.5 rounded font-extrabold">
+                  <span className="text-[9px] bg-black/50 text-[#00f0ff] border border-[#00f0ff]/30 px-1.5 py-0.5 rounded font-mono font-extrabold">
                     {item.badge}
                   </span>
                 )}
@@ -176,7 +176,7 @@ export const Sidebar: React.FC = () => {
             ))}
 
             {/* Section 3: Governance */}
-            <div className="pt-3 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+            <div className="pt-3 px-3 py-1.5 text-[10px] font-mono font-bold uppercase tracking-wider text-slate-500">
               Security & Ledger
             </div>
             {adminNav.map((item) => (
@@ -186,7 +186,7 @@ export const Sidebar: React.FC = () => {
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
                     isActive
-                      ? 'bg-gradient-to-r from-cyan-500/15 to-blue-500/15 text-cyan-400 border border-cyan-500/30 shadow-xs'
+                      ? 'bg-gradient-to-r from-[#00f0ff]/15 to-blue-500/15 text-[#00f0ff] border border-[#00f0ff]/30 shadow-xs'
                       : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
                   }`
                 }
@@ -198,14 +198,14 @@ export const Sidebar: React.FC = () => {
           </nav>
         </div>
 
-        {/* Cyber Security Status Footer */}
+        {/* Status Footer */}
         <div className="p-3.5 border-t border-white/5">
           <div className="p-3 rounded-2xl bg-black/40 border border-white/10 text-white">
             <div className="flex items-center justify-between mb-1">
               <span className="font-extrabold text-[11px] text-white flex items-center gap-1">
-                <Globe2 className="w-3.5 h-3.5 text-cyan-400" /> Multi-Region
+                <Globe2 className="w-3.5 h-3.5 text-[#00f0ff]" /> Neo-Workforce
               </span>
-              <span className="text-[9px] bg-emerald-500/20 text-emerald-300 font-bold px-1.5 py-0.5 rounded border border-emerald-500/30">
+              <span className="text-[9px] bg-[#00ffc2]/20 text-[#00ffc2] font-mono font-bold px-1.5 py-0.5 rounded border border-[#00ffc2]/30">
                 Online
               </span>
             </div>
@@ -216,7 +216,7 @@ export const Sidebar: React.FC = () => {
         </div>
       </aside>
 
-      {/* Dayflow AI Copilot Drawer */}
+      {/* WorkNest AI Copilot Drawer */}
       <AICopilotDrawer isOpen={isAIOpen} onClose={() => setIsAIOpen(false)} />
     </>
   );
