@@ -165,7 +165,9 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
   // Instant 0ms Zero-Latency Punch Out (Only when user explicitly clicks Punch Out)
   const handleCheckOut = async () => {
     const checkInTime = data.record?.checkInTime ? new Date(data.record.checkInTime).getTime() : Date.now();
-    const hoursWorked = Number(((Date.now() - checkInTime) / 3600000).toFixed(2)) || 8.0;
+    const diffMs = Math.max(1000, Date.now() - checkInTime);
+    const hoursWorked = Number((diffMs / 3600000).toFixed(2));
+    const minsWorked = Math.max(1, Math.round(diffMs / 60000));
 
     const updatedData: TodayAttendanceData = {
       isCheckedIn: false,
@@ -183,7 +185,8 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     localStorage.setItem('worknest_punch_current', JSON.stringify(updatedData));
     window.dispatchEvent(new Event('attendance-sync'));
 
-    success('Shift Finalized', `${hoursWorked} hours logged successfully. Punch closed for today.`);
+    const displayDuration = hoursWorked >= 0.1 ? `${hoursWorked} hrs` : `${minsWorked} min(s)`;
+    success('Shift Finalized', `${displayDuration} logged successfully.`);
     onAttendanceChange?.();
 
     // 2. Background Server Sync
@@ -195,6 +198,20 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     } finally {
       setActionLoading(false);
     }
+  };
+
+  const handleResetShift = () => {
+    const emptyData: TodayAttendanceData = {
+      isCheckedIn: false,
+      isCheckedOut: false,
+      record: null,
+    };
+    setData(emptyData);
+    localStorage.removeItem(`worknest_punch_${userKey}`);
+    localStorage.removeItem('worknest_punch_current');
+    window.dispatchEvent(new Event('attendance-sync'));
+    success('Shift Reset', 'You can now punch in again.');
+    onAttendanceChange?.();
   };
 
   const formatElapsed = (seconds: number) => {
@@ -270,7 +287,9 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
                 Logged Duration for Today
               </div>
               <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 font-mono">
-                {data.record?.totalHours} hours
+                {data.record?.totalHours && data.record.totalHours >= 0.1
+                  ? `${data.record.totalHours} hrs`
+                  : `${Math.max(1, Math.round(((new Date(data.record?.checkOutTime || Date.now()).getTime() - new Date(data.record?.checkInTime || Date.now()).getTime())) / 60000))} min(s)`}
               </div>
               <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 Completed at: {new Date(data.record!.checkOutTime!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -371,12 +390,19 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
           )}
 
           {data?.isCheckedOut && (
-            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center text-xs text-emerald-800 dark:text-emerald-300 font-medium space-y-1">
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center text-xs text-emerald-800 dark:text-emerald-300 font-medium space-y-2">
               <div className="font-bold flex items-center justify-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span>Daily Shift Completed</span>
               </div>
-              <p className="text-[11px] text-slate-500">Your attendance punch is locked for today. You can clock in again tomorrow.</p>
+              <p className="text-[11px] text-slate-500">Your attendance punch has been recorded for today.</p>
+              <button
+                type="button"
+                onClick={handleResetShift}
+                className="mt-1 inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 text-xs font-bold cursor-pointer transition-all"
+              >
+                <span>Punch In Again / Reset Shift</span>
+              </button>
             </div>
           )}
         </div>

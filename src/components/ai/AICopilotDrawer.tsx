@@ -179,30 +179,44 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
       p.includes('complete shift')
     ) {
       const nowIso = new Date().toISOString();
+      let checkInIso = new Date(Date.now() - 15 * 60000).toISOString();
+      try {
+        const existing = JSON.parse(localStorage.getItem(`worknest_punch_${userKey}`) || '{}');
+        if (existing?.record?.checkInTime) {
+          checkInIso = existing.record.checkInTime;
+        }
+      } catch (e) {}
+
+      const checkInMs = new Date(checkInIso).getTime();
+      const diffMs = Math.max(1000, Date.now() - checkInMs);
+      const hoursWorked = Number((diffMs / 3600000).toFixed(2));
+      const minsWorked = Math.max(1, Math.round(diffMs / 60000));
+      const displayDuration = hoursWorked >= 0.1 ? `${hoursWorked} hours` : `${minsWorked} min(s)`;
+
       const punchData = {
         isCheckedIn: false,
         isCheckedOut: true,
         record: {
-          checkInTime: new Date(Date.now() - 8 * 3600000).toISOString(),
+          checkInTime: checkInIso,
           checkOutTime: nowIso,
           status: 'PRESENT',
           workMode: 'OFFICE',
-          totalHours: 8.0,
+          totalHours: hoursWorked,
           notes: 'Clocked out via AI Agent Copilot',
         },
       };
       localStorage.setItem(`worknest_punch_${userKey}`, JSON.stringify(punchData));
       localStorage.setItem('worknest_punch_current', JSON.stringify(punchData));
       window.dispatchEvent(new Event('attendance-sync'));
-      success('Shift Finalized', 'AI Agent finalized your shift attendance.');
+      success('Shift Finalized', `AI Agent logged ${displayDuration} for today.`);
 
       return {
-        thinking: `Autonomous Agent Action: Dispatched attendance check-out mutation. Duration: 8.0 hours recorded.`,
-        text: `### ✅ Task Executed: Clocked Out & Shift Finalized!\n\n- **Logged Duration**: **8.0 Hours**\n- **Completion Timestamp**: **${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}**\n- **Daily Status**: ✓ **Shift Completed for Today**\n\n> 🎉 *Great job today! Your attendance record has been finalized in the enterprise ledger.*`,
+        thinking: `Autonomous Agent Action: Dispatched attendance check-out mutation. Duration: ${displayDuration} recorded.`,
+        text: `### ✅ Task Executed: Clocked Out & Shift Finalized!\n\n- **Logged Duration**: **${displayDuration}**\n- **Completion Timestamp**: **${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}**\n- **Daily Status**: ✓ **Shift Completed for Today**\n\n> 🎉 *Great job today! Your attendance record has been finalized in the enterprise ledger.*`,
         actionExecuted: {
           type: 'PUNCH_OUT',
           title: 'Shift Completed',
-          description: '8.0 hours logged successfully.',
+          description: `${displayDuration} logged successfully.`,
         },
         actionLink: { label: 'View Attendance Records', path: '/attendance' },
       };
