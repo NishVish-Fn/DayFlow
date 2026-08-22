@@ -1,15 +1,11 @@
 {
   "version": 2,
-  "buildCommand": "cd backend && npm install && npx prisma generate --schema=./prisma/schema.postgres.prisma && npx prisma db push --schema=./prisma/schema.postgres.prisma --accept-data-loss && npx tsx prisma/seed.ts && cd ../frontend && npm install && npm run build",
+  "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.ts"
-    },
-    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/frontend/dist/index.html"
     }
   ]
 }
