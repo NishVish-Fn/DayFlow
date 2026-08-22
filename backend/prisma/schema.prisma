@@ -1,0 +1,270 @@
+// Dayflow HRMS - Normalized Prisma Relational Database Schema
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ----------------------------------------------------------------------
+// Authentication & User Model
+// ----------------------------------------------------------------------
+model User {
+  id              String         @id @default(uuid())
+  email           String         @unique
+  employeeId      String         @unique // Staff Badge ID (e.g., EMP-1001)
+  passwordHash    String
+  role            String         @default("EMPLOYEE") // ADMIN, HR_MANAGER, EMPLOYEE
+  status          String         @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED
+  isEmailVerified Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  profile         EmployeeProfile?
+  refreshTokens   RefreshToken[]
+  auditLogs       AuditLog[]
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id              String   @id @default(uuid())
+  userId          String
+  tokenHash       String   @unique
+  expiresAt       DateTime
+  revoked         Boolean  @default(false)
+  replacedByToken String?
+  createdAt       DateTime @default(now())
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ----------------------------------------------------------------------
+// Employee Profile & Organization Hierarchy
+// ----------------------------------------------------------------------
+model EmployeeProfile {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  firstName          String
+  lastName           String
+  phone              String?
+  dateOfBirth        DateTime?
+  gender             String?            // Male, Female, Non-Binary, Prefer not to say
+  address            String?
+  department         String             // ENGINEERING, PRODUCT, DESIGN, HUMAN_RESOURCES, MARKETING, SALES, FINANCE, OPERATIONS
+  designation        String             // e.g. Senior Software Engineer
+  dateOfJoining      DateTime           @default(now())
+  employmentType     String             @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, INTERN
+  reportingManagerId String?
+  emergencyContact   String?
+  avatarUrl          String?
+  documents          String?            // JSON serialized metadata array
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportingManager   EmployeeProfile?   @relation("ManagerToReports", fields: [reportingManagerId], references: [id], onDelete: SetNull)
+  directReports      EmployeeProfile[]  @relation("ManagerToReports")
+
+  salaryStructures   SalaryStructure[]
+  payrollRecords     PayrollRecord[]
+  attendanceRecords  AttendanceRecord[]
+  leaveBalances      LeaveBalance[]
+  leaveRequests      LeaveRequest[]
+
+  @@map("employee_profiles")
+}
+
+// ----------------------------------------------------------------------
+// Versioned Salary & Compensation History
+// ----------------------------------------------------------------------
+model SalaryStructure {
+  id            String          @id @default(uuid())
+  employeeId    String
+  effectiveDate DateTime        @default(now())
+  baseSalary    Float
+  hra           Float           @default(0) // House Rent Allowance
+  allowances    Float           @default(0) // Special/Transport allowances
+  deductions    Float           @default(0) // Standard Tax/PF deductions
+  grossSalary   Float
+  netSalary     Float
+  isCurrent     Boolean         @default(true)
+  currency      String          @default("USD")
+  remarks       String?         // Reason for revision / promotion
+  createdById   String?         // Admin/HR user ID who set this structure
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  payrollRecords PayrollRecord[]
+
+  @@index([employeeId, isCurrent])
+  @@map("salary_structures")
+}
+
+// ----------------------------------------------------------------------
+// Payroll Runs & Generated Payslips
+// ----------------------------------------------------------------------
+model PayrollRecord {
+  id                   String          @id @default(uuid())
+  employeeId           String
+  salaryStructureId    String
+  month                Int             // 1 - 12
+  year                 Int             // e.g. 2026
+  paymentDate          DateTime?
+  baseAmount           Float
+  hraAmount            Float
+  allowancesBreakdown  String?         // JSON: { "transport": 200, "bonus": 500 }
+  deductionsBreakdown  String?         // JSON: { "tax": 400, "pf": 150, "unpaidLeave": 0 }
+  grossAmount          Float
+  netAmount            Float
+  status               String          @default("PROCESSED") // DRAFT, PROCESSED, PAID
+  transactionReference String?
+  notes                String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  employee             EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  salaryStructure      SalaryStructure @relation(fields: [salaryStructureId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, month, year])
+  @@index([month, year])
+  @@map("payroll_records")
+}
+
+// ----------------------------------------------------------------------
+// Daily Attendance & Punch Clock Records
+// ----------------------------------------------------------------------
+model AttendanceRecord {
+  id           String          @id @default(uuid())
+  employeeId   String
+  date         DateTime        // 00:00:00 UTC date
+  checkInTime  DateTime?
+  checkOutTime DateTime?
+  status       String          @default("PRESENT") // PRESENT, ABSENT, HALF_DAY, ON_LEAVE, HOLIDAY, WEEKEND
+  totalHours   Float           @default(0)
+  workMode     String          @default("OFFICE") // OFFICE, REMOTE, HYBRID
+  notes        String?
+  ipAddress    String?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  employee     EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+  @@index([date])
+  @@index([employeeId, status])
+  @@map("attendance_records")
+}
+
+// ----------------------------------------------------------------------
+// Leave Management System (Types, Quotas, Applications)
+// ----------------------------------------------------------------------
+model LeaveType {
+  id             String         @id @default(uuid())
+  name           String         @unique // e.g. "Paid Time Off", "Sick Leave"
+  code           String         @unique // e.g. "PTO", "SL", "CL", "ML"
+  maxDaysPerYear Float
+  isPaid         Boolean        @default(true)
+  description    String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  leaveBalances  LeaveBalance[]
+  leaveRequests  LeaveRequest[]
+
+  @@map("leave_types")
+}
+
+model LeaveBalance {
+  id             String          @id @default(uuid())
+  employeeId     String
+  leaveTypeId    String
+  year           Int             // e.g. 2026
+  totalAllocated Float
+  usedDays       Float           @default(0)
+  pendingDays    Float           @default(0)
+  remainingDays  Float
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  employee       EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType      LeaveType       @relation(fields: [leaveTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, leaveTypeId, year])
+  @@index([employeeId])
+  @@map("leave_balances")
+}
+
+model LeaveRequest {
+  id           String          @id @default(uuid())
+  employeeId   String
+  leaveTypeId  String
+  startDate    DateTime
+  endDate      DateTime
+  totalDays    Float
+  reason       String
+  status       String          @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  appliedAt    DateTime        @default(now())
+  approvedById String?
+  adminRemarks String?
+  reviewedAt   DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  employee     EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType    LeaveType       @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, status])
+  @@index([startDate, endDate])
+  @@map("leave_requests")
+}
+
+// ----------------------------------------------------------------------
+// Tamper-Evident Audit Logging Ledger
+// ----------------------------------------------------------------------
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  userEmail    String?
+  action       String   // e.g. "AUTH_LOGIN", "SALARY_REVISION", "LEAVE_APPROVAL", "ATTENDANCE_OVERRIDE"
+  resourceType String   // e.g. "AUTH", "EMPLOYEE", "PAYROLL", "LEAVE", "ATTENDANCE"
+  resourceId   String?
+  changesDiff  String?  // JSON serialized string of previous vs updated state
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ----------------------------------------------------------------------
+// In-App Notification System
+// ----------------------------------------------------------------------
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String   @default("INFO") // INFO, SUCCESS, WARNING, ACTION_REQUIRED
+  isRead    Boolean  @default(false)
+  linkUrl   String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}

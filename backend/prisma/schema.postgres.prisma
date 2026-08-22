@@ -1,0 +1,335 @@
+// Dayflow HRMS - PostgreSQL Production Prisma Relational Database Schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  HR_MANAGER
+  EMPLOYEE
+}
+
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum Department {
+  ENGINEERING
+  PRODUCT
+  DESIGN
+  HUMAN_RESOURCES
+  MARKETING
+  SALES
+  FINANCE
+  OPERATIONS
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  HALF_DAY
+  ON_LEAVE
+  HOLIDAY
+  WEEKEND
+}
+
+enum WorkMode {
+  OFFICE
+  REMOTE
+  HYBRID
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum PayrollStatus {
+  DRAFT
+  PROCESSED
+  PAID
+}
+
+enum NotificationType {
+  INFO
+  SUCCESS
+  WARNING
+  ACTION_REQUIRED
+}
+
+// ----------------------------------------------------------------------
+// Authentication & User Model
+// ----------------------------------------------------------------------
+model User {
+  id              String         @id @default(uuid())
+  email           String         @unique
+  employeeId      String         @unique
+  passwordHash    String
+  role            Role           @default(EMPLOYEE)
+  status          AccountStatus  @default(ACTIVE)
+  isEmailVerified Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  profile         EmployeeProfile?
+  refreshTokens   RefreshToken[]
+  auditLogs       AuditLog[]
+  notifications   Notification[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id              String   @id @default(uuid())
+  userId          String
+  tokenHash       String   @unique
+  expiresAt       DateTime
+  revoked         Boolean  @default(false)
+  replacedByToken String?
+  createdAt       DateTime @default(now())
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ----------------------------------------------------------------------
+// Employee Profile & Organization Hierarchy
+// ----------------------------------------------------------------------
+model EmployeeProfile {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  firstName          String
+  lastName           String
+  phone              String?
+  dateOfBirth        DateTime?
+  gender             String?
+  address            String?
+  department         Department
+  designation        String
+  dateOfJoining      DateTime           @default(now())
+  employmentType     EmploymentType     @default(FULL_TIME)
+  reportingManagerId String?
+  emergencyContact   String?
+  avatarUrl          String?
+  documents          Json?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportingManager   EmployeeProfile?   @relation("ManagerToReports", fields: [reportingManagerId], references: [id], onDelete: SetNull)
+  directReports      EmployeeProfile[]  @relation("ManagerToReports")
+
+  salaryStructures   SalaryStructure[]
+  payrollRecords     PayrollRecord[]
+  attendanceRecords  AttendanceRecord[]
+  leaveBalances      LeaveBalance[]
+  leaveRequests      LeaveRequest[]
+
+  @@map("employee_profiles")
+}
+
+// ----------------------------------------------------------------------
+// Versioned Salary & Compensation History
+// ----------------------------------------------------------------------
+model SalaryStructure {
+  id            String          @id @default(uuid())
+  employeeId    String
+  effectiveDate DateTime        @default(now())
+  baseSalary    Float
+  hra           Float           @default(0)
+  allowances    Float           @default(0)
+  deductions    Float           @default(0)
+  grossSalary   Float
+  netSalary     Float
+  isCurrent     Boolean         @default(true)
+  currency      String          @default("USD")
+  remarks       String?
+  createdById   String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  payrollRecords PayrollRecord[]
+
+  @@index([employeeId, isCurrent])
+  @@map("salary_structures")
+}
+
+// ----------------------------------------------------------------------
+// Payroll Runs & Generated Payslips
+// ----------------------------------------------------------------------
+model PayrollRecord {
+  id                   String          @id @default(uuid())
+  employeeId           String
+  salaryStructureId    String
+  month                Int
+  year                 Int
+  paymentDate          DateTime?
+  baseAmount           Float
+  hraAmount            Float
+  allowancesBreakdown  Json?
+  deductionsBreakdown  Json?
+  grossAmount          Float
+  netAmount            Float
+  status               PayrollStatus   @default(PROCESSED)
+  transactionReference String?
+  notes                String?
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+
+  employee             EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  salaryStructure      SalaryStructure @relation(fields: [salaryStructureId], references: [id], onDelete: Restrict)
+
+  @@unique([employeeId, month, year])
+  @@index([month, year])
+  @@map("payroll_records")
+}
+
+// ----------------------------------------------------------------------
+// Daily Attendance & Punch Clock Records
+// ----------------------------------------------------------------------
+model AttendanceRecord {
+  id           String           @id @default(uuid())
+  employeeId   String
+  date         DateTime
+  checkInTime  DateTime?
+  checkOutTime DateTime?
+  status       AttendanceStatus @default(PRESENT)
+  totalHours   Float            @default(0)
+  workMode     WorkMode         @default(OFFICE)
+  notes        String?
+  ipAddress    String?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  employee     EmployeeProfile  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, date])
+  @@index([date])
+  @@index([employeeId, status])
+  @@map("attendance_records")
+}
+
+// ----------------------------------------------------------------------
+// Leave Management System (Types, Quotas, Applications)
+// ----------------------------------------------------------------------
+model LeaveType {
+  id             String         @id @default(uuid())
+  name           String         @unique
+  code           String         @unique
+  maxDaysPerYear Float
+  isPaid         Boolean        @default(true)
+  description    String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  leaveBalances  LeaveBalance[]
+  leaveRequests  LeaveRequest[]
+
+  @@map("leave_types")
+}
+
+model LeaveBalance {
+  id             String          @id @default(uuid())
+  employeeId     String
+  leaveTypeId    String
+  year           Int
+  totalAllocated Float
+  usedDays       Float           @default(0)
+  pendingDays    Float           @default(0)
+  remainingDays  Float
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  employee       EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType      LeaveType       @relation(fields: [leaveTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, leaveTypeId, year])
+  @@index([employeeId])
+  @@map("leave_balances")
+}
+
+model LeaveRequest {
+  id           String          @id @default(uuid())
+  employeeId   String
+  leaveTypeId  String
+  startDate    DateTime
+  endDate      DateTime
+  totalDays    Float
+  reason       String
+  status       LeaveStatus     @default(PENDING)
+  appliedAt    DateTime        @default(now())
+  approvedById String?
+  adminRemarks String?
+  reviewedAt   DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  employee     EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType    LeaveType       @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+
+  @@index([employeeId, status])
+  @@index([startDate, endDate])
+  @@map("leave_requests")
+}
+
+// ----------------------------------------------------------------------
+// Tamper-Evident Audit Logging Ledger
+// ----------------------------------------------------------------------
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  userEmail    String?
+  action       String
+  resourceType String
+  resourceId   String?
+  changesDiff  Json?
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ----------------------------------------------------------------------
+// In-App Notification System
+// ----------------------------------------------------------------------
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      NotificationType @default(INFO)
+  isRead    Boolean          @default(false)
+  linkUrl   String?
+  createdAt DateTime         @default(now())
+
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead])
+  @@map("notifications")
+}
