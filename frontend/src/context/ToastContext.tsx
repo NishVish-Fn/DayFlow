@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CheckCircle2, AlertTriangle, XCircle, Info, X } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, XCircle, Info, X, Check } from 'lucide-react';
 
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -29,7 +29,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const showToast = useCallback(
-    (type: ToastType, title: string, message?: string, duration: number = 4000) => {
+    (type: ToastType, title: string, message?: string, duration: number = 3500) => {
       const id = Math.random().toString(36).substring(2, 9);
       const newToast: Toast = { id, type, title, message, duration };
 
@@ -53,33 +53,44 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     <ToastContext.Provider value={{ showToast, success, error, warning, info }}>
       {children}
       {/* Toast Render Container */}
-      <div className="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none px-4">
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-2.5 max-w-md w-full pointer-events-none px-4">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`pointer-events-auto flex items-start gap-3 p-4 rounded-xl shadow-2xl border transition-all duration-300 transform translate-y-0 backdrop-blur-md ${
+            className={`pointer-events-auto flex items-center gap-3.5 p-4 rounded-2xl shadow-2xl border transition-all duration-300 transform translate-y-0 backdrop-blur-xl animate-in slide-in-from-bottom-2 ${
               toast.type === 'success'
-                ? 'bg-emerald-950/90 border-emerald-500/40 text-emerald-100'
+                ? 'bg-[#0a192f]/95 border-[#00f0ff]/40 text-slate-100 shadow-[0_10px_30px_rgba(0,240,255,0.15)]'
                 : toast.type === 'error'
-                ? 'bg-rose-950/90 border-rose-500/40 text-rose-100'
+                ? 'bg-rose-950/95 border-rose-500/40 text-rose-100 shadow-[0_10px_30px_rgba(244,63,94,0.15)]'
                 : toast.type === 'warning'
-                ? 'bg-amber-950/90 border-amber-500/40 text-amber-100'
-                : 'bg-indigo-950/90 border-indigo-500/40 text-indigo-100'
+                ? 'bg-amber-950/95 border-amber-500/40 text-amber-100'
+                : 'bg-slate-900/95 border-blue-500/40 text-blue-100'
             }`}
           >
-            <div className="mt-0.5">
-              {toast.type === 'success' && <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
-              {toast.type === 'error' && <XCircle className="w-5 h-5 text-rose-400" />}
-              {toast.type === 'warning' && <AlertTriangle className="w-5 h-5 text-amber-400" />}
-              {toast.type === 'info' && <Info className="w-5 h-5 text-indigo-400" />}
+            {/* Animated Modern Blue/Green Tick Mark Badge */}
+            <div className="shrink-0">
+              {toast.type === 'success' && (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#00ffc2] to-[#00f0ff] p-[2px] shadow-md shadow-[#00f0ff]/30 flex items-center justify-center animate-in zoom-in-50 duration-200">
+                  <div className="w-full h-full bg-[#0a192f] rounded-full flex items-center justify-center">
+                    <Check className="w-4 h-4 text-[#00ffc2] stroke-[3]" />
+                  </div>
+                </div>
+              )}
+              {toast.type === 'error' && <XCircle className="w-6 h-6 text-rose-400" />}
+              {toast.type === 'warning' && <AlertTriangle className="w-6 h-6 text-amber-400" />}
+              {toast.type === 'info' && <Info className="w-6 h-6 text-blue-400" />}
             </div>
+
             <div className="flex-1">
-              <h4 className="font-semibold text-sm">{toast.title}</h4>
-              {toast.message && <p className="text-xs opacity-90 mt-0.5">{toast.message}</p>}
+              <h4 className="font-bold text-xs tracking-tight text-white flex items-center gap-1.5">
+                {toast.title}
+              </h4>
+              {toast.message && <p className="text-[11px] text-slate-300 font-medium mt-0.5 leading-snug">{toast.message}</p>}
             </div>
+
             <button
               onClick={() => removeToast(toast.id)}
-              className="text-slate-400 hover:text-white transition-colors"
+              className="text-slate-400 hover:text-white transition-colors cursor-pointer p-1 rounded-lg hover:bg-white/10"
             >
               <X className="w-4 h-4" />
             </button>

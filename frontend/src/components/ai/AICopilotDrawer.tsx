@@ -37,7 +37,6 @@ import { useNavigate } from 'react-router-dom';
 import { MarkdownRenderer } from '../common/MarkdownRenderer';
 import { useToast } from '../../context/ToastContext';
 import api from '../../services/api';
-import confetti from 'canvas-confetti';
 
 interface Message {
   id: string;
@@ -153,7 +152,6 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
       localStorage.setItem(`worknest_punch_${userKey}`, JSON.stringify(punchData));
       localStorage.setItem('worknest_punch_current', JSON.stringify(punchData));
       window.dispatchEvent(new Event('attendance-sync'));
-      confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
       success('Shift Started', 'AI Agent clocked you in for today.');
 
       return {
@@ -241,7 +239,6 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
         localStorage.setItem('worknest_leaves', JSON.stringify(existingLeaves));
       } catch (e) {}
 
-      confetti({ particleCount: 35, spread: 50, origin: { y: 0.85 } });
       success('Leave Submitted', `Applied ${days} days of ${leaveType}.`);
 
       return {
@@ -275,7 +272,6 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
         localStorage.setItem('worknest_wellness_state', JSON.stringify(updated));
       } catch (e) {}
 
-      confetti({ particleCount: 30, spread: 45, origin: { y: 0.85 } });
       success('Support Protocol Dispatched', 'Elena Rodriguez burnout score reduced to 15%.');
 
       return {

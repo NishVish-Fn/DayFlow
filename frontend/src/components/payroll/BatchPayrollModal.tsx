@@ -3,7 +3,6 @@ import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
 import api from '../../services/api';
 import { useToast } from '../../context/ToastContext';
-import confetti from 'canvas-confetti';
 
 interface Props {
   isOpen: boolean;
@@ -36,7 +35,6 @@ export const BatchPayrollModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
         notes,
       });
 
-      confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
       success('Batch Payroll Executed', data.data.message);
       onSuccess();
       onClose();

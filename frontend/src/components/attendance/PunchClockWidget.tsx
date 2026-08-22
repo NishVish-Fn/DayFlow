@@ -4,7 +4,6 @@ import api from '../../services/api';
 import { Badge } from '../common/Badge';
 import { useToast } from '../../context/ToastContext';
 import { useAuth } from '../../context/AuthContext';
-import confetti from 'canvas-confetti';
 
 interface TodayAttendanceData {
   isCheckedIn: boolean;
@@ -147,7 +146,6 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     localStorage.setItem('worknest_punch_current', JSON.stringify(updatedData));
     window.dispatchEvent(new Event('attendance-sync'));
 
-    confetti({ particleCount: 35, spread: 55, origin: { y: 0.85 } });
     success('Shift Started', `Logged ${workMode} check-in at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
     const currentNotes = notes;
     setNotes('');

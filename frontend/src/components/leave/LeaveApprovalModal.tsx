@@ -4,7 +4,6 @@ import { Button } from '../common/Button';
 import api from '../../services/api';
 import { useToast } from '../../context/ToastContext';
 import { LeaveRequest } from '../../types';
-import confetti from 'canvas-confetti';
 
 interface Props {
   isOpen: boolean;
@@ -32,10 +31,6 @@ export const LeaveApprovalModal: React.FC<Props> = ({
         status,
         adminRemarks,
       });
-
-      if (status === 'APPROVED') {
-        confetti({ particleCount: 60, spread: 70, origin: { y: 0.7 } });
-      }
 
       success(
         `Leave Request ${status}`,

@@ -21,7 +21,6 @@ import {
   Trash2,
   Download,
   Upload,
-  Briefcase,
   Landmark,
   Shield,
   MapPin,
@@ -30,7 +29,6 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { computeSalaryStructure, SalaryBreakdown } from '../utils/hrCalculations';
-import confetti from 'canvas-confetti';
 
 export const ProfilePage: React.FC = () => {
   const { user, role, refreshProfile } = useAuth();
@@ -195,7 +193,6 @@ export const ProfilePage: React.FC = () => {
       await api.patch('/auth/me/profile', updated);
     } catch (e) {}
 
-    confetti({ particleCount: 35, spread: 55, origin: { y: 0.85 } });
     success('Profile Saved', 'All changes and biometric records updated successfully.');
     setIsEditing(false);
   };
