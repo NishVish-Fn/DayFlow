@@ -44,7 +44,18 @@ export class AuthService {
     const currentYear = new Date().getFullYear();
 
     // Fetch leave types to initialize default balances
-    const leaveTypes = await prisma.leaveType.findMany();
+    let leaveTypes = await prisma.leaveType.findMany();
+    if (leaveTypes.length === 0) {
+      await prisma.leaveType.createMany({
+        data: [
+          { name: 'Paid Time Off / Annual', code: 'PTO', maxDaysPerYear: 18, isPaid: true },
+          { name: 'Sick Leave', code: 'SICK', maxDaysPerYear: 10, isPaid: true },
+          { name: 'Casual Leave', code: 'CASUAL', maxDaysPerYear: 7, isPaid: true },
+          { name: 'Unpaid Leave', code: 'UNPAID', maxDaysPerYear: 30, isPaid: false },
+        ],
+      });
+      leaveTypes = await prisma.leaveType.findMany();
+    }
 
     const user = await prisma.user.create({
       data: {
