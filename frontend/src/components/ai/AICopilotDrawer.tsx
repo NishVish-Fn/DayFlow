@@ -46,9 +46,11 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Model Selection: Google Gemini Models & LLaMA
+  // Model Selection: Google Gemini Models
   const [selectedModel, setSelectedModel] = useState<string>('gemini-1.5-flash');
-  const [geminiApiKey, setGeminiApiKey] = useState<string>(() => localStorage.getItem('worknest_gemini_api_key') || '');
+  const [geminiApiKey, setGeminiApiKey] = useState<string>(
+    () => localStorage.getItem('worknest_gemini_api_key') || (import.meta.env.VITE_GEMINI_API_KEY as string) || ''
+  );
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showThinking, setShowThinking] = useState<boolean>(true);
 
@@ -99,9 +101,10 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
     model: string
   ): Promise<{ text: string; thinking?: string; actionLink?: { label: string; path: string } }> => {
     const p = prompt.toLowerCase();
+    const activeKey = geminiApiKey.trim() || (import.meta.env.VITE_GEMINI_API_KEY as string) || '';
 
     // If a Google Gemini API Key is provided, call Google Gemini REST API
-    if (geminiApiKey.trim()) {
+    if (activeKey) {
       try {
         const contextPrompt = `You are WorkNest AI Copilot, an elite enterprise HRMS AI assistant.
 Current Authenticated User Context:
@@ -120,11 +123,16 @@ User Prompt: "${prompt}"
 Format your response in crisp, executive GitHub-flavored markdown with clean tables and clear bullet points.`;
 
         const targetModel = model.startsWith('gemini') ? model : 'gemini-1.5-flash';
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${geminiApiKey.trim()}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent?key=${activeKey}`;
+
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (activeKey.startsWith('AQ.')) {
+          headers['Authorization'] = `Bearer ${activeKey}`;
+        }
 
         const res = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers,
           body: JSON.stringify({
             contents: [{ parts: [{ text: contextPrompt }] }],
             generationConfig: {
@@ -145,7 +153,7 @@ Format your response in crisp, executive GitHub-flavored markdown with clean tab
             if (p.includes('attendance') || p.includes('clock') || p.includes('punch')) actionLink = { label: 'Open Punch Clock', path: '/attendance' };
 
             return {
-              thinking: `Connected via Google Gemini API (${targetModel}). Context injected: ${user?.employeeId} (${user?.profile?.department}). Formatted output stream.`,
+              thinking: `Connected via Google Gemini API (${targetModel}). Injected real-time 3NF profile for ${user?.employeeId} (${user?.profile?.department}).`,
               text: generatedText,
               actionLink,
             };
