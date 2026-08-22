@@ -5,9 +5,6 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  User,
-  Building2,
-  ShieldCheck,
   Eye,
   EyeOff,
   Sparkles,
@@ -79,127 +76,121 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0b0f19] text-white flex flex-col justify-between selection:bg-purple-500 selection:text-white font-sans relative overflow-hidden">
+    <div className="min-h-screen bg-[#f8fafd] dark:bg-[#131314] text-slate-900 dark:text-white flex flex-col justify-between selection:bg-[#c2e7ff] selection:text-[#001d35] font-sans relative">
       
-      {/* Background Ambient Purple & Blue Glows */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-gradient-to-b from-purple-600/20 via-blue-600/15 to-transparent rounded-full blur-[120px]" />
-        <div className="absolute -bottom-40 right-10 w-[500px] h-[500px] bg-purple-900/15 rounded-full blur-[140px]" />
-      </div>
-
-      {/* Top Header Bar */}
-      <header className="relative z-10 flex items-center justify-between px-6 sm:px-12 py-5 border-b border-white/5 bg-[#0b0f19]/80 backdrop-blur-md">
+      {/* Top Google Header */}
+      <header className="flex items-center justify-between px-6 sm:px-12 py-4 bg-transparent">
         <CorporateGlobeLogo size="sm" />
 
         <button
           onClick={() => setIsAIOpen(true)}
-          className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs font-semibold text-purple-300 transition-all cursor-pointer shadow-sm"
+          className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#1e1f20] hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all shadow-xs cursor-pointer"
         >
-          <Sparkles className="w-3.5 h-3.5 text-purple-400 animate-pulse" />
-          <span>WorkNest AI Copilot</span>
+          <Sparkles className="w-4 h-4 text-[#4285F4] animate-pulse" />
+          <span>Ask Gemini AI</span>
         </button>
       </header>
 
-      {/* Centered Direct Microsoft Outlook / 365 Style Sign-In Card */}
-      <main className="relative z-10 flex-1 flex items-center justify-center p-4 sm:p-6">
-        <div className="w-full max-w-[440px] bg-[#111827]/95 backdrop-blur-2xl border border-slate-800 hover:border-purple-500/30 rounded-3xl p-7 sm:p-9 shadow-[0_20px_70px_rgba(0,0,0,0.7)] transition-all">
+      {/* Centered Google Accounts Style Card */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-[440px] bg-white dark:bg-[#1e1f20] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-8 sm:p-10 shadow-lg shadow-slate-200/50 dark:shadow-none transition-all">
           
-          {/* Card Brand Header */}
+          {/* Logo & Headline */}
           <div className="text-center mb-6 space-y-2">
-            <div className="flex justify-center mb-3">
-              <div className="p-3 rounded-2xl bg-gradient-to-tr from-purple-600/20 to-blue-600/20 border border-purple-500/30 shadow-inner">
-                <CorporateGlobeLogo size="sm" showText={false} />
-              </div>
+            <div className="flex justify-center mb-4">
+              <CorporateGlobeLogo size="md" showText={false} />
             </div>
-            <h1 className="text-2xl font-extrabold text-white tracking-tight font-display">
-              {mode === 'signin' ? 'Sign in to WorkNest' : 'Create Staff Profile'}
+            <h1 className="text-2xl font-normal text-slate-900 dark:text-white tracking-tight">
+              {mode === 'signin' ? 'Sign in' : 'Create an account'}
             </h1>
-            <p className="text-xs text-slate-400 font-medium">
-              {mode === 'signin' ? 'Enterprise workforce and self-service workspace' : 'Join your organization directory'}
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              to continue to <span className="font-semibold text-slate-900 dark:text-white">WorkNest Workspace</span>
             </p>
           </div>
 
-          {/* Segmented Sign In / Register Tab */}
-          <div className="flex p-1 rounded-xl bg-slate-900/90 border border-slate-800 text-xs mb-6">
+          {/* Segmented Switcher */}
+          <div className="flex p-1 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs mb-6">
             <button
               type="button"
               onClick={() => setMode('signin')}
-              className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer text-center ${
+              className={`flex-1 py-1.5 rounded-full font-semibold transition-all cursor-pointer text-center ${
                 mode === 'signin'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md shadow-purple-600/20'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white dark:bg-[#28292a] text-[#1a73e8] dark:text-[#c2e7ff] shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              Sign In
+              Sign in
             </button>
             <button
               type="button"
               onClick={() => setMode('signup')}
-              className={`flex-1 py-2 rounded-lg font-bold transition-all cursor-pointer text-center ${
+              className={`flex-1 py-1.5 rounded-full font-semibold transition-all cursor-pointer text-center ${
                 mode === 'signup'
-                  ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-md shadow-purple-600/20'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white dark:bg-[#28292a] text-[#1a73e8] dark:text-[#c2e7ff] shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              Register
+              Create account
             </button>
           </div>
 
           {/* SIGN IN FORM */}
           {mode === 'signin' && (
-            <form onSubmit={handleSignIn} className="space-y-4 text-xs">
+            <form onSubmit={handleSignIn} className="space-y-4 text-sm">
               <div>
-                <label className="block font-bold text-slate-300 mb-1.5 uppercase tracking-wider text-[10px]">
-                  Corporate Email or Staff Badge ID
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                  Email or Employee ID
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-purple-400 absolute left-3.5 top-3" />
+                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
                     type="text"
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="e.g. admin@dayflow.internal or EMP-0001"
-                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-10 pr-3.5 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 font-medium transition-all"
+                    placeholder="admin@dayflow.internal or EMP-0001"
+                    className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl pl-10 pr-3.5 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/20 transition-all font-normal text-xs"
                   />
                 </div>
               </div>
 
               <div>
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider text-[10px]">Password</label>
-                  <span className="text-[11px] text-purple-400 hover:text-purple-300 cursor-pointer font-semibold">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">Password</label>
+                  <span className="text-xs text-[#1a73e8] dark:text-[#8ab4f8] hover:underline cursor-pointer font-medium">
                     Forgot password?
                   </span>
                 </div>
                 <div className="relative">
-                  <Lock className="w-4 h-4 text-purple-400 absolute left-3.5 top-3" />
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••••••"
-                    className="w-full bg-slate-900/80 border border-slate-800 rounded-xl pl-10 pr-10 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 font-medium transition-all"
+                    className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl pl-10 pr-10 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1a73e8] focus:ring-2 focus:ring-[#1a73e8]/20 transition-all font-normal text-xs"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-2.5 text-slate-400 hover:text-white cursor-pointer"
+                    className="absolute right-3.5 top-2.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2 cursor-pointer mt-2"
-              >
-                {loading ? 'Signing In...' : 'Sign In'}
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-              </button>
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white font-semibold text-xs tracking-wide transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {loading ? 'Authenticating...' : 'Next'}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </form>
           )}
 
@@ -208,59 +199,59 @@ export const LoginPage: React.FC = () => {
             <form onSubmit={handleSignUp} className="space-y-3 text-xs">
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">First Name</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">First Name</label>
                   <input
                     type="text"
                     required
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Alex"
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 font-medium"
+                    className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a73e8]"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">Last Name</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Last Name</label>
                   <input
                     type="text"
                     required
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Chen"
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 font-medium"
+                    className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a73e8]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">Corporate Email</label>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Corporate Email</label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@dayflow.internal"
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 font-medium"
+                  className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a73e8]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">Badge ID</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Badge ID</label>
                   <input
                     type="text"
                     required
                     value={employeeId}
                     onChange={(e) => setEmployeeId(e.target.value)}
                     placeholder="EMP-1008"
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 font-medium"
+                    className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a73e8]"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1">Department</label>
+                  <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Department</label>
                   <select
                     value={department}
                     onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-2 text-white focus:outline-none focus:border-purple-500 font-medium"
+                    className="w-full bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl px-2.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a73e8]"
                   >
                     <option value="ENGINEERING">Engineering</option>
                     <option value="PRODUCT">Product</option>
@@ -275,84 +266,86 @@ export const LoginPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">Designation</label>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Designation</label>
                 <input
                   type="text"
                   required
                   value={designation}
                   onChange={(e) => setDesignation(e.target.value)}
-                  placeholder="Senior Software Architect"
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 font-medium"
+                  placeholder="Software Engineer"
+                  className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a73e8]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 mb-1">Password</label>
+                <label className="block font-semibold text-slate-700 dark:text-slate-300 mb-1">Password</label>
                 <input
                   type="password"
                   required
                   value={signupPassword}
                   onChange={(e) => setSignupPassword(e.target.value)}
                   placeholder="Min 8 characters"
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-purple-500 font-medium"
+                  className="w-full bg-transparent border border-slate-300 dark:border-slate-700 rounded-xl px-3 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#1a73e8]"
                 />
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-extrabold text-xs uppercase tracking-wider transition-all shadow-md shadow-purple-600/25 flex items-center justify-center gap-2 cursor-pointer mt-1"
-              >
-                {loading ? 'Creating Account...' : 'Create Account'}
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-              </button>
+              <div className="pt-2">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-2.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white font-semibold text-xs tracking-wide transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {loading ? 'Creating...' : 'Create Account'}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
             </form>
           )}
 
           {/* Quick-Fill Test Personas */}
-          <div className="pt-5 border-t border-slate-800 mt-6 space-y-2">
-            <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              <span className="flex items-center gap-1 text-purple-400">
-                <Zap className="w-3 h-3 fill-current" /> Instant Test Personas
+          <div className="pt-6 border-t border-slate-200 dark:border-slate-800 mt-6 space-y-2.5">
+            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
+              <span className="flex items-center gap-1 text-[#1a73e8] dark:text-[#8ab4f8]">
+                <Zap className="w-3.5 h-3.5 fill-current" /> Instant Google Test Personas
               </span>
-              <span className="font-mono text-slate-500">Password@123</span>
+              <span className="font-mono text-[10px]">Password@123</span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left">
               <button
                 type="button"
                 onClick={() => setQuickFill('admin@dayflow.internal')}
-                className="p-2 rounded-xl bg-slate-900 hover:bg-purple-950/60 border border-slate-800 hover:border-purple-500/40 transition-all group cursor-pointer text-left"
+                className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-800 hover:border-blue-300 transition-all group cursor-pointer"
               >
-                <div className="font-bold text-[11px] text-white group-hover:text-purple-300">👑 Admin</div>
-                <div className="text-[10px] text-slate-400 truncate">Sarah Connor</div>
+                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-[#1a73e8]">👑 Admin</div>
+                <div className="text-[10px] text-slate-500 truncate">Sarah Connor</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setQuickFill('hr@dayflow.internal')}
-                className="p-2 rounded-xl bg-slate-900 hover:bg-blue-950/60 border border-slate-800 hover:border-blue-500/40 transition-all group cursor-pointer text-left"
+                className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 hover:bg-purple-50 dark:hover:bg-purple-950/40 border border-slate-200 dark:border-slate-800 hover:border-purple-300 transition-all group cursor-pointer"
               >
-                <div className="font-bold text-[11px] text-white group-hover:text-blue-300">💼 HR Lead</div>
-                <div className="text-[10px] text-slate-400 truncate">Marcus Vance</div>
+                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-purple-600">💼 HR Lead</div>
+                <div className="text-[10px] text-slate-500 truncate">Marcus Vance</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setQuickFill('alex.chen@dayflow.internal')}
-                className="p-2 rounded-xl bg-slate-900 hover:bg-emerald-950/60 border border-slate-800 hover:border-emerald-500/40 transition-all group cursor-pointer text-left"
+                className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 border border-slate-200 dark:border-slate-800 hover:border-emerald-300 transition-all group cursor-pointer"
               >
-                <div className="font-bold text-[11px] text-white group-hover:text-emerald-300">💻 Engineer</div>
-                <div className="text-[10px] text-slate-400 truncate">Alex Chen</div>
+                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-emerald-600">💻 Engineer</div>
+                <div className="text-[10px] text-slate-500 truncate">Alex Chen</div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setQuickFill('elena.rodriguez@dayflow.internal')}
-                className="p-2 rounded-xl bg-slate-900 hover:bg-amber-950/60 border border-slate-800 hover:border-amber-500/40 transition-all group cursor-pointer text-left"
+                className="p-2.5 rounded-2xl bg-slate-50 dark:bg-slate-900/80 hover:bg-amber-50 dark:hover:bg-amber-950/40 border border-slate-200 dark:border-slate-800 hover:border-amber-300 transition-all group cursor-pointer"
               >
-                <div className="font-bold text-[11px] text-white group-hover:text-amber-300">🎨 Designer</div>
-                <div className="text-[10px] text-slate-400 truncate">Elena Rodriguez</div>
+                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-amber-600">🎨 Designer</div>
+                <div className="text-[10px] text-slate-500 truncate">Elena Rodriguez</div>
               </button>
             </div>
           </div>
@@ -360,9 +353,14 @@ export const LoginPage: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 py-4 border-t border-white/5 text-center text-xs text-slate-500 font-medium">
-        <span>&copy; 2026 WorkNest &bull; Microsoft 365 / Outlook Enterprise Tier Workspace</span>
+      {/* Google Footer */}
+      <footer className="px-6 sm:px-12 py-4 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 border-t border-slate-200/60 dark:border-slate-800/60">
+        <span>&copy; 2026 Google Workspace Tier &bull; WorkNest HRMS</span>
+        <div className="flex items-center gap-6 mt-2 sm:mt-0">
+          <a href="#" className="hover:underline">Help</a>
+          <a href="#" className="hover:underline">Privacy</a>
+          <a href="#" className="hover:underline">Terms</a>
+        </div>
       </footer>
 
       {/* AI Copilot Drawer */}

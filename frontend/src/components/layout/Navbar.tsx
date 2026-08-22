@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Bell, LogOut, CheckCheck, Sparkles, Search, Command } from 'lucide-react';
+import { Bell, LogOut, CheckCheck, Sparkles, Search, Grip, HelpCircle, Settings } from 'lucide-react';
 import api from '../../services/api';
 import { Notification } from '../../types';
 import { CorporateGlobeLogo } from '../common/CorporateGlobeLogo';
@@ -41,64 +41,70 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex items-center justify-between h-14 px-5 bg-[#0b0f19]/95 backdrop-blur-xl border-b border-slate-800 text-white shadow-xs">
+      <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-5 bg-white dark:bg-[#1f1f1f] border-b border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-white shadow-xs">
         
-        {/* Brand */}
+        {/* Brand & Logo */}
         <div className="flex items-center gap-3">
           <CorporateGlobeLogo size="sm" />
         </div>
 
-        {/* Outlook-Style Global Search Bar */}
-        <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
+        {/* Signature Google Search Pill */}
+        <div className="hidden md:flex items-center flex-1 max-w-xl mx-8">
           <div className="relative w-full">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
+            <Search className="w-4 h-4 text-slate-500 absolute left-4 top-3" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search people, policies, attendance, or ask Copilot..."
-              className="w-full bg-[#111827] border border-slate-800 focus:border-purple-500 rounded-xl pl-9.5 pr-14 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-purple-500/30 transition-all font-medium"
+              placeholder="Search in WorkNest (employees, leaves, salary, policies)..."
+              className="w-full bg-[#f0f4f9] dark:bg-[#28292a] hover:bg-[#e9eef6] dark:hover:bg-[#333537] focus:bg-white dark:focus:bg-[#1e1f20] border border-transparent focus:border-slate-300 dark:focus:border-slate-700 rounded-full pl-11 pr-12 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:shadow-md transition-all font-medium"
             />
-            <div className="absolute right-2.5 top-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-slate-800 text-[10px] text-slate-400 font-mono">
-              <Command className="w-2.5 h-2.5" /> K
-            </div>
           </div>
         </div>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-3">
-          {/* Ask WorkNest AI Copilot Button */}
+        <div className="flex items-center gap-2">
+          {/* Ask Gemini AI Action */}
           <button
             onClick={() => setIsAIOpen(true)}
-            className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-bold text-xs shadow-md shadow-purple-600/20 transition-all cursor-pointer group"
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#c2e7ff] hover:bg-[#b3dfff] text-[#001d35] font-semibold text-xs shadow-xs transition-all cursor-pointer"
           >
-            <Sparkles className="w-3.5 h-3.5 text-purple-200 animate-pulse" />
-            <span className="hidden sm:inline">Ask Copilot</span>
+            <Sparkles className="w-4 h-4 text-[#004a77] animate-pulse" />
+            <span className="hidden sm:inline">Ask Gemini</span>
+          </button>
+
+          {/* Google 9-Dot App Launcher */}
+          <button
+            onClick={() => setIsAIOpen(true)}
+            className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+            title="Google Workspace Apps"
+          >
+            <Grip className="w-5 h-5" />
           </button>
 
           {/* Notifications Bell */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 rounded-xl bg-[#111827] hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white transition-all cursor-pointer"
+              className="relative p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
               title="Notifications"
             >
-              <Bell className="w-4 h-4" />
+              <Bell className="w-5 h-5" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-purple-500 text-[10px] font-extrabold text-white shadow-md">
+                <span className="absolute 1 top-1 right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ea4335] text-[10px] font-bold text-white shadow-xs">
                   {unreadCount}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-[#111827] border border-slate-800 shadow-2xl p-3.5 z-50 animate-in fade-in zoom-in-95">
-                <div className="flex items-center justify-between px-2 pb-2.5 border-b border-slate-800">
-                  <span className="text-xs font-bold text-white">Notifications</span>
+              <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-white dark:bg-[#1e1f20] border border-slate-200 dark:border-slate-800 shadow-xl p-4 z-50 animate-in fade-in zoom-in-95">
+                <div className="flex items-center justify-between pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                  <span className="text-xs font-bold text-slate-900 dark:text-white">Notifications</span>
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllRead}
-                      className="flex items-center gap-1 text-[11px] font-bold text-purple-400 hover:underline cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] font-semibold text-[#1a73e8] dark:text-[#8ab4f8] hover:underline cursor-pointer"
                     >
                       <CheckCheck className="w-3.5 h-3.5" /> Mark all read
                     </button>
@@ -114,12 +120,12 @@ export const Navbar: React.FC = () => {
                         key={n.id}
                         className={`p-2.5 rounded-xl border text-xs transition-colors ${
                           n.isRead
-                            ? 'bg-slate-900/40 border-slate-800/60 text-slate-400'
-                            : 'bg-gradient-to-r from-purple-950/60 to-blue-950/60 border-purple-500/30 text-white font-semibold'
+                            ? 'bg-slate-50 dark:bg-slate-900/60 border-slate-100 dark:border-slate-800 text-slate-500'
+                            : 'bg-blue-50/80 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800 text-slate-900 dark:text-white font-semibold'
                         }`}
                       >
-                        <div className="font-bold text-white">{n.title}</div>
-                        <div className="text-[11px] mt-0.5 text-slate-300 font-normal">{n.message}</div>
+                        <div className="font-bold">{n.title}</div>
+                        <div className="text-[11px] mt-0.5 text-slate-600 dark:text-slate-300 font-normal">{n.message}</div>
                       </div>
                     ))
                   )}
@@ -128,29 +134,22 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* User Profile Badge */}
-          <div className="flex items-center gap-2.5 pl-2.5 border-l border-slate-800">
+          {/* User Profile Avatar (Google Account Circle) */}
+          <div className="flex items-center gap-2 pl-2">
             <img
               src={
                 user?.profile?.avatarUrl ||
                 `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`
               }
               alt="Avatar"
-              className="w-8 h-8 rounded-xl border border-purple-500/30 bg-slate-800 object-cover"
+              className="w-8 h-8 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-100 object-cover cursor-pointer"
+              title={`${user?.profile?.firstName} ${user?.profile?.lastName} (${user?.email})`}
             />
-            <div className="hidden lg:block text-left">
-              <div className="text-xs font-bold text-white leading-tight">
-                {user?.profile?.firstName} {user?.profile?.lastName}
-              </div>
-              <div className="text-[10px] text-purple-400 font-mono">
-                {user?.role}
-              </div>
-            </div>
 
             <button
               onClick={() => logout()}
               title="Sign Out"
-              className="p-1.5 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+              className="p-2 rounded-full text-slate-500 hover:text-[#ea4335] hover:bg-red-50 dark:hover:bg-red-950/40 transition-colors cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>
@@ -158,7 +157,7 @@ export const Navbar: React.FC = () => {
         </div>
       </header>
 
-      {/* Copilot Drawer */}
+      {/* Gemini AI Drawer */}
       <AICopilotDrawer isOpen={isAIOpen} onClose={() => setIsAIOpen(false)} />
     </>
   );

@@ -44,9 +44,11 @@ export const createApp = (): Application => {
   // 4. Global Rate Limiter for API routes
   app.use('/api', globalRateLimiter);
 
-  // 5. API v1 Routing (supports both /api/v1 and direct /v1)
+  // 5. API v1 Routing (supports /api/v1, /v1, /api, and root in serverless)
   app.use('/api/v1', apiRoutes);
   app.use('/v1', apiRoutes);
+  app.use('/api', apiRoutes);
+  app.use('/', apiRoutes);
 
   // 6. Serve Frontend Static Build (for 100% Free Monolith Hosting on Render / Railway / VPS)
   const frontendDist = path.resolve(__dirname, '../../frontend/dist');

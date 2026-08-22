@@ -8,46 +8,46 @@ export const LeaveBalanceCard: React.FC<{ balance: LeaveBalance }> = ({ balance 
   );
 
   return (
-    <div className="bg-[#0e1217] border border-white/10 rounded-2xl p-4 shadow-sm flex flex-col justify-between hover:border-[#00f0ff]/40 transition-colors">
+    <div className="bg-white dark:bg-[#1e1f20] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-5 shadow-xs flex flex-col justify-between hover:shadow-md transition-all">
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-xs font-bold text-white">{balance.leaveType.name}</span>
-          <span className="ml-1.5 text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/30 font-bold">
+          <span className="text-xs font-bold text-slate-800 dark:text-white">{balance.leaveType.name}</span>
+          <span className="ml-1.5 text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 text-[#1a73e8] dark:text-[#8ab4f8] font-bold">
             {balance.leaveType.code}
           </span>
         </div>
-        <span className="text-xs font-mono font-semibold text-slate-400">
-          {balance.totalAllocated}d Total
+        <span className="text-xs font-semibold text-slate-400">
+          {balance.totalAllocated}d total
         </span>
       </div>
 
       <div className="my-3">
-        <div className="flex items-baseline justify-between mb-1">
-          <span className="text-2xl font-black text-white font-mono">{balance.remainingDays}</span>
-          <span className="text-[11px] font-semibold text-slate-400">Days Available</span>
+        <div className="flex items-baseline justify-between mb-1.5">
+          <span className="text-2xl font-bold text-slate-900 dark:text-white font-sans">{balance.remainingDays}</span>
+          <span className="text-xs font-medium text-slate-500">Days Available</span>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden flex">
+        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden flex">
           {/* Used portion */}
           <div
-            className="bg-[#00ffc2] h-2 transition-all"
+            className="bg-[#34a853] h-2 transition-all"
             style={{ width: `${(balance.usedDays / balance.totalAllocated) * 100}%` }}
             title={`Used: ${balance.usedDays} days`}
           />
           {/* Pending portion */}
           <div
-            className="bg-amber-400 h-2 transition-all"
+            className="bg-[#fbbc04] h-2 transition-all"
             style={{ width: `${(balance.pendingDays / balance.totalAllocated) * 100}%` }}
             title={`Pending: ${balance.pendingDays} days`}
           />
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-[11px] text-slate-400 border-t border-white/5 pt-2 font-medium">
-        <span>Used: <strong className="text-[#00ffc2] font-mono">{balance.usedDays}</strong></span>
-        <span>Pending: <strong className="text-amber-400 font-mono">{balance.pendingDays}</strong></span>
-        <span className="font-mono">{percentUsed}% Utilized</span>
+      <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 pt-2 font-medium">
+        <span>Used: <strong className="text-[#34a853]">{balance.usedDays}</strong></span>
+        <span>Pending: <strong className="text-[#fbbc04]">{balance.pendingDays}</strong></span>
+        <span>{percentUsed}%</span>
       </div>
     </div>
   );

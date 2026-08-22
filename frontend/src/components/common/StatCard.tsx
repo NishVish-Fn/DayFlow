@@ -21,37 +21,37 @@ export const StatCard: React.FC<StatCardProps> = ({
   variant = 'blue',
 }) => {
   const iconVariants = {
-    blue: 'bg-[#00f0ff]/10 text-[#00f0ff] border-[#00f0ff]/30',
-    indigo: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
-    emerald: 'bg-[#00ffc2]/10 text-[#00ffc2] border-[#00ffc2]/30',
-    amber: 'bg-amber-500/10 text-amber-400 border-amber-500/30',
-    purple: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
+    blue: 'bg-blue-50 dark:bg-blue-950/60 text-[#1a73e8] dark:text-[#8ab4f8]',
+    indigo: 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400',
+    emerald: 'bg-emerald-50 dark:bg-emerald-950/60 text-[#34a853] dark:text-emerald-400',
+    amber: 'bg-amber-50 dark:bg-amber-950/60 text-[#fbbc04] dark:text-amber-400',
+    purple: 'bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400',
   };
 
   return (
-    <div className="bg-[#0e1217] border border-white/10 rounded-2xl p-5 shadow-sm hover:border-[#00f0ff]/40 transition-all">
+    <div className="bg-white dark:bg-[#1e1f20] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-5 shadow-xs hover:shadow-md transition-all">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+          <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 block">
             {title}
           </span>
-          <div className="text-2xl font-black text-white font-mono tracking-tight">
+          <div className="text-2xl font-bold text-slate-900 dark:text-white font-sans tracking-tight">
             {value}
           </div>
         </div>
 
-        <div className={`p-2.5 rounded-xl border ${iconVariants[variant]} shadow-sm`}>
+        <div className={`p-3 rounded-2xl ${iconVariants[variant]}`}>
           {icon}
         </div>
       </div>
 
       {(subtitle || trend) && (
-        <div className="mt-3 flex items-center justify-between text-xs pt-3 border-t border-white/5">
-          {subtitle && <span className="text-slate-400 text-[11px] font-medium">{subtitle}</span>}
+        <div className="mt-3 flex items-center justify-between text-xs pt-3 border-t border-slate-100 dark:border-slate-800">
+          {subtitle && <span className="text-slate-500 dark:text-slate-400 text-[11px] font-normal">{subtitle}</span>}
           {trend && (
             <span
-              className={`font-mono font-bold text-[11px] ${
-                trend.isPositive ? 'text-[#00ffc2]' : 'text-rose-400'
+              className={`font-semibold text-[11px] ${
+                trend.isPositive ? 'text-[#34a853]' : 'text-[#ea4335]'
               }`}
             >
               {trend.isPositive ? '↑' : '↓'} {trend.value}

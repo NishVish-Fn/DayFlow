@@ -14,7 +14,7 @@ export const CorporateGlobeLogo: React.FC<LogoProps> = ({
   const sizeMap = {
     sm: { icon: 'w-6 h-6', text: 'text-base', sub: 'text-[9px]' },
     md: { icon: 'w-8 h-8', text: 'text-lg', sub: 'text-[10px]' },
-    lg: { icon: 'w-12 h-12', text: 'text-2xl', sub: 'text-xs' },
+    lg: { icon: 'w-11 h-11', text: 'text-2xl', sub: 'text-xs' },
     xl: { icon: 'w-16 h-16', text: 'text-3xl', sub: 'text-xs' },
   };
 
@@ -22,48 +22,68 @@ export const CorporateGlobeLogo: React.FC<LogoProps> = ({
 
   return (
     <div className="flex items-center gap-2.5 select-none">
-      {/* Google-World Wireframe Globe with Purple-Blue Glow */}
+      {/* Google 4-Color Segmented World Globe */}
       <div className={`relative ${currentSize.icon} flex items-center justify-center shrink-0`}>
         <svg
           viewBox="0 0 48 48"
-          className="w-full h-full drop-shadow-[0_0_12px_rgba(139,92,246,0.5)]"
+          className="w-full h-full drop-shadow-sm"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <defs>
-            <linearGradient id="globeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#8b5cf6" />
-              <stop offset="100%" stopColor="#3b82f6" />
-            </linearGradient>
-          </defs>
+          {/* 4 Google Colors on Latitude & Longitude Geometries */}
+          {/* Google Blue Segment */}
+          <path
+            d="M24 4 A20 20 0 0 1 44 24"
+            stroke="#4285F4"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          {/* Google Red Segment */}
+          <path
+            d="M44 24 A20 20 0 0 1 24 44"
+            stroke="#EA4335"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          {/* Google Yellow Segment */}
+          <path
+            d="M24 44 A20 20 0 0 1 4 24"
+            stroke="#FBBC04"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
+          {/* Google Green Segment */}
+          <path
+            d="M4 24 A20 20 0 0 1 24 4"
+            stroke="#34A853"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
 
-          {/* Outer Boundary Circle */}
-          <circle cx="24" cy="24" r="20" stroke="url(#globeGrad)" strokeWidth="1.75" />
-
-          {/* Longitude Ellipses (Google-World Grid) */}
-          <ellipse cx="24" cy="24" rx="9" ry="20" stroke="url(#globeGrad)" strokeWidth="1.25" strokeOpacity="0.85" />
-          <ellipse cx="24" cy="24" rx="16" ry="20" stroke="url(#globeGrad)" strokeWidth="0.9" strokeOpacity="0.4" strokeDasharray="3 2" />
-
-          {/* Latitude Lines */}
-          <line x1="4" y1="24" x2="44" y2="24" stroke="url(#globeGrad)" strokeWidth="1.25" strokeOpacity="0.85" />
-          <ellipse cx="24" cy="24" rx="20" ry="9" stroke="url(#globeGrad)" strokeWidth="1" strokeOpacity="0.6" />
-
-          {/* Center Nexus Data Node */}
-          <circle cx="24" cy="24" r="2.5" fill="#a855f7" />
+          {/* Internal Grid Lines */}
+          <ellipse cx="24" cy="24" rx="8" ry="18" stroke="#4285F4" strokeWidth="1.5" strokeOpacity="0.7" />
+          <line x1="6" y1="24" x2="42" y2="24" stroke="#34A853" strokeWidth="1.5" strokeOpacity="0.7" />
+          
+          {/* Center Nexus Node */}
+          <circle cx="24" cy="24" r="3" fill="#4285F4" />
         </svg>
       </div>
 
-      {/* Brand Typography: WorkNest */}
+      {/* Brand Typography: Google Workspace style WorkNest */}
       {showText && (
         <div className="flex flex-col">
-          <div className={`font-black tracking-tight font-display flex items-center gap-0.5 leading-none text-white ${currentSize.text} ${textClassName}`}>
-            <span>Work</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-violet-400 to-blue-400 font-extrabold">
-              Nest
-            </span>
+          <div className={`font-extrabold tracking-tight font-sans flex items-center leading-none text-slate-800 dark:text-white ${currentSize.text} ${textClassName}`}>
+            <span className="text-[#4285F4]">W</span>
+            <span className="text-[#EA4335]">o</span>
+            <span className="text-[#FBBC04]">r</span>
+            <span className="text-[#4285F4]">k</span>
+            <span className="text-[#34A853]">N</span>
+            <span className="text-[#EA4335]">e</span>
+            <span className="text-[#4285F4]">s</span>
+            <span className="text-[#FBBC04]">t</span>
           </div>
-          <span className={`font-mono font-bold tracking-wider uppercase text-purple-300/80 mt-0.5 ${currentSize.sub}`}>
-            Enterprise Workspace
+          <span className={`font-medium tracking-wide text-slate-500 dark:text-slate-400 mt-0.5 ${currentSize.sub}`}>
+            Google Workspace HRMS
           </span>
         </div>
       )}
