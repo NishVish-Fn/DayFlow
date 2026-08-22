@@ -308,54 +308,6 @@ export const LoginPage: React.FC = () => {
             </form>
           )}
 
-          {/* Quick-Fill Persona Passkey Cards */}
-          <div className="pt-5 border-t border-black/[0.06] dark:border-white/[0.08] mt-6 space-y-2">
-            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500">
-              <span className="flex items-center gap-1 text-[#0071e3] dark:text-[#2997ff]">
-                <Zap className="w-3.5 h-3.5 fill-current" /> Fast Passkey Sign-In
-              </span>
-              <span className="font-mono text-[10px]">Password@123</span>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-left">
-              <button
-                type="button"
-                onClick={() => setQuickFill('admin@dayflow.internal')}
-                className="p-2.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] hover:bg-[#0071e3]/10 dark:hover:bg-[#0071e3]/20 border border-black/[0.05] dark:border-white/[0.08] hover:border-[#0071e3]/30 transition-all group cursor-pointer"
-              >
-                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-[#0071e3]">👑 Admin</div>
-                <div className="text-[10px] text-slate-400 truncate">Sarah Connor</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setQuickFill('hr@dayflow.internal')}
-                className="p-2.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] hover:bg-purple-500/10 dark:hover:bg-purple-500/20 border border-black/[0.05] dark:border-white/[0.08] hover:border-purple-500/30 transition-all group cursor-pointer"
-              >
-                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-purple-600">💼 HR Lead</div>
-                <div className="text-[10px] text-slate-400 truncate">Marcus Vance</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setQuickFill('alex.chen@dayflow.internal')}
-                className="p-2.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] hover:bg-emerald-500/10 dark:hover:bg-emerald-500/20 border border-black/[0.05] dark:border-white/[0.08] hover:border-emerald-500/30 transition-all group cursor-pointer"
-              >
-                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-emerald-600">💻 Engineer</div>
-                <div className="text-[10px] text-slate-400 truncate">Alex Chen</div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setQuickFill('elena.rodriguez@dayflow.internal')}
-                className="p-2.5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.04] hover:bg-amber-500/10 dark:hover:bg-amber-500/20 border border-black/[0.05] dark:border-white/[0.08] hover:border-amber-500/30 transition-all group cursor-pointer"
-              >
-                <div className="font-bold text-[11px] text-slate-900 dark:text-white group-hover:text-amber-600">🎨 Designer</div>
-                <div className="text-[10px] text-slate-400 truncate">Elena Rodriguez</div>
-              </button>
-            </div>
-          </div>
-
         </div>
       </main>
 
