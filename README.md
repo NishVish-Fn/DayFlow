@@ -53,6 +53,7 @@ All seeded demo accounts use the standard password: `Password@123`
 | **Marcus Vance** | `hr@dayflow.internal` | `EMP-0002` | `HR_MANAGER` | Lead People Ops — Leave approvals, Muster roll, Onboarding |
 | **Alex Chen** | `alex.chen@dayflow.internal` | `EMP-1001` | `EMPLOYEE` | Staff Architect — Self-service attendance, PTO, Payslips |
 | **Elena Rodriguez**| `elena.rodriguez@dayflow.internal`| `EMP-1002` | `EMPLOYEE` | Principal Designer — Personal quotas & profile management |
+DEAFULT PASSWORD FOR EVERY USER LOGIN IS Password@123
 
 > **Pro Tip**: Use the **"Switch Role (Demo)"** button in the top navbar to switch between personas instantly during live hackathon judging.
 
