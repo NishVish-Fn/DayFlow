@@ -15,6 +15,10 @@ import {
   ArrowUpDown,
   MoreVertical,
   Eye,
+  LayoutGrid,
+  List,
+  Phone,
+  Briefcase,
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 
@@ -27,6 +31,7 @@ export const EmployeesPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [department, setDepartment] = useState('ALL');
   const [status, setStatus] = useState('ALL');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
 
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeProfile | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
@@ -77,21 +82,45 @@ export const EmployeesPage: React.FC = () => {
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-display">
             <Users className="w-5 h-5 text-blue-600" /> Employee Directory
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Browse and manage organizational profiles, roles, and compensation structures.
+          <p className="text-xs text-slate-500 mt-0.5 font-medium">
+            Browse and manage organizational profiles, roles, and compensation structures across all departments.
           </p>
         </div>
 
-        {isAdminOrHr && (
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => setIsCreateOpen(true)}
-            leftIcon={<PlusCircle className="w-4 h-4" />}
-          >
-            Onboard New Employee
-          </Button>
-        )}
+        <div className="flex items-center gap-2.5">
+          {/* View Mode Toggle */}
+          <div className="flex p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                viewMode === 'grid' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+              }`}
+              title="Card Grid View"
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={`p-1.5 rounded-lg transition-all cursor-pointer ${
+                viewMode === 'table' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+              }`}
+              title="Dense Table View"
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+
+          {isAdminOrHr && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setIsCreateOpen(true)}
+              leftIcon={<PlusCircle className="w-4 h-4" />}
+            >
+              Onboard Employee
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Filters Bar */}
@@ -103,7 +132,7 @@ export const EmployeesPage: React.FC = () => {
             placeholder="Search by name, role, email, or badge ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-medium"
           />
         </form>
 
@@ -137,120 +166,193 @@ export const EmployeesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Employees Table Grid */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
-              <tr>
-                <th className="py-3.5 px-4">Employee</th>
-                <th className="py-3.5 px-4">Badge / Role</th>
-                <th className="py-3.5 px-4">Department</th>
-                <th className="py-3.5 px-4">Current Compensation</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {loading ? (
+      {/* VIEW 1: STORYBOARD CARD GRID */}
+      {viewMode === 'grid' && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="h-56 bg-white border border-slate-200 rounded-2xl animate-pulse p-5" />
+            ))
+          ) : employees.length === 0 ? (
+            <div className="col-span-3 py-16 text-center text-slate-400 bg-white border border-slate-200 rounded-2xl">
+              No employees found matching filter criteria.
+            </div>
+          ) : (
+            employees.map((emp) => (
+              <div
+                key={emp.id}
+                onClick={() => handleOpenDetail(emp.id)}
+                className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-md hover:border-slate-300 transition-all cursor-pointer flex flex-col justify-between group"
+              >
+                <div>
+                  {/* Top Row: Avatar & Badges */}
+                  <div className="flex items-start justify-between">
+                    <img
+                      src={
+                        emp.avatarUrl ||
+                        `https://api.dicebear.com/7.x/avataaars/svg?seed=${emp.firstName}_${emp.lastName}`
+                      }
+                      alt="Avatar"
+                      className="w-13 h-13 rounded-2xl bg-slate-100 border border-slate-200 object-cover shadow-sm"
+                    />
+                    <Badge
+                      variant={emp.user?.status === 'ACTIVE' ? 'success' : 'danger'}
+                      size="sm"
+                    >
+                      {emp.user?.status || 'ACTIVE'}
+                    </Badge>
+                  </div>
+
+                  {/* Employee Info */}
+                  <div className="mt-3.5">
+                    <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                      {emp.firstName} {emp.lastName}
+                    </h4>
+                    <p className="text-xs text-slate-600 font-medium mt-0.5">{emp.designation}</p>
+                    
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-500 mt-2 font-mono">
+                      <span className="text-blue-700 font-bold bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                        {emp.user?.employeeId}
+                      </span>
+                      <span>&bull;</span>
+                      <span>{emp.department}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Row: Contact & Action */}
+                <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                  <div className="flex items-center gap-1 text-[11px] truncate max-w-[170px]">
+                    <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="truncate">{emp.user?.email}</span>
+                  </div>
+
+                  <span className="text-blue-600 font-bold text-xs group-hover:translate-x-0.5 transition-transform">
+                    View 360 &rarr;
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* VIEW 2: DENSE DATA TABLE */}
+      {viewMode === 'table' && (
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
-                    Loading directory...
-                  </td>
+                  <th className="py-3.5 px-4">Employee</th>
+                  <th className="py-3.5 px-4">Badge / Role</th>
+                  <th className="py-3.5 px-4">Department</th>
+                  <th className="py-3.5 px-4">Current Compensation</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
-              ) : employees.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-400">
-                    No employees matching filter criteria found.
-                  </td>
-                </tr>
-              ) : (
-                employees.map((emp) => (
-                  <tr
-                    key={emp.id}
-                    className="hover:bg-slate-50/70 transition-colors cursor-pointer"
-                    onClick={() => handleOpenDetail(emp.id)}
-                  >
-                    {/* Employee Profile */}
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={
-                            emp.avatarUrl ||
-                            `https://api.dicebear.com/7.x/avataaars/svg?seed=${emp.firstName}_${emp.lastName}`
-                          }
-                          alt="Avatar"
-                          className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 object-cover"
-                        />
-                        <div>
-                          <div className="font-bold text-slate-900">
-                            {emp.firstName} {emp.lastName}
-                          </div>
-                          <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
-                            <Mail className="w-3 h-3 text-slate-400" />
-                            {emp.user?.email}
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Badge & Role */}
-                    <td className="py-3.5 px-4">
-                      <div className="font-mono text-blue-700 font-bold">{emp.user?.employeeId}</div>
-                      <div className="text-[11px] text-slate-600">{emp.designation}</div>
-                    </td>
-
-                    {/* Department */}
-                    <td className="py-3.5 px-4">
-                      <Badge variant="neutral" size="sm">
-                        {emp.department}
-                      </Badge>
-                    </td>
-
-                    {/* Compensation */}
-                    <td className="py-3.5 px-4">
-                      {emp.currentSalary ? (
-                        <div>
-                          <span className="font-bold text-slate-900">
-                            ${emp.currentSalary.grossSalary.toLocaleString()}/mo
-                          </span>
-                          <div className="text-[10px] text-slate-500">
-                            Net: ${emp.currentSalary.netSalary.toLocaleString()}
-                          </div>
-                        </div>
-                      ) : (
-                        <span className="text-slate-400 text-[11px]">Unassigned</span>
-                      )}
-                    </td>
-
-                    {/* Status */}
-                    <td className="py-3.5 px-4">
-                      <Badge
-                        variant={emp.user?.status === 'ACTIVE' ? 'success' : 'danger'}
-                        size="sm"
-                      >
-                        {emp.user?.status}
-                      </Badge>
-                    </td>
-
-                    {/* Action */}
-                    <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => handleOpenDetail(emp.id)}
-                        leftIcon={<Eye className="w-3.5 h-3.5 text-blue-600" />}
-                      >
-                        View 360
-                      </Button>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-slate-400">
+                      Loading directory...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : employees.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-slate-400">
+                      No employees matching filter criteria found.
+                    </td>
+                  </tr>
+                ) : (
+                  employees.map((emp) => (
+                    <tr
+                      key={emp.id}
+                      className="hover:bg-slate-50/70 transition-colors cursor-pointer"
+                      onClick={() => handleOpenDetail(emp.id)}
+                    >
+                      {/* Employee Profile */}
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={
+                              emp.avatarUrl ||
+                              `https://api.dicebear.com/7.x/avataaars/svg?seed=${emp.firstName}_${emp.lastName}`
+                            }
+                            alt="Avatar"
+                            className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 object-cover"
+                          />
+                          <div>
+                            <div className="font-bold text-slate-900">
+                              {emp.firstName} {emp.lastName}
+                            </div>
+                            <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                              <Mail className="w-3 h-3 text-slate-400" />
+                              {emp.user?.email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Badge & Role */}
+                      <td className="py-3.5 px-4">
+                        <div className="font-mono text-blue-700 font-bold">{emp.user?.employeeId}</div>
+                        <div className="text-[11px] text-slate-600">{emp.designation}</div>
+                      </td>
+
+                      {/* Department */}
+                      <td className="py-3.5 px-4">
+                        <Badge variant="neutral" size="sm">
+                          {emp.department}
+                        </Badge>
+                      </td>
+
+                      {/* Compensation */}
+                      <td className="py-3.5 px-4">
+                        {emp.currentSalary ? (
+                          <div>
+                            <span className="font-bold text-slate-900">
+                              ${emp.currentSalary.grossSalary.toLocaleString()}/mo
+                            </span>
+                            <div className="text-[10px] text-slate-500">
+                              Net: ${emp.currentSalary.netSalary.toLocaleString()}
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 text-[11px]">Unassigned</span>
+                        )}
+                      </td>
+
+                      {/* Status */}
+                      <td className="py-3.5 px-4">
+                        <Badge
+                          variant={emp.user?.status === 'ACTIVE' ? 'success' : 'danger'}
+                          size="sm"
+                        >
+                          {emp.user?.status}
+                        </Badge>
+                      </td>
+
+                      {/* Action */}
+                      <td className="py-3.5 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          onClick={() => handleOpenDetail(emp.id)}
+                          leftIcon={<Eye className="w-3.5 h-3.5 text-blue-600" />}
+                        >
+                          View 360
+                        </Button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* 360 Detail Drawer */}
       {isDetailOpen && (
