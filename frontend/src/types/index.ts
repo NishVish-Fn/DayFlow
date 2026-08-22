@@ -44,6 +44,11 @@ export interface EmployeeProfile {
   emergencyContact?: string;
   avatarUrl?: string;
   documents?: string;
+  about?: string;
+  jobLove?: string;
+  interests?: string;
+  skills?: string;
+  workLocation?: string;
   user?: User;
   currentSalary?: SalaryStructure;
   salaryStructures?: SalaryStructure[];
