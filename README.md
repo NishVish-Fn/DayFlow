@@ -1,4 +1,4 @@
-# Dayflow HRMS — Modern Enterprise Workforce Operating System
+# WORKNEST HRMS — Modern Enterprise Workforce Operating System
 
 Dayflow is a self-hosted Human Resource Management System (HRMS) engineered for high reliability, database normalization, auditable financial records, and defense-in-depth security.
 
