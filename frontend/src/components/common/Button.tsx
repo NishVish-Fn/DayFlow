@@ -1,7 +1,7 @@
 import React, { ButtonHTMLAttributes } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'outline' | 'ghost' | 'purple';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   leftIcon?: React.ReactNode;
@@ -20,27 +20,29 @@ export const Button: React.FC<ButtonProps> = ({
   ...props
 }) => {
   const baseStyles =
-    'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none';
+    'inline-flex items-center justify-center font-bold rounded-xl transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none';
 
   const sizeStyles = {
     sm: 'px-3 py-1.5 text-xs gap-1.5',
-    md: 'px-4 py-2 text-xs font-semibold gap-2',
+    md: 'px-4 py-2 text-xs font-bold gap-2',
     lg: 'px-5 py-2.5 text-sm font-bold gap-2.5',
   };
 
   const variantStyles = {
     primary:
-      'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-sm shadow-blue-600/20 focus:ring-blue-500 border border-transparent',
+      'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white shadow-md shadow-purple-600/25 border border-transparent',
+    purple:
+      'bg-purple-600 hover:bg-purple-500 text-white shadow-md shadow-purple-600/25 border border-transparent',
     secondary:
-      'bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-700 border border-slate-200 shadow-sm focus:ring-slate-300',
+      'bg-[#111827] hover:bg-slate-800 text-slate-200 border border-slate-700 shadow-sm focus:ring-purple-500',
     outline:
-      'bg-transparent hover:bg-slate-100 active:bg-slate-200 text-slate-700 border border-slate-300 focus:ring-slate-300',
+      'bg-transparent hover:bg-white/5 text-slate-300 border border-slate-700 focus:ring-purple-500',
     danger:
-      'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-sm shadow-rose-600/20 focus:ring-rose-500 border border-transparent',
+      'bg-rose-600 hover:bg-rose-500 text-white shadow-sm shadow-rose-600/20 border border-transparent',
     success:
-      'bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-sm shadow-emerald-600/20 focus:ring-emerald-500 border border-transparent',
+      'bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm shadow-emerald-600/20 border border-transparent',
     ghost:
-      'bg-transparent hover:bg-slate-100 active:bg-slate-200 text-slate-600 hover:text-slate-900 focus:ring-slate-300',
+      'bg-transparent hover:bg-white/5 text-slate-400 hover:text-white',
   };
 
   return (
