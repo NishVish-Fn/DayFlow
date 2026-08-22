@@ -34,8 +34,8 @@ export const errorHandler = (
     success: false,
     error: {
       code: 'INTERNAL_SERVER_ERROR',
-      message: 'An unexpected internal server error occurred',
-      details: config.env === 'development' ? err.message : null,
+      message: err.message || 'An unexpected internal server error occurred',
+      details: err.message,
     },
   });
 };
