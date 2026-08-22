@@ -206,7 +206,7 @@ export const PayrollPage: React.FC = () => {
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
             }`}
           >
-            <ShieldCheck className="w-4 h-4" /> Organization Payroll Ledger ($685,000 / mo)
+            <ShieldCheck className="w-4 h-4" /> Organization Payroll Ledger (₹685,000 / mo)
           </button>
 
           <button

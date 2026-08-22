@@ -442,7 +442,7 @@ export const WellnessPage: React.FC = () => {
                   <option value="MANDATORY_REST">🌴 Enforce Mandatory 2-Day Paid Recovery Leave</option>
                   <option value="WORKLOAD_REASSIGN">🔄 Rebalance Sprint Deliverables & PR Backlog</option>
                   <option value="ONE_ON_ONE_SYNC">💬 Schedule Skip-Level 1:1 Wellbeing Check-in</option>
-                  <option value="WELLNESS_STIPEND">🧘 Grant $250 Wellness & Therapy Allowance</option>
+                  <option value="WELLNESS_STIPEND">🧘 Grant ₹250 Wellness & Therapy Allowance</option>
                 </select>
               </div>
 

@@ -319,8 +319,8 @@ export const DashboardPage: React.FC = () => {
 
           <StatCard
             title="Monthly Payroll Spend"
-            value={`$${(adminData?.payrollMetrics?.totalMonthlyGross || 148500).toLocaleString()}`}
-            subtitle={`Net payable: $${(adminData?.payrollMetrics?.totalMonthlyNet || 114200).toLocaleString()}`}
+            value={`₹${(adminData?.payrollMetrics?.totalMonthlyGross || 148500).toLocaleString()}`}
+            subtitle={`Net payable: ₹${(adminData?.payrollMetrics?.totalMonthlyNet || 114200).toLocaleString()}`}
             icon={<CreditCard className="w-5 h-5" />}
             variant="purple"
           />
@@ -538,7 +538,7 @@ export const DashboardPage: React.FC = () => {
                 <div className="text-2xl">🧘</div>
                 <div>
                   <h4 className="text-xs font-bold text-slate-900 dark:text-white">Wellness & Gym Allowance</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">$1,200/year for gym memberships, wellness apps, and fitness equipment.</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">₹1,200/year for gym memberships, wellness apps, and fitness equipment.</p>
                 </div>
               </div>
 
@@ -546,7 +546,7 @@ export const DashboardPage: React.FC = () => {
                 <div className="text-2xl">💻</div>
                 <div>
                   <h4 className="text-xs font-bold text-slate-900 dark:text-white">Home Office Stipend</h4>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">$1,000 allowance for monitors, ergonomic chairs, and high-speed fiber internet.</p>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">₹1,000 allowance for monitors, ergonomic chairs, and high-speed fiber internet.</p>
                 </div>
               </div>
             </div>

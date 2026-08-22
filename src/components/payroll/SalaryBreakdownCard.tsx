@@ -45,7 +45,7 @@ export const SalaryBreakdownCard: React.FC<{ structure: any | null }> = ({
             Monthly Gross
           </div>
           <div className="text-2xl font-black text-slate-900 dark:text-white mt-1 font-mono">
-            ${Number(grossMonthly).toLocaleString()}
+            ₹{Number(grossMonthly).toLocaleString()}
           </div>
         </div>
 
@@ -54,7 +54,7 @@ export const SalaryBreakdownCard: React.FC<{ structure: any | null }> = ({
             Net Take-Home
           </div>
           <div className="text-2xl font-black text-[#0071e3] dark:text-[#2997ff] mt-1 font-mono">
-            ${Number(netMonthly).toLocaleString()}
+            ₹{Number(netMonthly).toLocaleString()}
           </div>
         </div>
       </div>
@@ -63,25 +63,25 @@ export const SalaryBreakdownCard: React.FC<{ structure: any | null }> = ({
       <div className="space-y-2.5 text-xs border-t border-black/[0.05] dark:border-white/[0.06] pt-3">
         <div className="flex justify-between text-slate-700 dark:text-slate-300">
           <span className="text-slate-500 dark:text-slate-400">Basic Pay</span>
-          <span className="font-semibold font-mono">${Number(baseSalary).toLocaleString()}</span>
+          <span className="font-semibold font-mono">₹{Number(baseSalary).toLocaleString()}</span>
         </div>
         <div className="flex justify-between text-slate-700 dark:text-slate-300">
           <span className="text-slate-500 dark:text-slate-400">House Rent Allowance (HRA)</span>
-          <span className="font-semibold font-mono">${Number(hra).toLocaleString()}</span>
+          <span className="font-semibold font-mono">₹{Number(hra).toLocaleString()}</span>
         </div>
         <div className="flex justify-between text-slate-700 dark:text-slate-300">
           <span className="text-slate-500 dark:text-slate-400">Special Allowances</span>
-          <span className="font-semibold font-mono">${Number(allowances).toLocaleString()}</span>
+          <span className="font-semibold font-mono">₹{Number(allowances).toLocaleString()}</span>
         </div>
         {bonus > 0 && (
           <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
             <span>Performance Bonus</span>
-            <span className="font-semibold font-mono">+${Number(bonus).toLocaleString()}</span>
+            <span className="font-semibold font-mono">+₹{Number(bonus).toLocaleString()}</span>
           </div>
         )}
         <div className="flex justify-between text-rose-600 dark:text-rose-400 border-t border-black/[0.05] dark:border-white/[0.06] pt-2 font-medium">
           <span>Standard Deductions (Taxes & PF)</span>
-          <span className="font-bold font-mono">-${Number(deductions).toLocaleString()}</span>
+          <span className="font-bold font-mono">-₹{Number(deductions).toLocaleString()}</span>
         </div>
       </div>
 

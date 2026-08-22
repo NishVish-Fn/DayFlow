@@ -65,22 +65,22 @@ export const PayslipModal: React.FC<Props> = ({ isOpen, onClose, payslip }) => {
               <div>Department: ${payslip.employee?.department || 'Engineering'} &bull; Designation: ${payslip.employee?.designation || 'Specialist'}</div>
             </div>
             <table class="table">
-              <tr><th>Earnings Component</th><th>Amount (USD)</th></tr>
-              <tr><td>Basic Salary</td><td>$${Number(baseAmt).toLocaleString()}</td></tr>
-              <tr><td>House Rent Allowance (HRA)</td><td>$${Number(hraAmt).toLocaleString()}</td></tr>
-              <tr><td>Standard Allowance</td><td>$${Number(stdAllowance).toLocaleString()}</td></tr>
-              ${perfBonus > 0 ? `<tr><td>Performance Bonus</td><td>$${Number(perfBonus).toLocaleString()}</td></tr>` : ''}
-              <tr class="total"><td>Gross Earnings</td><td>$${Number(grossAmt).toLocaleString()}</td></tr>
+              <tr><th>Earnings Component</th><th>Amount (INR / ₹)</th></tr>
+              <tr><td>Basic Salary</td><td>₹${Number(baseAmt).toLocaleString()}</td></tr>
+              <tr><td>House Rent Allowance (HRA)</td><td>₹${Number(hraAmt).toLocaleString()}</td></tr>
+              <tr><td>Standard Allowance</td><td>₹${Number(stdAllowance).toLocaleString()}</td></tr>
+              ${perfBonus > 0 ? `<tr><td>Performance Bonus</td><td>₹${Number(perfBonus).toLocaleString()}</td></tr>` : ''}
+              <tr class="total"><td>Gross Earnings</td><td>₹${Number(grossAmt).toLocaleString()}</td></tr>
             </table>
             <table class="table">
-              <tr><th>Deductions Component</th><th>Amount (USD)</th></tr>
-              <tr><td>Provident Fund (PF)</td><td>-$${Number(pfAmt).toLocaleString()}</td></tr>
-              <tr><td>Income Tax (TDS)</td><td>-$${Number(taxAmt).toLocaleString()}</td></tr>
-              <tr><td>Professional Tax</td><td>-$${Number(pTaxAmt).toLocaleString()}</td></tr>
-              <tr class="total"><td>Total Deductions</td><td>-$${Number(totalDeductions).toLocaleString()}</td></tr>
+              <tr><th>Deductions Component</th><th>Amount (INR / ₹)</th></tr>
+              <tr><td>Provident Fund (PF)</td><td>-₹${Number(pfAmt).toLocaleString()}</td></tr>
+              <tr><td>Income Tax (TDS)</td><td>-₹${Number(taxAmt).toLocaleString()}</td></tr>
+              <tr><td>Professional Tax</td><td>-₹${Number(pTaxAmt).toLocaleString()}</td></tr>
+              <tr class="total"><td>Total Deductions</td><td>-₹${Number(totalDeductions).toLocaleString()}</td></tr>
             </table>
             <div style="margin-top: 30px; font-size: 18px; font-weight: bold; color: #0071e3;">
-              Net Disbursed Take-Home: $${Number(netAmt).toLocaleString()}
+              Net Disbursed Take-Home: ₹${Number(netAmt).toLocaleString()}
             </div>
           </body>
         </html>
