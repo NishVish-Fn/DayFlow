@@ -1,4 +1,7 @@
-// Dayflow HRMS - Normalized Prisma Relational Database Schema
+// ==============================================================================
+// DayFlow / WorkNest Enterprise HRMS - Tier-1 Production Database Architecture
+// Google PeopleOps & Enterprise HR Compliance Standard (SOX, GDPR, ISO-27001)
+// ==============================================================================
 
 datasource db {
   provider = "sqlite"
@@ -9,25 +12,52 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// ----------------------------------------------------------------------
-// Authentication & User Model
-// ----------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+// 1. Organization & Multi-Tenant Isolation
+// ------------------------------------------------------------------------------
+model Organization {
+  id               String   @id @default(uuid())
+  name             String   // e.g. "Acme Global Technologies"
+  slug             String   @unique // e.g. "acme-corp"
+  domain           String?  // e.g. "acme.internal"
+  tier             String   @default("ENTERPRISE") // STARTUP, GROWTH, ENTERPRISE
+  complianceMode   String   @default("STRICT_SOX") // STRICT_SOX, GDPR_COMPLIANT
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  users            User[]
+  auditLogs        AuditLedger[]
+
+  @@map("organizations")
+}
+
+// ------------------------------------------------------------------------------
+// 2. Authentication, RBAC & Identity Vault
+// ------------------------------------------------------------------------------
 model User {
-  id              String         @id @default(uuid())
-  email           String         @unique
-  employeeId      String         @unique // Staff Badge ID (e.g., EMP-1001)
-  passwordHash    String
-  role            String         @default("EMPLOYEE") // ADMIN, HR_MANAGER, EMPLOYEE
-  status          String         @default("ACTIVE") // ACTIVE, INACTIVE, SUSPENDED
-  isEmailVerified Boolean        @default(true)
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id                    String        @id @default(uuid())
+  organizationId        String?
+  email                 String        @unique
+  employeeId            String        @unique // Deterministic Login ID (e.g. OISACON20220001)
+  passwordHash          String
+  role                  String        @default("EMPLOYEE") // ADMIN, HR_MANAGER, EMPLOYEE, AUDITOR
+  status                String        @default("ACTIVE")   // ACTIVE, INACTIVE, SUSPENDED
+  isEmailVerified       Boolean       @default(true)
+  twoFactorEnabled      Boolean       @default(false)
+  failedLoginAttempts   Int           @default(0)
+  lockoutUntil          DateTime?
+  lastLoginAt           DateTime?
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
-  profile         EmployeeProfile?
-  refreshTokens   RefreshToken[]
-  auditLogs       AuditLog[]
-  notifications   Notification[]
+  organization          Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  profile               EmployeeProfile?
+  refreshTokens         RefreshToken[]
+  auditLogs             AuditLedger[]
+  notifications         Notification[]
 
+  @@index([organizationId])
+  @@index([role, status])
   @@map("users")
 }
 
@@ -46,72 +76,137 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
-// ----------------------------------------------------------------------
-// Employee Profile & Organization Hierarchy
-// ----------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+// 3. Employee 360° Profile & Talent Lattice (§4 & §5 Specification)
+// ------------------------------------------------------------------------------
 model EmployeeProfile {
-  id                 String             @id @default(uuid())
-  userId             String             @unique
-  firstName          String
-  lastName           String
-  phone              String?
-  dateOfBirth        DateTime?
-  gender             String?            // Male, Female, Non-Binary, Prefer not to say
-  address            String?
-  department         String             // ENGINEERING, PRODUCT, DESIGN, HUMAN_RESOURCES, MARKETING, SALES, FINANCE, OPERATIONS
-  designation        String             // e.g. Senior Software Engineer
-  dateOfJoining      DateTime           @default(now())
-  employmentType     String             @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, INTERN
-  reportingManagerId String?
-  emergencyContact   String?
-  avatarUrl          String?
-  documents          String?            // JSON serialized metadata array
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
+  id                   String             @id @default(uuid())
+  userId               String             @unique
+  firstName            String
+  lastName             String
+  phone                String?
+  dateOfBirth          DateTime?
+  gender               String?            // Male, Female, Non-Binary, Prefer not to say
+  maritalStatus        String?            // Single, Married, Other
+  nationality          String?            // e.g. "American", "Indian"
+  
+  // Public Profile Tab Fields (§4 Spec)
+  about                String?            // Executive biography
+  jobLove              String?            // "What I love about my job"
+  interests            String?            // Personal interests & hobbies
+  workLocation         String             @default("HQ - San Francisco")
+  
+  // Organizational Hierarchy
+  department           String             // ENGINEERING, PRODUCT, DESIGN, HUMAN_RESOURCES, MARKETING, SALES, FINANCE, OPERATIONS
+  designation          String             // e.g. Senior Software Architect
+  dateOfJoining        DateTime           @default(now())
+  employmentType       String             @default("FULL_TIME") // FULL_TIME, PART_TIME, CONTRACT, INTERN
+  reportingManagerId   String?
+  
+  // Private Information Tab Fields (§5 Spec)
+  residenceAddress     String?
+  emergencyContactName String?
+  emergencyContactPhone String?
+  
+  // Bank & Statutory Information Tab Fields (§5 Spec)
+  bankName             String?
+  bankAccountNumber    String?
+  bankIfsc             String?            // IFSC / SWIFT / Routing Code
+  panNumber            String?            // Tax ID / SSN / PAN
+  uanNumber            String?            // Universal Account Number / PF ID
+  
+  avatarUrl            String?
+  resumeUrl            String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
 
-  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  reportingManager   EmployeeProfile?   @relation("ManagerToReports", fields: [reportingManagerId], references: [id], onDelete: SetNull)
-  directReports      EmployeeProfile[]  @relation("ManagerToReports")
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reportingManager     EmployeeProfile?   @relation("ManagerToReports", fields: [reportingManagerId], references: [id], onDelete: SetNull)
+  directReports        EmployeeProfile[]  @relation("ManagerToReports")
 
-  salaryStructures   SalaryStructure[]
-  payrollRecords     PayrollRecord[]
-  attendanceRecords  AttendanceRecord[]
-  leaveBalances      LeaveBalance[]
-  leaveRequests      LeaveRequest[]
+  skills               EmployeeSkill[]
+  certifications       Certification[]
+  salaryStructures     SalaryStructure[]
+  payrollRecords       PayrollRecord[]
+  attendanceRecords    AttendanceRecord[]
+  wellnessTelemetries  WellnessTelemetry[]
+  leaveBalances        LeaveBalance[]
+  leaveRequests        LeaveRequest[]
 
   @@map("employee_profiles")
 }
 
-// ----------------------------------------------------------------------
-// Versioned Salary & Compensation History
-// ----------------------------------------------------------------------
-model SalaryStructure {
-  id            String          @id @default(uuid())
-  employeeId    String
-  effectiveDate DateTime        @default(now())
-  baseSalary    Float
-  hra           Float           @default(0) // House Rent Allowance
-  allowances    Float           @default(0) // Special/Transport allowances
-  deductions    Float           @default(0) // Standard Tax/PF deductions
-  grossSalary   Float
-  netSalary     Float
-  isCurrent     Boolean         @default(true)
-  currency      String          @default("USD")
-  remarks       String?         // Reason for revision / promotion
-  createdById   String?         // Admin/HR user ID who set this structure
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+// ------------------------------------------------------------------------------
+// 4. Skills & Verified Credentials (§4 Spec)
+// ------------------------------------------------------------------------------
+model EmployeeSkill {
+  id          String          @id @default(uuid())
+  employeeId  String
+  name        String          // e.g. "React.js", "System Architecture"
+  proficiency String          @default("ADVANCED") // BEGINNER, INTERMEDIATE, ADVANCED, EXPERT
+  isVerified  Boolean         @default(true)
+  createdAt   DateTime        @default(now())
 
-  employee      EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  payrollRecords PayrollRecord[]
+  employee    EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("employee_skills")
+}
+
+model Certification {
+  id               String          @id @default(uuid())
+  employeeId       String
+  name             String          // e.g. "AWS Certified Solutions Architect"
+  issuingAuthority String          // e.g. "Amazon Web Services"
+  issueDate        DateTime
+  expiryDate       DateTime?
+  credentialUrl    String?
+  createdAt        DateTime        @default(now())
+
+  employee         EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("certifications")
+}
+
+// ------------------------------------------------------------------------------
+// 5. Versioned Statutory Salary Computation Engine (§6 Specification)
+// ------------------------------------------------------------------------------
+model SalaryStructure {
+  id                 String          @id @default(uuid())
+  employeeId         String
+  effectiveDate      DateTime        @default(now())
+  version            Int             @default(1)
+  
+  // Earnings Components (§6 Spec)
+  definedWage        Float           // Defined Gross Target (e.g. 50,000)
+  basicSalary        Float           // 50.0% of defined wage
+  hra                Float           // 50.0% of Basic Salary
+  standardAllowance  Float           @default(2500)
+  performanceBonus   Float           // 10.0% of Basic Salary
+  lta                Float           // 5.0% of Basic Salary (Leave Travel Allowance)
+  fixedAllowance     Float           // Auto-balanced remainder
+  grossEarnings      Float
+  
+  // Statutory Deductions (§6 Spec)
+  pfDeduction        Float           // 12.0% of Basic Salary (Provident Fund)
+  professionalTax    Float           @default(200)
+  totalDeductions    Float
+  netSalary          Float           // Disbursed Take-Home
+  
+  currency           String          @default("INR") // INR, USD, EUR
+  isCurrent          Boolean         @default(true)
+  approvedById       String?
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  employee           EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  payrollRecords     PayrollRecord[]
 
   @@index([employeeId, isCurrent])
   @@map("salary_structures")
 }
 
-// ----------------------------------------------------------------------
-// Payroll Runs & Generated Payslips
-// ----------------------------------------------------------------------
 model PayrollRecord {
   id                   String          @id @default(uuid())
   employeeId           String
@@ -119,14 +214,12 @@ model PayrollRecord {
   month                Int             // 1 - 12
   year                 Int             // e.g. 2026
   paymentDate          DateTime?
-  baseAmount           Float
-  hraAmount            Float
-  allowancesBreakdown  String?         // JSON: { "transport": 200, "bonus": 500 }
-  deductionsBreakdown  String?         // JSON: { "tax": 400, "pf": 150, "unpaidLeave": 0 }
   grossAmount          Float
-  netAmount            Float
-  status               String          @default("PROCESSED") // DRAFT, PROCESSED, PAID
-  transactionReference String?
+  deductionsAmount     Float
+  netDisbursedAmount   Float
+  status               String          @default("PAID") // DRAFT, PROCESSED, PAID
+  transactionReference String?         // Cryptographic ACH/Bank trace ID
+  payslipHash          String?         // SHA-256 Payslip Fingerprint
   notes                String?
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
@@ -139,24 +232,26 @@ model PayrollRecord {
   @@map("payroll_records")
 }
 
-// ----------------------------------------------------------------------
-// Daily Attendance & Punch Clock Records
-// ----------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+// 6. Day-Wise Attendance & Telemetry Ledger (§7 Specification)
+// ------------------------------------------------------------------------------
 model AttendanceRecord {
-  id           String          @id @default(uuid())
-  employeeId   String
-  date         DateTime        // 00:00:00 UTC date
-  checkInTime  DateTime?
-  checkOutTime DateTime?
-  status       String          @default("PRESENT") // PRESENT, ABSENT, HALF_DAY, ON_LEAVE, HOLIDAY, WEEKEND
-  totalHours   Float           @default(0)
-  workMode     String          @default("OFFICE") // OFFICE, REMOTE, HYBRID
-  notes        String?
-  ipAddress    String?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id             String          @id @default(uuid())
+  employeeId     String
+  date           DateTime        // 00:00:00 UTC date
+  checkInTime    DateTime?
+  checkOutTime   DateTime?
+  status         String          @default("PRESENT") // PRESENT, ABSENT, HALF_DAY, ON_LEAVE, HOLIDAY
+  workHours      Float           @default(0)         // Standard work duration
+  extraHours     Float           @default(0)         // Overtime duration
+  totalHours     Float           @default(0)
+  workMode       String          @default("OFFICE")  // OFFICE, REMOTE, HYBRID
+  ipAddress      String?
+  notes          String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
-  employee     EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employee       EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   @@unique([employeeId, date])
   @@index([date])
@@ -164,18 +259,41 @@ model AttendanceRecord {
   @@map("attendance_records")
 }
 
-// ----------------------------------------------------------------------
-// Leave Management System (Types, Quotas, Applications)
-// ----------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+// 7. AI Wellness Radar & Continuous Workforce Telemetry
+// ------------------------------------------------------------------------------
+model WellnessTelemetry {
+  id                   String          @id @default(uuid())
+  employeeId           String
+  date                 DateTime        @default(now())
+  burnoutRiskScore     Int             // 0 to 100
+  moodPulse            String          // ENERGETIC, PRODUCTIVE, STEADY, OVERWHELMED, EXHAUSTED
+  overtimeHoursWeekly  Float           @default(0)
+  consecutiveWorkDays  Int             @default(0)
+  riskLevel            String          @default("OPTIMAL") // OPTIMAL, MODERATE, CRITICAL
+  isSupportDispatched  Boolean         @default(false)
+  supportProtocolNotes String?
+  createdAt            DateTime        @default(now())
+
+  employee             EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId, date])
+  @@index([riskLevel])
+  @@map("wellness_telemetry")
+}
+
+// ------------------------------------------------------------------------------
+// 8. Leave Management & Policy Quotas (§8 Specification)
+// ------------------------------------------------------------------------------
 model LeaveType {
   id             String         @id @default(uuid())
-  name           String         @unique // e.g. "Paid Time Off", "Sick Leave"
-  code           String         @unique // e.g. "PTO", "SL", "CL", "ML"
-  maxDaysPerYear Float
+  name           String         @unique // "Paid Time Off", "Sick Leave", "Unpaid Leave"
+  code           String         @unique // "PTO", "SL", "UPL"
+  maxDaysPerYear Float          // 24 for PTO, 7 for Sick
   isPaid         Boolean        @default(true)
+  requiresProof  Boolean        @default(false) // Mandatory attachment for Sick leave
   description    String?
   createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
 
   leaveBalances  LeaveBalance[]
   leaveRequests  LeaveRequest[]
@@ -188,10 +306,10 @@ model LeaveBalance {
   employeeId     String
   leaveTypeId    String
   year           Int             // e.g. 2026
-  totalAllocated Float
+  totalAllocated Float           // 24 for PTO, 7 for Sick
   usedDays       Float           @default(0)
   pendingDays    Float           @default(0)
-  remainingDays  Float
+  remainingDays  Float           // e.g. 20 for PTO
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
@@ -204,55 +322,79 @@ model LeaveBalance {
 }
 
 model LeaveRequest {
-  id           String          @id @default(uuid())
-  employeeId   String
-  leaveTypeId  String
-  startDate    DateTime
-  endDate      DateTime
-  totalDays    Float
-  reason       String
-  status       String          @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
-  appliedAt    DateTime        @default(now())
-  approvedById String?
-  adminRemarks String?
-  reviewedAt   DateTime?
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  id             String          @id @default(uuid())
+  employeeId     String
+  leaveTypeId    String
+  startDate      DateTime
+  endDate        DateTime
+  totalDays      Float
+  reason         String
+  attachmentUrl  String?         // Document upload for sick leave
+  status         String          @default("PENDING") // PENDING, APPROVED, REJECTED, CANCELLED
+  appliedAt      DateTime        @default(now())
+  reviewedById   String?
+  reviewerNote   String?
+  reviewedAt     DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
-  employee     EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  leaveType    LeaveType       @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
+  employee       EmployeeProfile @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  leaveType      LeaveType       @relation(fields: [leaveTypeId], references: [id], onDelete: Restrict)
 
   @@index([employeeId, status])
   @@index([startDate, endDate])
   @@map("leave_requests")
 }
 
-// ----------------------------------------------------------------------
-// Tamper-Evident Audit Logging Ledger
-// ----------------------------------------------------------------------
-model AuditLog {
-  id           String   @id @default(uuid())
-  userId       String?
-  userEmail    String?
-  action       String   // e.g. "AUTH_LOGIN", "SALARY_REVISION", "LEAVE_APPROVAL", "ATTENDANCE_OVERRIDE"
-  resourceType String   // e.g. "AUTH", "EMPLOYEE", "PAYROLL", "LEAVE", "ATTENDANCE"
-  resourceId   String?
-  changesDiff  String?  // JSON serialized string of previous vs updated state
-  ipAddress    String?
-  userAgent    String?
-  createdAt    DateTime @default(now())
+// ------------------------------------------------------------------------------
+// 9. Confidential Whistleblower Grievance Vault (§0 Spec)
+// ------------------------------------------------------------------------------
+model ConfidentialGrievance {
+  id                   String    @id @default(uuid())
+  referenceCode        String    @unique // e.g. "GRV-9821"
+  category             String    // Workplace Conduct, Harassment, Compensation, Policy
+  statementEncrypted   String    // Encrypted statement payload
+  status               String    @default("PENDING") // PENDING, INVESTIGATING, RESOLVED, CLOSED
+  isAnonymous          Boolean   @default(true)
+  investigationSummary String?
+  resolvedAt           DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  user         User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@index([status])
+  @@map("confidential_grievances")
+}
+
+// ------------------------------------------------------------------------------
+// 10. Tamper-Evident Cryptographic Audit Ledger (Merkle Chained)
+// ------------------------------------------------------------------------------
+model AuditLedger {
+  id             String        @id @default(uuid())
+  organizationId String?
+  userId         String?
+  userEmail      String?
+  action         String        // AUTH_LOGIN, LEAVE_APPROVED, SALARY_MUTATED, SUPPORT_TRIGGERED
+  resourceType   String        // AUTH, EMPLOYEE, PAYROLL, ATTENDANCE, LEAVE, WELLNESS
+  resourceId     String?
+  diffJson       String?       // JSON before/after state diff
+  previousHash   String?       // Chained cryptographic hash
+  currentHash    String?       // SHA-256 signature
+  ipAddress      String?
+  userAgent      String?
+  createdAt      DateTime      @default(now())
+
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([action])
   @@index([createdAt])
-  @@map("audit_logs")
+  @@map("audit_ledger")
 }
 
-// ----------------------------------------------------------------------
-// In-App Notification System
-// ----------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+// 11. In-App Notification System
+// ------------------------------------------------------------------------------
 model Notification {
   id        String   @id @default(uuid())
   userId    String
