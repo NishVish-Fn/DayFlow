@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build",
+  "buildCommand": "cd backend && npm install && npx prisma generate --schema=./prisma/schema.postgres.prisma && npx prisma db push --schema=./prisma/schema.postgres.prisma --accept-data-loss && npx tsx prisma/seed.ts && cd ../frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {

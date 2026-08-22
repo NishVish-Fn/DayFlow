@@ -91,7 +91,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(newUser);
       success('Account Created', `Welcome to Dayflow, ${newUser.profile?.firstName}!`);
     } catch (err: any) {
-      const msg = err.response?.data?.error?.message || 'Registration failed';
+      const details = err.response?.data?.error?.details;
+      const detailMsg = Array.isArray(details) ? details.map((d: any) => d.message).join(', ') : null;
+      const msg = detailMsg || err.response?.data?.error?.message || 'Registration failed';
       error('Registration Error', msg);
       throw err;
     } finally {
