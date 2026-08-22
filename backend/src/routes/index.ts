@@ -7,6 +7,7 @@ import payrollRoutes from './payroll.routes';
 import auditRoutes from './audit.routes';
 import notificationRoutes from './notification.routes';
 import dashboardRoutes from './dashboard.routes';
+import aiRoutes from './ai.routes';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.get('/health', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    service: 'Dayflow HRMS API Engine',
+    service: 'WorkNest AI HRMS API Engine',
     version: '1.0.0',
   });
 });
@@ -29,5 +30,6 @@ router.use('/payroll', payrollRoutes);
 router.use('/audit-logs', auditRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/dashboard', dashboardRoutes);
+router.use('/ai', aiRoutes);
 
 export default router;
