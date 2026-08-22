@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build:frontend && npm run build:backend",
     "build:frontend": "cd frontend && npm install && npm run build",
-    "build:backend": "cd backend && npm install && npx prisma generate --schema=./prisma/schema.postgres.prisma && npm run build",
+    "build:backend": "cd backend && npm install && npx prisma generate --schema=./prisma/schema.postgres.prisma && npx prisma db push --schema=./prisma/schema.postgres.prisma --accept-data-loss && npm run build",
     "start": "cd backend && node dist/server.js",
     "test": "cd backend && npm test"
   },
