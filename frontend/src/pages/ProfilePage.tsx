@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { Button } from '../components/common/Button';
@@ -26,9 +26,11 @@ import {
   Shield,
   MapPin,
   CheckCircle2,
+  Save,
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { computeSalaryStructure, SalaryBreakdown } from '../utils/hrCalculations';
+import confetti from 'canvas-confetti';
 
 export const ProfilePage: React.FC = () => {
   const { user, role, refreshProfile } = useAuth();
@@ -36,60 +38,83 @@ export const ProfilePage: React.FC = () => {
   const profile = user?.profile;
   const { success, error } = useToast();
 
+  const storageKey = `worknest_profile_${user?.employeeId || user?.email || 'default'}`;
+
+  // Read saved local profile if available
+  const savedProfile = (() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
+    return null;
+  })();
+
   const [activeTab, setActiveTab] = useState<'profile' | 'private' | 'bank' | 'salary' | 'security'>('profile');
   const [isEditing, setIsEditing] = useState(false);
 
-  // §4 Fields: My Profile & About & Job Love & Interests & Skills & Certification & Resume
+  // Core Identity Fields
+  const [firstName, setFirstName] = useState(savedProfile?.firstName || profile?.firstName || 'Alex');
+  const [lastName, setLastName] = useState(savedProfile?.lastName || profile?.lastName || 'Chen');
+  const [phone, setPhone] = useState(savedProfile?.phone || profile?.phone || '+1 (555) 019-2831');
+  const [designation, setDesignation] = useState(savedProfile?.designation || profile?.designation || 'Senior Software Architect');
+  const [department, setDepartment] = useState(savedProfile?.department || profile?.department || 'ENGINEERING');
+  const [workLocation, setWorkLocation] = useState(savedProfile?.workLocation || profile?.workLocation || 'HQ - San Francisco');
+
+  // §4 Fields: My Profile & About & Job Love & Interests & Skills & Certification
   const [aboutBio, setAboutBio] = useState(
-    profile?.about ||
+    savedProfile?.about ||
+      profile?.about ||
       'Passionate technologist dedicated to building scalable enterprise workforce solutions with human-first design principles.'
   );
   const [jobLove, setJobLove] = useState(
-    profile?.jobLove ||
+    savedProfile?.jobLove ||
+      profile?.jobLove ||
       'Collaborating with high-impact teams, solving challenging distributed systems problems, and empowering colleagues.'
   );
   const [interests, setInterests] = useState(
-    profile?.interests || 'Cloud Architecture, Open Source AI, Hiking, Photography, and Coffee brewing.'
+    savedProfile?.interests || profile?.interests || 'Cloud Architecture, Open Source AI, Hiking, Photography, and Coffee brewing.'
   );
   const [skills, setSkills] = useState<string[]>(
-    profile?.skills ? JSON.parse(profile.skills) : ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'System Architecture', 'UI/UX']
+    savedProfile?.skills || (profile?.skills ? JSON.parse(profile.skills) : ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'System Architecture', 'UI/UX'])
   );
   const [newSkill, setNewSkill] = useState('');
-  const [certifications, setCertifications] = useState<string[]>([
-    'AWS Certified Solutions Architect - Professional',
-    'Google Cloud Professional Cloud Architect',
-    'Certified ScrumMaster (CSM)',
-  ]);
+  const [certifications, setCertifications] = useState<string[]>(
+    savedProfile?.certifications || [
+      'AWS Certified Solutions Architect - Professional',
+      'Google Cloud Professional Cloud Architect',
+      'Certified ScrumMaster (CSM)',
+    ]
+  );
   const [newCert, setNewCert] = useState('');
 
   // §5 Fields: Private Info
-  const [dob, setDob] = useState('1994-08-15');
-  const [residingAddress, setResidingAddress] = useState(profile?.address || '742 Evergreen Terrace, San Francisco, CA');
-  const [personalEmail, setPersonalEmail] = useState('alex.chen.personal@gmail.com');
-  const [nationality, setNationality] = useState('United States');
-  const [gender, setGender] = useState('Male');
-  const [maritalStatus, setMaritalStatus] = useState('Single');
-  const [dateOfJoining, setDateOfJoining] = useState(profile?.dateOfJoining || '2022-03-01');
+  const [dob, setDob] = useState(savedProfile?.dob || '1994-08-15');
+  const [residingAddress, setResidingAddress] = useState(savedProfile?.residingAddress || profile?.address || '742 Evergreen Terrace, San Francisco, CA');
+  const [personalEmail, setPersonalEmail] = useState(savedProfile?.personalEmail || 'alex.chen.personal@gmail.com');
+  const [nationality, setNationality] = useState(savedProfile?.nationality || 'United States');
+  const [gender, setGender] = useState(savedProfile?.gender || 'Male');
+  const [maritalStatus, setMaritalStatus] = useState(savedProfile?.maritalStatus || 'Single');
+  const [dateOfJoining, setDateOfJoining] = useState(savedProfile?.dateOfJoining || profile?.dateOfJoining || '2022-03-01');
 
   // §5 Fields: Bank Details
-  const [accountNumber, setAccountNumber] = useState('987654321012');
-  const [bankName, setBankName] = useState('Silicon Valley Bank');
-  const [ifscCode, setIfscCode] = useState('SVBL0004521');
-  const [panNo, setPanNo] = useState('ABCDE1234F');
-  const [uanNo, setUanNo] = useState('100987654321');
-  const [empCode, setEmpCode] = useState(user?.employeeId || 'OIJODO20220001');
+  const [accountNumber, setAccountNumber] = useState(savedProfile?.accountNumber || '987654321012');
+  const [bankName, setBankName] = useState(savedProfile?.bankName || 'Silicon Valley Bank');
+  const [ifscCode, setIfscCode] = useState(savedProfile?.ifscCode || 'SVBL0004521');
+  const [panNo, setPanNo] = useState(savedProfile?.panNo || 'ABCDE1234F');
+  const [uanNo, setUanNo] = useState(savedProfile?.uanNo || '100987654321');
+  const [empCode] = useState(user?.employeeId || 'OIALCH20230003');
 
   // §6 Fields: Salary Info (Admin-only)
   const [monthlyWage, setMonthlyWage] = useState(50000);
   const [workingDaysPerWeek, setWorkingDaysPerWeek] = useState(5);
   const [breakTimeHours, setBreakTimeHours] = useState(1);
-  const [basicPercent, setBasicPercent] = useState(50);
-  const [hraPercent, setHraPercent] = useState(50);
-  const [standardAllowance, setStandardAllowance] = useState(2500);
-  const [bonusPercent, setBonusPercent] = useState(10);
-  const [ltaPercent, setLtaPercent] = useState(5);
-  const [pfPercent, setPfPercent] = useState(12);
-  const [professionalTax, setProfessionalTax] = useState(200);
+  const [basicPercent] = useState(50);
+  const [hraPercent] = useState(50);
+  const [standardAllowance] = useState(2500);
+  const [bonusPercent] = useState(10);
+  const [ltaPercent] = useState(5);
+  const [pfPercent] = useState(12);
+  const [professionalTax] = useState(200);
 
   // Compute live §6 salary
   const salary: SalaryBreakdown = computeSalaryStructure(
@@ -135,7 +160,43 @@ export const ProfilePage: React.FC = () => {
   };
 
   const handleSaveProfile = async () => {
-    success('Profile Saved', 'All profile details, bios, and skillsets updated.');
+    const updated = {
+      firstName,
+      lastName,
+      phone,
+      designation,
+      department,
+      workLocation,
+      about: aboutBio,
+      jobLove,
+      interests,
+      skills,
+      certifications,
+      dob,
+      residingAddress,
+      personalEmail,
+      nationality,
+      gender,
+      maritalStatus,
+      dateOfJoining,
+      accountNumber,
+      bankName,
+      ifscCode,
+      panNo,
+      uanNo,
+    };
+
+    // 1. Save to persistent localStorage
+    localStorage.setItem(storageKey, JSON.stringify(updated));
+    localStorage.setItem('dayflow_custom_profile', JSON.stringify(updated));
+
+    // 2. Sync to backend API if available
+    try {
+      await api.patch('/auth/me/profile', updated);
+    } catch (e) {}
+
+    confetti({ particleCount: 35, spread: 55, origin: { y: 0.85 } });
+    success('Profile Saved', 'All changes and biometric records updated successfully.');
     setIsEditing(false);
   };
 
@@ -167,39 +228,49 @@ export const ProfilePage: React.FC = () => {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-5 border-b border-black/[0.05] dark:border-white/[0.06] pb-6 mb-6">
           <div className="flex items-center gap-4">
             <img
-              src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
+              src={profile?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email || firstName}`}
               alt="Avatar"
               className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-black/[0.06] dark:border-white/[0.08] object-cover shadow-xs"
             />
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white">
-                  {profile?.firstName} {profile?.lastName}
+                  {firstName} {lastName}
                 </h2>
                 <span className="font-mono text-xs font-bold text-[#0071e3] bg-[#0071e3]/10 px-2.5 py-0.5 rounded-full border border-[#0071e3]/20">
-                  {user?.employeeId || empCode}
+                  {empCode}
                 </span>
                 <Badge variant={user?.role === 'ADMIN' ? 'purple' : 'success'} size="sm">
-                  {user?.role}
+                  {user?.role || 'EMPLOYEE'}
                 </Badge>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-300 font-medium mt-0.5">
-                {profile?.designation} &bull; {profile?.department}
+                {designation} &bull; {department}
               </p>
               <p className="text-[11px] text-slate-400 mt-0.5">
-                Company: <strong>Odoo India / WorkNest</strong> &bull; Location: <strong>{profile?.workLocation || 'HQ - San Francisco'}</strong>
+                Company: <strong>Odoo India / WorkNest</strong> &bull; Location: <strong>{workLocation}</strong>
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={() => setIsEditing(!isEditing)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
-            >
-              <Edit2 className="w-3.5 h-3.5" />
-              <span>{isEditing ? 'Save Profile' : 'Edit Profile'}</span>
-            </button>
+            {isEditing ? (
+              <button
+                onClick={handleSaveProfile}
+                className="flex items-center gap-1.5 px-5 py-2 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer"
+              >
+                <Save className="w-3.5 h-3.5" />
+                <span>Save Changes</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+                <span>Edit Profile</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -275,40 +346,94 @@ export const ProfilePage: React.FC = () => {
             <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-4">Organizational Coordinates</h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <span className="text-slate-400 block text-[11px]">Full Name</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{profile?.firstName} {profile?.lastName}</span>
+                <span className="text-slate-400 block text-[11px] font-semibold">First Name</span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    className="w-full mt-1 bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-[#0071e3]"
+                  />
+                ) : (
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{firstName}</span>
+                )}
               </div>
+
               <div>
-                <span className="text-slate-400 block text-[11px]">Corporate Email</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{user?.email}</span>
+                <span className="text-slate-400 block text-[11px] font-semibold">Last Name</span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    className="w-full mt-1 bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-[#0071e3]"
+                  />
+                ) : (
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{lastName}</span>
+                )}
               </div>
+
               <div>
-                <span className="text-slate-400 block text-[11px]">Mobile Phone</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{profile?.phone || '+1 (555) 019-2831'}</span>
+                <span className="text-slate-400 block text-[11px] font-semibold">Mobile Phone</span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full mt-1 bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-[#0071e3]"
+                  />
+                ) : (
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{phone}</span>
+                )}
               </div>
+
               <div>
-                <span className="text-slate-400 block text-[11px]">Deterministic Login ID</span>
-                <span className="font-mono font-bold text-[#0071e3]">{empCode}</span>
+                <span className="text-slate-400 block text-[11px] font-semibold">Job Designation</span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={designation}
+                    onChange={(e) => setDesignation(e.target.value)}
+                    className="w-full mt-1 bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-[#0071e3]"
+                  />
+                ) : (
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{designation}</span>
+                )}
               </div>
+
               <div>
-                <span className="text-slate-400 block text-[11px]">Department & Team</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{profile?.department}</span>
+                <span className="text-slate-400 block text-[11px] font-semibold">Department & Team</span>
+                {isEditing ? (
+                  <select
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                    className="w-full mt-1 bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-[#0071e3]"
+                  >
+                    <option value="ENGINEERING">Engineering</option>
+                    <option value="PRODUCT">Product</option>
+                    <option value="DESIGN">Design</option>
+                    <option value="HUMAN_RESOURCES">Human Resources</option>
+                    <option value="MARKETING">Marketing</option>
+                    <option value="FINANCE">Finance</option>
+                    <option value="OPERATIONS">Operations</option>
+                  </select>
+                ) : (
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{department}</span>
+                )}
               </div>
+
               <div>
-                <span className="text-slate-400 block text-[11px]">Job Position</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{profile?.designation}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[11px]">Reporting Manager</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">Sarah Connor (VP of Engineering)</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[11px]">Company Entity</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">Odoo India / WorkNest</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[11px]">Office Location</span>
-                <span className="font-bold text-slate-800 dark:text-slate-200">{profile?.workLocation || 'HQ - San Francisco'}</span>
+                <span className="text-slate-400 block text-[11px] font-semibold">Office Location</span>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={workLocation}
+                    onChange={(e) => setWorkLocation(e.target.value)}
+                    className="w-full mt-1 bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-xl px-2.5 py-1.5 text-slate-900 dark:text-white font-bold focus:outline-none focus:border-[#0071e3]"
+                  />
+                ) : (
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{workLocation}</span>
+                )}
               </div>
             </div>
           </div>
@@ -389,7 +514,7 @@ export const ProfilePage: React.FC = () => {
                     {isEditing && (
                       <button
                         onClick={() => handleRemoveSkill(skill)}
-                        className="hover:text-red-500 cursor-pointer"
+                        className="hover:text-red-500 cursor-pointer ml-1"
                       >
                         &times;
                       </button>
@@ -798,37 +923,31 @@ export const ProfilePage: React.FC = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-slate-500 mb-1 font-semibold">New Password</label>
-                <input
-                  type="password"
-                  required
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-2xl px-3.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#0071e3]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-500 mb-1 font-semibold">Confirm Password</label>
-                <input
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-2xl px-3.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#0071e3]"
-                />
-              </div>
+            <div>
+              <label className="block text-slate-500 mb-1 font-semibold">New Password</label>
+              <input
+                type="password"
+                required
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-2xl px-3.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#0071e3]"
+              />
             </div>
 
-            <button
-              type="submit"
-              disabled={passLoading}
-              className="px-5 py-2 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-semibold text-xs shadow-xs cursor-pointer"
-            >
-              {passLoading ? 'Updating...' : 'Update Password'}
-            </button>
+            <div>
+              <label className="block text-slate-500 mb-1 font-semibold">Confirm New Password</label>
+              <input
+                type="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="w-full bg-black/[0.02] dark:bg-black/30 border border-black/[0.08] dark:border-white/[0.1] rounded-2xl px-3.5 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-[#0071e3]"
+              />
+            </div>
+
+            <Button type="submit" variant="primary" size="md" isLoading={passLoading} className="rounded-full px-6">
+              Update Password
+            </Button>
           </form>
         </div>
       )}
