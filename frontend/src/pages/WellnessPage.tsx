@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import {
   HeartPulse,
@@ -20,6 +20,7 @@ import {
   X,
   Send,
   Zap,
+  RotateCcw,
 } from 'lucide-react';
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
@@ -35,67 +36,107 @@ interface WellnessScore {
   lastLeaveDaysAgo: number;
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   suggestedAction: string;
+  isSupportActive?: boolean;
 }
+
+const DEFAULT_WELLNESS_LOGS: WellnessScore[] = [
+  {
+    name: 'Elena Rodriguez',
+    department: 'Design',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Elena_Rodriguez',
+    burnoutRisk: 84,
+    overtimeHours: 18.5,
+    consecutiveDays: 12,
+    lastLeaveDaysAgo: 140,
+    riskLevel: 'CRITICAL',
+    suggestedAction: 'Enforce 2-day mandatory rest break and rebalance sprint deliverable load.',
+    isSupportActive: false,
+  },
+  {
+    name: 'David Kim',
+    department: 'Engineering',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David_Kim',
+    burnoutRisk: 68,
+    overtimeHours: 12.0,
+    consecutiveDays: 9,
+    lastLeaveDaysAgo: 95,
+    riskLevel: 'HIGH',
+    suggestedAction: 'Schedule 1:1 check-in; reassign pending pull request reviews.',
+    isSupportActive: false,
+  },
+  {
+    name: 'Alex Chen',
+    department: 'Engineering',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex_Chen',
+    burnoutRisk: 38,
+    overtimeHours: 4.5,
+    consecutiveDays: 5,
+    lastLeaveDaysAgo: 24,
+    riskLevel: 'MEDIUM',
+    suggestedAction: 'Workload healthy; monitor weekend slack notifications.',
+    isSupportActive: false,
+  },
+  {
+    name: 'Sarah Connor',
+    department: 'Operations',
+    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah_Connor',
+    burnoutRisk: 18,
+    overtimeHours: 1.0,
+    consecutiveDays: 4,
+    lastLeaveDaysAgo: 12,
+    riskLevel: 'LOW',
+    suggestedAction: 'Optimal stamina index; steady work-life rhythm.',
+    isSupportActive: false,
+  },
+];
 
 export const WellnessPage: React.FC = () => {
   const { user, role } = useAuth();
   const { success } = useToast();
   const isAdminOrHr = role === 'ADMIN' || role === 'HR_MANAGER';
 
-  const [wellnessLogs, setWellnessLogs] = useState<WellnessScore[]>([
-    {
-      name: 'Elena Rodriguez',
-      department: 'Design',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Elena_Rodriguez',
-      burnoutRisk: 84,
-      overtimeHours: 18.5,
-      consecutiveDays: 12,
-      lastLeaveDaysAgo: 140,
-      riskLevel: 'CRITICAL',
-      suggestedAction: 'Enforce 2-day mandatory rest break and rebalance sprint deliverable load.',
-    },
-    {
-      name: 'David Kim',
-      department: 'Engineering',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David_Kim',
-      burnoutRisk: 68,
-      overtimeHours: 12.0,
-      consecutiveDays: 9,
-      lastLeaveDaysAgo: 95,
-      riskLevel: 'HIGH',
-      suggestedAction: 'Schedule 1:1 check-in; reassign pending pull request reviews.',
-    },
-    {
-      name: 'Alex Chen',
-      department: 'Engineering',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex_Chen',
-      burnoutRisk: 38,
-      overtimeHours: 4.5,
-      consecutiveDays: 5,
-      lastLeaveDaysAgo: 24,
-      riskLevel: 'MEDIUM',
-      suggestedAction: 'Workload healthy; monitor weekend slack notifications.',
-    },
-    {
-      name: 'Sarah Connor',
-      department: 'Operations',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah_Connor',
-      burnoutRisk: 18,
-      overtimeHours: 1.0,
-      consecutiveDays: 4,
-      lastLeaveDaysAgo: 12,
-      riskLevel: 'LOW',
-      suggestedAction: 'Optimal stamina index; steady work-life rhythm.',
-    },
-  ]);
+  // Persistent Wellness Logs across page reloads
+  const [wellnessLogs, setWellnessLogs] = useState<WellnessScore[]>(() => {
+    try {
+      const saved = localStorage.getItem('worknest_wellness_state');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      // fallback
+    }
+    return DEFAULT_WELLNESS_LOGS;
+  });
+
+  // Daily Punch-In: Once Per Calendar Day
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const [lastCheckinDate, setLastCheckinDate] = useState<string | null>(() => {
+    return localStorage.getItem('worknest_wellness_checkin_date');
+  });
+  const [savedMood, setSavedMood] = useState<string | null>(() => {
+    return localStorage.getItem('worknest_wellness_checkin_mood');
+  });
+
+  const isCheckedInToday = lastCheckinDate === todayStr;
 
   const [selectedStaff, setSelectedStaff] = useState<WellnessScore | null>(null);
   const [interventionType, setInterventionType] = useState('MANDATORY_REST');
   const [interventionNote, setInterventionNote] = useState('');
   const [isInterventionModalOpen, setIsInterventionModalOpen] = useState(false);
 
-  const [myMood, setMyMood] = useState<'great' | 'good' | 'neutral' | 'stressed' | 'exhausted' | null>(null);
-  const [moodSubmitted, setMoodSubmitted] = useState(false);
+  // Synchronize state changes to localStorage whenever wellnessLogs updates
+  useEffect(() => {
+    localStorage.setItem('worknest_wellness_state', JSON.stringify(wellnessLogs));
+  }, [wellnessLogs]);
+
+  // Dynamic Metrics derived directly from live persistent wellnessLogs
+  const avgBurnout = wellnessLogs.length
+    ? Math.round((wellnessLogs.reduce((acc, log) => acc + log.burnoutRisk, 0) / wellnessLogs.length) * 10) / 10
+    : 0;
+  const criticalStaffCount = wellnessLogs.filter((log) => log.burnoutRisk >= 75 && !log.isSupportActive).length;
+  const avgOvertime = wellnessLogs.length
+    ? Math.round((wellnessLogs.reduce((acc, log) => acc + log.overtimeHours, 0) / wellnessLogs.length) * 10) / 10
+    : 0;
 
   const handleOpenIntervention = (staff: WellnessScore) => {
     setSelectedStaff(staff);
@@ -103,24 +144,61 @@ export const WellnessPage: React.FC = () => {
     setIsInterventionModalOpen(true);
   };
 
+  // Trigger Support Action - Updates state, recalculates stats & persists permanently
   const handleExecuteIntervention = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedStaff) return;
 
-    // Update staff in list to healthy / managed
-    setWellnessLogs((prev) =>
-      prev.map((log) =>
-        log.name === selectedStaff.name
-          ? { ...log, burnoutRisk: Math.max(20, log.burnoutRisk - 35), riskLevel: 'LOW', suggestedAction: 'Intervention Active: Workload rebalanced & rest granted.' }
-          : log
-      )
-    );
+    const updatedLogs: WellnessScore[] = wellnessLogs.map((log) => {
+      if (log.name === selectedStaff.name) {
+        return {
+          ...log,
+          burnoutRisk: 15,
+          overtimeHours: Math.max(0, log.overtimeHours - 10),
+          riskLevel: 'LOW',
+          isSupportActive: true,
+          suggestedAction: `✓ Active HR Support Protocol Dispatched: ${
+            interventionType === 'MANDATORY_REST'
+              ? '2-Day Recovery Leave Activated'
+              : interventionType === 'WORKLOAD_REASSIGN'
+              ? 'Sprint Load Reassigned'
+              : 'Wellbeing 1:1 Synchronized'
+          }.`,
+        };
+      }
+      return log;
+    });
 
-    success('HR Wellness Intervention Dispatched', `Proactive care protocol successfully initiated for ${selectedStaff.name}.`);
+    setWellnessLogs(updatedLogs);
+    localStorage.setItem('worknest_wellness_state', JSON.stringify(updatedLogs));
+
+    success('HR Support Protocol Dispatched', `Proactive care protocol successfully initiated for ${selectedStaff.name}. Burnout index reduced to 15%.`);
     setIsInterventionModalOpen(false);
   };
 
-  const getRiskBadge = (level: string) => {
+  // Reset demo state helper
+  const handleResetWellnessData = () => {
+    setWellnessLogs(DEFAULT_WELLNESS_LOGS);
+    localStorage.setItem('worknest_wellness_state', JSON.stringify(DEFAULT_WELLNESS_LOGS));
+    success('Wellness Radar Reset', 'Restored initial telemetry values.');
+  };
+
+  // Handle Daily Wellness Check-In (Strictly Once Per Day)
+  const handleDailyCheckin = (moodKey: string, label: string) => {
+    if (isCheckedInToday) return;
+
+    localStorage.setItem('worknest_wellness_checkin_date', todayStr);
+    localStorage.setItem('worknest_wellness_checkin_mood', label);
+    setLastCheckinDate(todayStr);
+    setSavedMood(label);
+
+    success('Daily Pulse Recorded', `Your wellbeing pulse (${label}) was logged for today (${todayStr}).`);
+  };
+
+  const getRiskBadge = (level: string, isSupportActive?: boolean) => {
+    if (isSupportActive) {
+      return <Badge variant="success" size="sm">✓ Active Support (15%)</Badge>;
+    }
     switch (level) {
       case 'CRITICAL':
         return <Badge variant="danger" size="sm">Critical Risk (80%+)</Badge>;
@@ -142,18 +220,26 @@ export const WellnessPage: React.FC = () => {
             <HeartPulse className="w-5 h-5 text-rose-500" /> Employee Wellness & Burnout Prediction
           </h2>
           <p className="text-xs text-slate-400 mt-0.5 font-medium">
-            AI-driven continuous workload telemetry, fatigue indices, and proactive HR intervention triggers.
+            AI-driven continuous workload telemetry, fatigue indices, and persistent proactive HR support.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            onClick={handleResetWellnessData}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white bg-white/5 hover:bg-white/10 text-xs font-semibold flex items-center gap-1 cursor-pointer"
+            title="Reset telemetry to default demo state"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset Demo Stats</span>
+          </button>
           <span className="px-3 py-1 rounded-full bg-[#00ffc2]/10 text-[#00ffc2] border border-[#00ffc2]/30 text-xs font-mono font-bold flex items-center gap-1.5">
-            <Activity className="w-3.5 h-3.5" /> AI Model Active
+            <Activity className="w-3.5 h-3.5" /> Live Sync Active
           </span>
         </div>
       </div>
 
-      {/* Overview Stat Cards */}
+      {/* Dynamic Overview Stat Cards (Always in sync with persistent state) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-[#0e1217] border border-white/10 rounded-2xl p-4 shadow-sm">
           <div className="flex items-center justify-between">
@@ -162,9 +248,9 @@ export const WellnessPage: React.FC = () => {
               <Flame className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-white mt-2 font-display font-mono">42.8%</div>
+          <div className="text-2xl font-black text-white mt-2 font-display font-mono">{avgBurnout}%</div>
           <div className="flex items-center gap-1 text-[11px] text-[#00ffc2] mt-1 font-semibold">
-            <TrendingDown className="w-3 h-3" /> -3.4% vs last sprint (Improving)
+            <TrendingDown className="w-3 h-3" /> Live calculation from {wellnessLogs.length} members
           </div>
         </div>
 
@@ -175,8 +261,10 @@ export const WellnessPage: React.FC = () => {
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-rose-400 mt-2 font-display font-mono">2 Staff</div>
-          <div className="text-[11px] text-slate-400 mt-1 font-medium">Interventions recommended</div>
+          <div className="text-2xl font-black text-rose-400 mt-2 font-display font-mono">{criticalStaffCount} Staff</div>
+          <div className="text-[11px] text-slate-400 mt-1 font-medium">
+            {criticalStaffCount > 0 ? 'Proactive intervention required' : 'All critical strains resolved ✓'}
+          </div>
         </div>
 
         <div className="bg-[#0e1217] border border-white/10 rounded-2xl p-4 shadow-sm">
@@ -186,8 +274,8 @@ export const WellnessPage: React.FC = () => {
               <Clock className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-black text-white mt-2 font-display font-mono">6.2 hrs</div>
-          <div className="text-[11px] text-slate-400 mt-1 font-medium">Per employee threshold: 8.0h</div>
+          <div className="text-2xl font-black text-white mt-2 font-display font-mono">{avgOvertime} hrs</div>
+          <div className="text-[11px] text-slate-400 mt-1 font-medium">Overtime threshold: 8.0h/wk</div>
         </div>
 
         <div className="bg-[#0e1217] border border-white/10 rounded-2xl p-4 shadow-sm">
@@ -204,7 +292,7 @@ export const WellnessPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Daily Wellness Pulse Survey (Employee Self-Service Widget) */}
+      {/* Daily Wellness Pulse Survey (Strictly Once Per Calendar Day) */}
       <div className="bg-gradient-to-r from-blue-950/80 via-slate-900 to-black rounded-3xl p-6 text-white border border-white/10 shadow-lg relative overflow-hidden">
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
@@ -213,11 +301,11 @@ export const WellnessPage: React.FC = () => {
             </div>
             <h3 className="text-lg font-extrabold text-white">How energized are you feeling today, {user?.profile?.firstName}?</h3>
             <p className="text-xs text-slate-400">
-              Your response helps the AI workforce model optimize workload distribution and prevent burnout.
+              Employees can punch in wellness status once per day. Your submission optimizes workload distribution.
             </p>
           </div>
 
-          {!moodSubmitted ? (
+          {!isCheckedInToday ? (
             <div className="flex flex-wrap items-center gap-2">
               {[
                 { key: 'great', label: 'Energized ⚡', icon: <Smile className="w-4 h-4 text-[#00ffc2]" /> },
@@ -228,10 +316,7 @@ export const WellnessPage: React.FC = () => {
               ].map((item) => (
                 <button
                   key={item.key}
-                  onClick={() => {
-                    setMyMood(item.key as any);
-                    setMoodSubmitted(true);
-                  }}
+                  onClick={() => handleDailyCheckin(item.key, item.label)}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/15 border border-white/10 text-xs font-bold transition-all cursor-pointer hover:scale-105"
                 >
                   {item.icon}
@@ -240,8 +325,12 @@ export const WellnessPage: React.FC = () => {
               ))}
             </div>
           ) : (
-            <div className="flex items-center gap-2 bg-[#00ffc2]/20 border border-[#00ffc2]/40 text-[#00ffc2] px-4 py-2 rounded-xl text-xs font-bold font-mono">
-              <CheckCircle2 className="w-4 h-4" /> Pulse recorded! Thanks for checking in.
+            <div className="flex items-center gap-3 bg-[#00ffc2]/15 border border-[#00ffc2]/30 text-[#00ffc2] px-5 py-2.5 rounded-2xl text-xs font-bold font-mono">
+              <CheckCircle2 className="w-5 h-5 text-[#00ffc2]" />
+              <div>
+                <div>✓ Today's Wellness Pulse Completed ({savedMood || 'Logged'})</div>
+                <div className="text-[10px] text-slate-400 font-sans mt-0.5">You can punch in your next pulse check-in tomorrow.</div>
+              </div>
             </div>
           )}
         </div>
@@ -253,7 +342,7 @@ export const WellnessPage: React.FC = () => {
           <div>
             <h3 className="text-sm font-bold text-white">Workforce Burnout Telemetry & Proactive Intervention Engine</h3>
             <p className="text-xs text-slate-400 mt-0.5">
-              Identifies employees with excessive overtime, delayed vacation utilization, or consecutive sprint fatigue.
+              Persistent state tracking &bull; Trigger support reduces strain and recalculates organizational index instantly.
             </p>
           </div>
         </div>
@@ -277,7 +366,14 @@ export const WellnessPage: React.FC = () => {
                   <td className="py-3.5 px-4">
                     <div className="flex items-center gap-3">
                       <img src={log.avatar} alt="Avatar" className="w-8 h-8 rounded-xl bg-slate-800 object-cover" />
-                      <span className="font-bold text-white">{log.name}</span>
+                      <div>
+                        <span className="font-bold text-white block">{log.name}</span>
+                        {log.isSupportActive && (
+                          <span className="text-[10px] text-[#00ffc2] font-semibold flex items-center gap-1 mt-0.5">
+                            <CheckCircle2 className="w-3 h-3" /> Support Active
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="py-3.5 px-4">
@@ -287,11 +383,11 @@ export const WellnessPage: React.FC = () => {
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-xs">
                         <span className="font-extrabold text-white font-mono">{log.burnoutRisk}%</span>
-                        {getRiskBadge(log.riskLevel)}
+                        {getRiskBadge(log.riskLevel, log.isSupportActive)}
                       </div>
                       <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
                         <div
-                          className={`h-full rounded-full ${
+                          className={`h-full rounded-full transition-all duration-500 ${
                             log.burnoutRisk > 75
                               ? 'bg-rose-500'
                               : log.burnoutRisk > 50
@@ -316,9 +412,13 @@ export const WellnessPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleOpenIntervention(log)}
-                      className="px-3 py-1.5 rounded-xl bg-[#00f0ff]/15 hover:bg-[#00f0ff] text-[#00f0ff] hover:text-slate-950 border border-[#00f0ff]/40 text-xs font-bold transition-all shadow-xs cursor-pointer"
+                      className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer ${
+                        log.isSupportActive
+                          ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40 hover:bg-emerald-500/30'
+                          : 'bg-[#00f0ff]/15 hover:bg-[#00f0ff] text-[#00f0ff] hover:text-slate-950 border-[#00f0ff]/40'
+                      }`}
                     >
-                      Trigger Support
+                      {log.isSupportActive ? 'Update Support' : 'Trigger Support'}
                     </button>
                   </td>
                 </tr>
@@ -377,20 +477,20 @@ export const WellnessPage: React.FC = () => {
               </div>
 
               <div className="p-3 rounded-xl bg-blue-950/40 border border-blue-500/20 text-slate-300 text-[11px] leading-relaxed">
-                ⚡ <strong>Instant Automated Dispatch</strong>: Submitting this form will automatically notify {selectedStaff.name}'s manager, adjust sprint load, and credit necessary recovery balance.
+                ⚡ <strong>Persistent Execution</strong>: Submitting will update {selectedStaff.name}'s burnout risk index, permanently persist across reloads, and update overall organizational stats.
               </div>
 
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsInterventionModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold"
+                  className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 text-xs font-bold cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-[#00f0ff] hover:bg-[#38f8ff] text-slate-950 font-extrabold text-xs shadow-md shadow-[#00f0ff]/25"
+                  className="px-5 py-2 rounded-xl bg-[#00f0ff] hover:bg-[#38f8ff] text-slate-950 font-extrabold text-xs shadow-md shadow-[#00f0ff]/25 cursor-pointer"
                 >
                   Dispatch Support Protocol &rarr;
                 </button>
