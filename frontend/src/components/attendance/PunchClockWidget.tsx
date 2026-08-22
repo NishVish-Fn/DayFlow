@@ -3,6 +3,7 @@ import { Clock, Play, Square, Building2, Home, Laptop, Sparkles, CheckCircle2 } 
 import api from '../../services/api';
 import { Badge } from '../common/Badge';
 import { useToast } from '../../context/ToastContext';
+import { useAuth } from '../../context/AuthContext';
 import confetti from 'canvas-confetti';
 
 interface TodayAttendanceData {
@@ -21,11 +22,27 @@ interface TodayAttendanceData {
 export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = ({
   onAttendanceChange,
 }) => {
-  const [data, setData] = useState<TodayAttendanceData>({
-    isCheckedIn: false,
-    isCheckedOut: false,
-    record: null,
+  const { user } = useAuth();
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const storageKey = `worknest_attendance_${user?.employeeId || user?.id || 'default'}_${todayStr}`;
+
+  // Read persistent state for today so login/reload does not reset punch status
+  const [data, setData] = useState<TodayAttendanceData>(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      // fallback
+    }
+    return {
+      isCheckedIn: false,
+      isCheckedOut: false,
+      record: null,
+    };
   });
+
   const [actionLoading, setActionLoading] = useState(false);
   const [workMode, setWorkMode] = useState<'OFFICE' | 'REMOTE' | 'HYBRID'>('OFFICE');
   const [notes, setNotes] = useState('');
@@ -37,13 +54,15 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     try {
       const res = await api.get('/attendance/today');
       if (res.data?.data) {
-        setData(res.data.data);
-        if (res.data.data.record?.workMode) {
-          setWorkMode(res.data.data.record.workMode);
+        const serverData = res.data.data;
+        setData(serverData);
+        localStorage.setItem(storageKey, JSON.stringify(serverData));
+        if (serverData.record?.workMode) {
+          setWorkMode(serverData.record.workMode);
         }
       }
     } catch (e) {
-      // Keep optimistic state
+      // Keep persistent local state
     }
   };
 
@@ -51,9 +70,9 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     fetchToday();
     const clockTimer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(clockTimer);
-  }, []);
+  }, [user]);
 
-  // Compute live elapsed time if checked in
+  // Compute live elapsed time if currently checked in
   useEffect(() => {
     if (data?.isCheckedIn && data?.record?.checkInTime) {
       const checkInDate = new Date(data.record.checkInTime).getTime();
@@ -69,12 +88,10 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     }
   }, [data?.isCheckedIn, data?.record?.checkInTime]);
 
-  // Instant 0ms Zero-Latency Punch In
+  // Instant 0ms Zero-Latency Punch In (Persisted for the day)
   const handleCheckIn = async () => {
     const nowIso = new Date().toISOString();
-    
-    // 1. Instant Optimistic State Update
-    setData({
+    const updatedData: TodayAttendanceData = {
       isCheckedIn: true,
       isCheckedOut: false,
       record: {
@@ -84,7 +101,13 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
         totalHours: 0,
         notes,
       },
-    });
+    };
+
+    // 1. Instant Local State & Persistent Storage Update
+    setData(updatedData);
+    localStorage.setItem(storageKey, JSON.stringify(updatedData));
+    localStorage.setItem('worknest_systray_checkin_' + (user?.employeeId || 'default'), 'true');
+    window.dispatchEvent(new Event('attendance-sync'));
 
     confetti({ particleCount: 35, spread: 55, origin: { y: 0.85 } });
     success('Shift Started', `Logged ${workMode} check-in at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
@@ -92,24 +115,23 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     setNotes('');
     onAttendanceChange?.();
 
-    // 2. Background Sync
+    // 2. Background Server Sync
     try {
       setActionLoading(true);
       await api.post('/attendance/check-in', { workMode, notes: currentNotes });
     } catch (err: any) {
-      // Revert only on fatal error
+      // Ignore
     } finally {
       setActionLoading(false);
     }
   };
 
-  // Instant 0ms Zero-Latency Punch Out
+  // Instant 0ms Zero-Latency Punch Out (Completes shift for today)
   const handleCheckOut = async () => {
     const checkInTime = data.record?.checkInTime ? new Date(data.record.checkInTime).getTime() : Date.now();
     const hoursWorked = Number(((Date.now() - checkInTime) / 3600000).toFixed(2)) || 8.0;
 
-    // 1. Instant Optimistic State Update
-    setData({
+    const updatedData: TodayAttendanceData = {
       isCheckedIn: false,
       isCheckedOut: true,
       record: {
@@ -117,17 +139,23 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
         checkOutTime: new Date().toISOString(),
         totalHours: hoursWorked,
       },
-    });
+    };
 
-    success('Shift Finalized', `${hoursWorked} hours logged successfully.`);
+    // 1. Instant Local State & Persistent Storage Update
+    setData(updatedData);
+    localStorage.setItem(storageKey, JSON.stringify(updatedData));
+    localStorage.setItem('worknest_systray_checkin_' + (user?.employeeId || 'default'), 'false');
+    window.dispatchEvent(new Event('attendance-sync'));
+
+    success('Shift Finalized', `${hoursWorked} hours logged successfully for today.`);
     onAttendanceChange?.();
 
-    // 2. Background Sync
+    // 2. Background Server Sync
     try {
       setActionLoading(true);
       await api.post('/attendance/check-out', { notes });
     } catch (err: any) {
-      // Revert only on fatal error
+      // Ignore
     } finally {
       setActionLoading(false);
     }
@@ -168,7 +196,7 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
             {currentTime.toLocaleTimeString()}
           </div>
           <div className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center justify-end gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Telemetry Synced
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Daily Punch Synced
           </div>
         </div>
       </div>
@@ -179,7 +207,7 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status:</span>
             {data?.isCheckedIn && <Badge variant="success" size="md">Active &bull; Clocked In</Badge>}
-            {data?.isCheckedOut && <Badge variant="neutral" size="md">Shift Completed</Badge>}
+            {data?.isCheckedOut && <Badge variant="neutral" size="md">✓ Shift Completed Today</Badge>}
             {!data?.isCheckedIn && !data?.isCheckedOut && (
               <Badge variant="warning" size="md">Ready to Check In</Badge>
             )}
@@ -201,14 +229,14 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
           )}
 
           {data?.isCheckedOut && (
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/40 border border-black/[0.05] dark:border-white/[0.08]">
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                Logged Duration
+            <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900">
+              <div className="text-xs font-semibold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
+                Logged Duration for Today
               </div>
               <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 font-mono">
                 {data.record?.totalHours} hours
               </div>
-              <div className="text-xs text-slate-400 mt-0.5">
+              <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 Completed at: {new Date(data.record!.checkOutTime!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
@@ -307,8 +335,12 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
           )}
 
           {data?.isCheckedOut && (
-            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center text-xs text-emerald-800 dark:text-emerald-300 font-medium">
-              🎉 Shifts recorded for today. Great job!
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center text-xs text-emerald-800 dark:text-emerald-300 font-medium space-y-1">
+              <div className="font-bold flex items-center justify-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>Daily Shift Completed</span>
+              </div>
+              <p className="text-[11px] text-slate-500">Your attendance punch is locked for today. You can clock in again tomorrow.</p>
             </div>
           )}
         </div>

@@ -33,13 +33,29 @@ export const Navbar: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   // Systray-style quick check-in state
-  const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const storageKey = `worknest_attendance_${user?.employeeId || user?.id || 'default'}_${todayStr}`;
+
+  const [isCheckedIn, setIsCheckedIn] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        return JSON.parse(saved).isCheckedIn === true;
+      }
+    } catch (e) {}
+    return false;
+  });
 
   const fetchAttendanceStatus = async () => {
     try {
+      const saved = localStorage.getItem(storageKey);
+      if (saved) {
+        setIsCheckedIn(JSON.parse(saved).isCheckedIn === true);
+      }
       const res = await api.get('/attendance/today');
       if (res.data?.data) {
         setIsCheckedIn(res.data.data.isCheckedIn);
+        localStorage.setItem(storageKey, JSON.stringify(res.data.data));
       }
     } catch (e) {
       // Ignore
@@ -58,23 +74,47 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     fetchAttendanceStatus();
     fetchNotifications();
+
+    const handleSync = () => {
+      fetchAttendanceStatus();
+    };
+
+    window.addEventListener('attendance-sync', handleSync);
     const interval = setInterval(() => {
       fetchNotifications();
       fetchAttendanceStatus();
     }, 20000);
-    return () => clearInterval(interval);
-  }, []);
+
+    return () => {
+      window.removeEventListener('attendance-sync', handleSync);
+      clearInterval(interval);
+    };
+  }, [user]);
 
   const handleQuickClockToggle = async () => {
     if (!isCheckedIn) {
       setIsCheckedIn(true);
+      const updateData = {
+        isCheckedIn: true,
+        isCheckedOut: false,
+        record: { checkInTime: new Date().toISOString(), status: 'PRESENT', workMode: 'OFFICE', totalHours: 0 },
+      };
+      localStorage.setItem(storageKey, JSON.stringify(updateData));
+      window.dispatchEvent(new Event('attendance-sync'));
       success('Checked In', 'Recorded office attendance.');
       try {
         await api.post('/attendance/check-in', { workMode: 'OFFICE' });
       } catch (e) {}
     } else {
       setIsCheckedIn(false);
-      success('Checked Out', 'Shift attendance finalized.');
+      const updateData = {
+        isCheckedIn: false,
+        isCheckedOut: true,
+        record: { checkOutTime: new Date().toISOString(), status: 'PRESENT', workMode: 'OFFICE', totalHours: 8.0 },
+      };
+      localStorage.setItem(storageKey, JSON.stringify(updateData));
+      window.dispatchEvent(new Event('attendance-sync'));
+      success('Checked Out', 'Shift attendance finalized for today.');
       try {
         await api.post('/attendance/check-out', {});
       } catch (e) {}
