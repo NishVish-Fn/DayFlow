@@ -17,6 +17,7 @@ import {
   Plus,
 } from 'lucide-react';
 import { AttendanceRecord, EmployeeProfile } from '../types';
+import { ENTERPRISE_ATTENDANCE } from '../utils/mockEnterpriseData';
 
 export const AttendancePage: React.FC = () => {
   const { user, role } = useAuth();
@@ -70,52 +71,7 @@ export const AttendancePage: React.FC = () => {
     },
   ]);
 
-  const [adminTeamRecords, setAdminTeamRecords] = useState<any[]>([
-    {
-      id: 'team-1',
-      employeeName: 'Sarah Connor',
-      badgeId: 'OISACON20220001',
-      date: '2026-08-22',
-      checkIn: '08:45 AM',
-      checkOut: '05:15 PM',
-      workHours: '8.5 hrs',
-      extraHours: '0.5 hrs',
-      status: 'PRESENT',
-    },
-    {
-      id: 'team-2',
-      employeeName: 'Marcus Vance',
-      badgeId: 'OIMAVA20220002',
-      date: '2026-08-22',
-      checkIn: '09:00 AM',
-      checkOut: '05:30 PM',
-      workHours: '8.0 hrs',
-      extraHours: '0.0 hrs',
-      status: 'PRESENT',
-    },
-    {
-      id: 'team-3',
-      employeeName: 'Alex Chen',
-      badgeId: 'OIALCH20230003',
-      date: '2026-08-22',
-      checkIn: '09:02 AM',
-      checkOut: '05:32 PM',
-      workHours: '8.0 hrs',
-      extraHours: '0.5 hrs',
-      status: 'PRESENT',
-    },
-    {
-      id: 'team-4',
-      employeeName: 'Elena Rodriguez',
-      badgeId: 'OIELRO20230004',
-      date: '2026-08-22',
-      checkIn: '—',
-      checkOut: '—',
-      workHours: '0.0 hrs',
-      extraHours: '0.0 hrs',
-      status: 'ON_LEAVE',
-    },
-  ]);
+  const [adminTeamRecords, setAdminTeamRecords] = useState<any[]>(ENTERPRISE_ATTENDANCE);
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',

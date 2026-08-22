@@ -63,10 +63,10 @@ export const DashboardPage: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const [adminData, setAdminData] = useState<any>({
-    headcount: 14,
-    attendance: { attendanceRate: 92.8, presentCount: 13, officeCount: 8, remoteCount: 5 },
-    pendingLeaveApprovals: 2,
-    payrollMetrics: { totalMonthlyGross: 148500, totalMonthlyNet: 114200 },
+    headcount: 55,
+    attendance: { attendanceRate: 92.7, presentCount: 51, officeCount: 32, remoteCount: 19 },
+    pendingLeaveApprovals: 4,
+    payrollMetrics: { totalMonthlyGross: 685000, totalMonthlyNet: 524000 },
   });
   const [employeeData, setEmployeeData] = useState<any>({
     leaveBalances: [

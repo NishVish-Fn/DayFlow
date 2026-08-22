@@ -18,61 +18,13 @@ import {
   List,
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { ENTERPRISE_EMPLOYEES } from '../utils/mockEnterpriseData';
 
 export const EmployeesPage: React.FC = () => {
   const { role } = useAuth();
   const isAdminOrHr = role === 'ADMIN' || role === 'HR_MANAGER';
 
-  const [employees, setEmployees] = useState<EmployeeProfile[]>([
-    {
-      id: 'emp-1',
-      userId: 'u-1',
-      firstName: 'Sarah',
-      lastName: 'Connor',
-      designation: 'VP of Engineering',
-      department: 'ENGINEERING',
-      workLocation: 'HQ - San Francisco',
-      dateOfJoining: '2022-01-10',
-      employmentType: 'FULL_TIME',
-      user: { id: 'u-1', email: 'admin@dayflow.internal', employeeId: 'OISACON20220001', role: 'ADMIN', status: 'ACTIVE', isEmailVerified: true, createdAt: '2022-01-10' },
-    },
-    {
-      id: 'emp-2',
-      userId: 'u-2',
-      firstName: 'Marcus',
-      lastName: 'Vance',
-      designation: 'Head of People & Culture',
-      department: 'HUMAN_RESOURCES',
-      workLocation: 'HQ - San Francisco',
-      dateOfJoining: '2022-02-15',
-      employmentType: 'FULL_TIME',
-      user: { id: 'u-2', email: 'hr@dayflow.internal', employeeId: 'OIMAVA20220002', role: 'HR_MANAGER', status: 'ACTIVE', isEmailVerified: true, createdAt: '2022-02-15' },
-    },
-    {
-      id: 'emp-3',
-      userId: 'u-3',
-      firstName: 'Alex',
-      lastName: 'Chen',
-      designation: 'Senior Software Architect',
-      department: 'ENGINEERING',
-      workLocation: 'Remote - California',
-      dateOfJoining: '2023-03-01',
-      employmentType: 'FULL_TIME',
-      user: { id: 'u-3', email: 'alex.chen@dayflow.internal', employeeId: 'OIALCH20230003', role: 'EMPLOYEE', status: 'ACTIVE', isEmailVerified: true, createdAt: '2023-03-01' },
-    },
-    {
-      id: 'emp-4',
-      userId: 'u-4',
-      firstName: 'Elena',
-      lastName: 'Rodriguez',
-      designation: 'Principal UI/UX Designer',
-      department: 'DESIGN',
-      workLocation: 'HQ - San Francisco',
-      dateOfJoining: '2023-04-12',
-      employmentType: 'FULL_TIME',
-      user: { id: 'u-4', email: 'elena.rodriguez@dayflow.internal', employeeId: 'OIELRO20230004', role: 'EMPLOYEE', status: 'ACTIVE', isEmailVerified: true, createdAt: '2023-04-12' },
-    },
-  ]);
+  const [employees, setEmployees] = useState<EmployeeProfile[]>(ENTERPRISE_EMPLOYEES);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [department, setDepartment] = useState('ALL');

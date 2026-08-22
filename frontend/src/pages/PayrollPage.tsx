@@ -14,6 +14,62 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { PayrollRecord, SalaryStructure } from '../types';
+import { ENTERPRISE_EMPLOYEES, ENTERPRISE_PAYROLL_RUNS } from '../utils/mockEnterpriseData';
+
+const GENERATE_MY_PAYSLIPS = (user: any): PayrollRecord[] => {
+  const months = [
+    { m: 8, y: 2026 }, { m: 7, y: 2026 }, { m: 6, y: 2026 }, { m: 5, y: 2026 },
+    { m: 4, y: 2026 }, { m: 3, y: 2026 }, { m: 2, y: 2026 }, { m: 1, y: 2026 },
+    { m: 12, y: 2025 }, { m: 11, y: 2025 }, { m: 10, y: 2025 }, { m: 9, y: 2025 },
+  ];
+
+  return months.map((date, idx) => ({
+    id: `my-ps-${idx + 1}`,
+    employeeProfileId: user?.profile?.id || 'prof-01',
+    month: date.m,
+    year: date.y,
+    baseSalary: 7200,
+    hra: 2880,
+    standardAllowance: 2160,
+    performanceBonus: idx % 3 === 0 ? 1500 : 0,
+    providentFund: 1728,
+    professionalTax: 200,
+    incomeTax: 1440,
+    grossAmount: 12240 + (idx % 3 === 0 ? 1500 : 0),
+    netAmount: 8872 + (idx % 3 === 0 ? 1500 : 0),
+    status: 'PAID',
+    paymentDate: `${date.y}-${String(date.m).padStart(2, '0')}-28`,
+    disbursementRef: `ACH-WF-${date.y}${date.m}890`,
+    employee: user?.profile,
+  } as any));
+};
+
+const DEFAULT_ADMIN_PAYSLIPS: PayrollRecord[] = ENTERPRISE_EMPLOYEES.map((emp, index) => {
+  const baseSalary = 110000 + (index % 10) * 9500;
+  const grossMonthly = Math.round(baseSalary / 12);
+  const deductions = Math.round(grossMonthly * 0.24);
+  const netMonthly = grossMonthly - deductions;
+
+  return {
+    id: `ps-${index + 1}`,
+    employeeProfileId: emp.id,
+    month: 8,
+    year: 2026,
+    baseSalary: Math.round(grossMonthly * 0.5),
+    hra: Math.round(grossMonthly * 0.2),
+    standardAllowance: Math.round(grossMonthly * 0.15),
+    performanceBonus: index % 4 === 0 ? 1500 : 0,
+    providentFund: Math.round(grossMonthly * 0.12),
+    professionalTax: 200,
+    incomeTax: Math.round(grossMonthly * 0.12),
+    grossAmount: grossMonthly,
+    netAmount: netMonthly,
+    status: 'PAID',
+    paymentDate: '2026-08-20',
+    disbursementRef: `ACH-WF-${202608000 + index}`,
+    employee: emp,
+  } as any;
+});
 
 export const PayrollPage: React.FC = () => {
   const { user, role } = useAuth();
@@ -24,11 +80,24 @@ export const PayrollPage: React.FC = () => {
   );
 
   // Employee Data
-  const [myPayslips, setMyPayslips] = useState<PayrollRecord[]>([]);
-  const [mySalaryStructure, setMySalaryStructure] = useState<SalaryStructure | null>(null);
+  const [myPayslips, setMyPayslips] = useState<PayrollRecord[]>(() => GENERATE_MY_PAYSLIPS(user));
+  const [mySalaryStructure, setMySalaryStructure] = useState<SalaryStructure | null>({
+    id: 'struct-current',
+    employeeProfileId: user?.profile?.id || 'prof-01',
+    baseSalary: 86400,
+    hra: 34560,
+    standardAllowance: 25920,
+    performanceBonus: 18000,
+    providentFund: 20736,
+    professionalTax: 2400,
+    incomeTax: 17280,
+    effectiveFrom: '2025-01-01',
+    isCurrent: true,
+    version: 2,
+  });
 
   // Admin Data
-  const [adminPayslips, setAdminPayslips] = useState<PayrollRecord[]>([]);
+  const [adminPayslips, setAdminPayslips] = useState<PayrollRecord[]>(DEFAULT_ADMIN_PAYSLIPS);
   const [selectedMonth, setSelectedMonth] = useState<number>(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [department, setDepartment] = useState('ALL');

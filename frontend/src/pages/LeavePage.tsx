@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { LeaveBalance, LeaveRequest, LeaveType } from '../types';
 import { useToast } from '../context/ToastContext';
+import { ENTERPRISE_LEAVE_REQUESTS } from '../utils/mockEnterpriseData';
 
 export const LeavePage: React.FC = () => {
   const { user, role } = useAuth();
@@ -71,45 +72,22 @@ export const LeavePage: React.FC = () => {
     },
   ]);
 
-  // Admin view records for ALL employees (§8 Spec)
-  const [adminRequests, setAdminRequests] = useState<any[]>([
-    {
-      id: 'adm-1',
-      name: 'Elena Rodriguez',
-      badgeId: 'OIELRO20230004',
-      startDate: '2026-08-25',
-      endDate: '2026-08-27',
-      timeOffType: 'Paid Time Off (PTO)',
-      days: 3,
-      reason: 'Family wedding event',
-      status: 'PENDING',
+  // Admin view records for ALL employees spanning past year
+  const [adminRequests, setAdminRequests] = useState<any[]>(
+    ENTERPRISE_LEAVE_REQUESTS.map((req) => ({
+      id: req.id,
+      name: req.employeeName,
+      badgeId: req.employeeId,
+      department: req.department,
+      startDate: req.startDate,
+      endDate: req.endDate,
+      timeOffType: req.leaveType === 'PAID_TIME_OFF' ? 'Paid Time Off (PTO)' : req.leaveType === 'SICK' ? 'Sick Leave' : 'Casual / Rest',
+      days: req.days,
+      reason: req.reason,
+      status: req.status === 'PENDING_APPROVAL' ? 'PENDING' : req.status,
       attachment: null,
-    },
-    {
-      id: 'adm-2',
-      name: 'Alex Chen',
-      badgeId: 'OIALCH20230003',
-      startDate: '2026-09-20',
-      endDate: '2026-09-22',
-      timeOffType: 'Paid Time Off (PTO)',
-      days: 3,
-      reason: 'Personal travel and wellness recovery',
-      status: 'PENDING',
-      attachment: null,
-    },
-    {
-      id: 'adm-3',
-      name: 'Marcus Vance',
-      badgeId: 'OIMAVA20220002',
-      startDate: '2026-08-01',
-      endDate: '2026-08-02',
-      timeOffType: 'Sick Leave',
-      days: 2,
-      reason: 'Viral fever rest',
-      status: 'APPROVED',
-      attachment: 'Clinic_Receipt.pdf',
-    },
-  ]);
+    }))
+  );
 
   const handleApprove = (id: string) => {
     setAdminRequests((prev) =>

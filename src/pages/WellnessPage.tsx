@@ -25,6 +25,7 @@ import {
 import { Button } from '../components/common/Button';
 import { Badge } from '../components/common/Badge';
 import { useToast } from '../context/ToastContext';
+import { ENTERPRISE_EMPLOYEES } from '../utils/mockEnterpriseData';
 
 interface WellnessScore {
   name: string;
@@ -39,56 +40,40 @@ interface WellnessScore {
   isSupportActive?: boolean;
 }
 
-const DEFAULT_WELLNESS_LOGS: WellnessScore[] = [
-  {
-    name: 'Elena Rodriguez',
-    department: 'Design',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Elena_Rodriguez',
-    burnoutRisk: 84,
-    overtimeHours: 18.5,
-    consecutiveDays: 12,
-    lastLeaveDaysAgo: 140,
-    riskLevel: 'CRITICAL',
-    suggestedAction: 'Enforce 2-day mandatory rest break and rebalance sprint deliverable load.',
-    isSupportActive: false,
-  },
-  {
-    name: 'David Kim',
-    department: 'Engineering',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=David_Kim',
-    burnoutRisk: 68,
-    overtimeHours: 12.0,
-    consecutiveDays: 9,
-    lastLeaveDaysAgo: 95,
-    riskLevel: 'HIGH',
-    suggestedAction: 'Schedule 1:1 check-in; reassign pending pull request reviews.',
-    isSupportActive: false,
-  },
-  {
-    name: 'Alex Chen',
-    department: 'Engineering',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Alex_Chen',
-    burnoutRisk: 38,
-    overtimeHours: 4.5,
-    consecutiveDays: 5,
-    lastLeaveDaysAgo: 24,
-    riskLevel: 'MEDIUM',
-    suggestedAction: 'Workload healthy; monitor weekend slack notifications.',
-    isSupportActive: false,
-  },
-  {
-    name: 'Sarah Connor',
-    department: 'Operations',
-    avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah_Connor',
-    burnoutRisk: 18,
-    overtimeHours: 1.0,
-    consecutiveDays: 4,
-    lastLeaveDaysAgo: 12,
-    riskLevel: 'LOW',
-    suggestedAction: 'Optimal stamina index; steady work-life rhythm.',
-    isSupportActive: false,
-  },
-];
+const GENERATE_ENTERPRISE_WELLNESS = (): WellnessScore[] => {
+  return ENTERPRISE_EMPLOYEES.map((emp, index) => {
+    let risk = 15 + ((index * 7) % 75);
+    if (emp.firstName === 'Elena') risk = 84;
+    if (emp.firstName === 'David') risk = 68;
+
+    let level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
+    if (risk > 75) level = 'CRITICAL';
+    else if (risk > 50) level = 'HIGH';
+    else if (risk > 30) level = 'MEDIUM';
+
+    return {
+      name: `${emp.firstName} ${emp.lastName}`,
+      department: emp.department,
+      avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${emp.firstName}_${emp.lastName}`,
+      burnoutRisk: risk,
+      overtimeHours: Number(((risk / 100) * 18).toFixed(1)),
+      consecutiveDays: Math.max(3, Math.round((risk / 100) * 12)),
+      lastLeaveDaysAgo: Math.max(10, Math.round((risk / 100) * 150)),
+      riskLevel: level,
+      suggestedAction:
+        level === 'CRITICAL'
+          ? 'Enforce 2-day mandatory rest break and rebalance sprint deliverable load.'
+          : level === 'HIGH'
+          ? 'Schedule 1:1 check-in; reassign pending backlog items.'
+          : level === 'MEDIUM'
+          ? 'Workload healthy; monitor weekend slack activity.'
+          : 'Optimal stamina index; steady work-life rhythm.',
+      isSupportActive: false,
+    };
+  });
+};
+
+const DEFAULT_WELLNESS_LOGS: WellnessScore[] = GENERATE_ENTERPRISE_WELLNESS();
 
 export const WellnessPage: React.FC = () => {
   const { user, role } = useAuth();
@@ -98,13 +83,9 @@ export const WellnessPage: React.FC = () => {
   // Persistent Wellness Logs across page reloads
   const [wellnessLogs, setWellnessLogs] = useState<WellnessScore[]>(() => {
     try {
-      const saved = localStorage.getItem('worknest_wellness_state');
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch (e) {
-      // fallback
-    }
+      const saved = localStorage.getItem('worknest_wellness_state') || localStorage.getItem('dayflow_wellness_logs');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {}
     return DEFAULT_WELLNESS_LOGS;
   });
 
