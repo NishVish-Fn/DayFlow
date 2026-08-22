@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Play, Square, Building2, Home, Laptop, CheckCircle2 } from 'lucide-react';
+import { Clock, Play, Square, Building2, Home, Laptop, Sparkles, CheckCircle2 } from 'lucide-react';
 import api from '../../services/api';
-import { Button } from '../common/Button';
 import { Badge } from '../common/Badge';
 import { useToast } from '../../context/ToastContext';
 import confetti from 'canvas-confetti';
@@ -27,13 +26,12 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     isCheckedOut: false,
     record: null,
   });
-  const [loading, setLoading] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [workMode, setWorkMode] = useState<'OFFICE' | 'REMOTE' | 'HYBRID'>('OFFICE');
   const [notes, setNotes] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [elapsedSeconds, setElapsedSeconds] = useState<number>(0);
-  const { success, error } = useToast();
+  const { success } = useToast();
 
   const fetchToday = async () => {
     try {
@@ -88,8 +86,8 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
       },
     });
 
-    confetti({ particleCount: 40, spread: 60, origin: { y: 0.85 } });
-    success('Punch In Recorded', `Started ${workMode} shift at ${new Date().toLocaleTimeString()}`);
+    confetti({ particleCount: 35, spread: 55, origin: { y: 0.85 } });
+    success('Shift Started', `Logged ${workMode} check-in at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`);
     const currentNotes = notes;
     setNotes('');
     onAttendanceChange?.();
@@ -121,7 +119,7 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
       },
     });
 
-    success('Punch Out Recorded', `Shift finalized: ${hoursWorked} hours logged.`);
+    success('Shift Finalized', `${hoursWorked} hours logged successfully.`);
     onAttendanceChange?.();
 
     // 2. Background Sync
@@ -143,15 +141,15 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
   };
 
   return (
-    <div className="bg-white dark:bg-[#1e1f20] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 shadow-sm relative overflow-hidden transition-all">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 dark:border-slate-800 pb-5">
+    <div className="bg-white dark:bg-[#161618] border border-black/[0.06] dark:border-white/[0.08] rounded-3xl p-6 sm:p-7 shadow-[0_2px_12px_rgba(0,0,0,0.03)] dark:shadow-none relative overflow-hidden transition-all">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-black/[0.05] dark:border-white/[0.06] pb-5">
         <div>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#1a73e8] dark:text-[#8ab4f8] flex items-center justify-center">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-2xl bg-[#0071e3]/10 dark:bg-[#0071e3]/20 text-[#0071e3] dark:text-[#2997ff] flex items-center justify-center">
               <Clock className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-base font-semibold text-slate-900 dark:text-white">Smart Attendance & Clock</h3>
+              <h3 className="text-base font-bold tracking-tight text-slate-900 dark:text-white">Smart Attendance & Telemetry</h3>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 {currentTime.toLocaleDateString(undefined, {
                   weekday: 'long',
@@ -164,13 +162,13 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
           </div>
         </div>
 
-        {/* Digital Clock */}
+        {/* Live Clock Display */}
         <div className="text-right">
           <div className="text-2xl font-bold font-mono tracking-tight text-slate-900 dark:text-white">
             {currentTime.toLocaleTimeString()}
           </div>
-          <div className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 flex items-center justify-end gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" /> Real-Time Telemetry Active
+          <div className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 flex items-center justify-end gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Telemetry Synced
           </div>
         </div>
       </div>
@@ -180,38 +178,38 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status:</span>
-            {data?.isCheckedIn && <Badge variant="success" size="md">Clocked In &bull; Active</Badge>}
+            {data?.isCheckedIn && <Badge variant="success" size="md">Active &bull; Clocked In</Badge>}
             {data?.isCheckedOut && <Badge variant="neutral" size="md">Shift Completed</Badge>}
             {!data?.isCheckedIn && !data?.isCheckedOut && (
-              <Badge variant="warning" size="md">Ready to Clock In</Badge>
+              <Badge variant="warning" size="md">Ready to Check In</Badge>
             )}
           </div>
 
-          {/* Running Timer */}
+          {/* Running Timer Card */}
           {data?.isCheckedIn && (
-            <div className="p-4 rounded-2xl bg-blue-50/80 dark:bg-[#004a77]/30 border border-blue-100 dark:border-[#004a77]">
-              <div className="text-xs font-semibold text-[#1a73e8] dark:text-[#c2e7ff] uppercase tracking-wider">
+            <div className="p-4 rounded-2xl bg-[#0071e3]/5 dark:bg-[#0071e3]/10 border border-[#0071e3]/20">
+              <div className="text-xs font-semibold text-[#0071e3] dark:text-[#2997ff] uppercase tracking-wider">
                 Shift Elapsed Time
               </div>
-              <div className="text-3xl font-extrabold font-mono text-[#1a73e8] dark:text-white mt-1">
+              <div className="text-3xl font-extrabold font-mono text-slate-900 dark:text-white mt-1 tracking-tight">
                 {formatElapsed(elapsedSeconds)}
               </div>
-              <div className="text-xs text-slate-600 dark:text-slate-300 mt-1 font-medium">
-                Started at: {new Date(data.record!.checkInTime!).toLocaleTimeString()}
+              <div className="text-xs text-slate-500 mt-1">
+                Started at: {new Date(data.record!.checkInTime!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
           )}
 
           {data?.isCheckedOut && (
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-black/40 border border-black/[0.05] dark:border-white/[0.08]">
               <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Logged Duration
               </div>
               <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1 font-mono">
                 {data.record?.totalHours} hours
               </div>
-              <div className="text-xs text-slate-500 mt-1">
-                Completed at: {new Date(data.record!.checkOutTime!).toLocaleTimeString()}
+              <div className="text-xs text-slate-400 mt-0.5">
+                Completed at: {new Date(data.record!.checkOutTime!).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </div>
             </div>
           )}
@@ -229,10 +227,10 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
                   <button
                     type="button"
                     onClick={() => setWorkMode('OFFICE')}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl text-xs font-semibold border transition-all cursor-pointer ${
                       workMode === 'OFFICE'
-                        ? 'bg-[#d3e3fd] text-[#041e49] border-[#1a73e8] font-bold shadow-xs'
-                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+                        ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-xs'
+                        : 'bg-slate-50 dark:bg-white/[0.04] border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-300 hover:bg-slate-100'
                     }`}
                   >
                     <Building2 className="w-3.5 h-3.5" /> Office
@@ -241,10 +239,10 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
                   <button
                     type="button"
                     onClick={() => setWorkMode('REMOTE')}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl text-xs font-semibold border transition-all cursor-pointer ${
                       workMode === 'REMOTE'
-                        ? 'bg-[#d3e3fd] text-[#041e49] border-[#1a73e8] font-bold shadow-xs'
-                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+                        ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-xs'
+                        : 'bg-slate-50 dark:bg-white/[0.04] border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-300 hover:bg-slate-100'
                     }`}
                   >
                     <Home className="w-3.5 h-3.5" /> Remote
@@ -253,10 +251,10 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
                   <button
                     type="button"
                     onClick={() => setWorkMode('HYBRID')}
-                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                    className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-2xl text-xs font-semibold border transition-all cursor-pointer ${
                       workMode === 'HYBRID'
-                        ? 'bg-[#d3e3fd] text-[#041e49] border-[#1a73e8] font-bold shadow-xs'
-                        : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'
+                        ? 'bg-[#0071e3] text-white border-[#0071e3] shadow-xs'
+                        : 'bg-slate-50 dark:bg-white/[0.04] border-slate-200 dark:border-white/[0.08] text-slate-600 dark:text-slate-300 hover:bg-slate-100'
                     }`}
                   >
                     <Laptop className="w-3.5 h-3.5" /> Hybrid
@@ -267,20 +265,20 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
               <div>
                 <input
                   type="text"
-                  placeholder="Optional check-in notes..."
+                  placeholder="Optional check-in notes (e.g. Desk #4)..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1a73e8] font-medium"
+                  className="w-full bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/[0.08] rounded-2xl px-3.5 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#0071e3] font-normal"
                 />
               </div>
 
               <button
                 type="button"
                 onClick={handleCheckIn}
-                className="w-full py-2.5 rounded-full bg-[#1a73e8] hover:bg-[#1557b0] text-white font-semibold text-xs tracking-wide shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+                className="w-full py-2.5 rounded-full bg-[#0071e3] hover:bg-[#0077ed] text-white font-semibold text-xs tracking-wide shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
               >
                 <Play className="w-4 h-4 fill-current" />
-                <span>Clock In</span>
+                <span>Clock In Now</span>
               </button>
             </>
           )}
@@ -290,10 +288,10 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
               <div>
                 <input
                   type="text"
-                  placeholder="Optional shift notes..."
+                  placeholder="Optional wrap-up notes..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#1a73e8] font-medium"
+                  className="w-full bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/[0.08] rounded-2xl px-3.5 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-[#0071e3] font-normal"
                 />
               </div>
 
@@ -303,13 +301,13 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
                 className="w-full py-2.5 rounded-full bg-[#ea4335] hover:bg-[#d93025] text-white font-semibold text-xs tracking-wide shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
               >
                 <Square className="w-4 h-4 fill-current" />
-                <span>Clock Out & End Shift</span>
+                <span>Clock Out & Complete Shift</span>
               </button>
             </>
           )}
 
           {data?.isCheckedOut && (
-            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 text-center text-xs text-emerald-800 dark:text-emerald-300 font-medium">
+            <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-center text-xs text-emerald-800 dark:text-emerald-300 font-medium">
               🎉 Shifts recorded for today. Great job!
             </div>
           )}
