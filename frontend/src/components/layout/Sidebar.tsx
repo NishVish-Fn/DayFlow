@@ -65,11 +65,6 @@ export const Sidebar: React.FC = () => {
       path: '/performance',
       icon: <Target className="w-4 h-4 text-indigo-400" />,
     },
-    {
-      label: 'Skills & Learning',
-      path: '/learning',
-      icon: <GraduationCap className="w-4 h-4 text-[#00f0ff]" />,
-    },
     ...(isAdminOrHr
       ? [
           {

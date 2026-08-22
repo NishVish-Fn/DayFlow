@@ -70,7 +70,6 @@ export const App: React.FC = () => {
               <Route path="payroll" element={<PayrollPage />} />
               <Route path="wellness" element={<WellnessPage />} />
               <Route path="performance" element={<PerformancePage />} />
-              <Route path="learning" element={<LearningPage />} />
               <Route
                 path="risk-radar"
                 element={

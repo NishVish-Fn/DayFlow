@@ -185,13 +185,13 @@ export const DashboardPage: React.FC = () => {
         </button>
 
         <button
-          onClick={() => navigate('/learning')}
+          onClick={() => navigate('/attendance')}
           className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50/40 text-left transition-all group shadow-sm cursor-pointer"
         >
           <div className="flex items-center gap-2 text-blue-600 font-bold text-xs">
-            <GraduationCap className="w-4 h-4" /> Skill Gap Matrix
+            <Clock className="w-4 h-4" /> Live Attendance
           </div>
-          <div className="text-[11px] text-slate-500 mt-1 font-medium">AI Learning & Certifications &rarr;</div>
+          <div className="text-[11px] text-slate-500 mt-1 font-medium">Muster Roll & Geofence &rarr;</div>
         </button>
 
         <button
