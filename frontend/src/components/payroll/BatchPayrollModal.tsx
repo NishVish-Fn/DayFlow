@@ -58,11 +58,11 @@ export const BatchPayrollModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
       <form onSubmit={handleRun} className="space-y-4">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Billing Month</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Billing Month</label>
             <select
               value={month}
               onChange={(e) => setMonth(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
             >
               {monthNames.map((name, i) => (
                 <option key={name} value={i + 1}>
@@ -73,11 +73,11 @@ export const BatchPayrollModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Billing Year</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Billing Year</label>
             <select
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
             >
               <option value={2025}>2025</option>
               <option value={2026}>2026</option>
@@ -87,11 +87,11 @@ export const BatchPayrollModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Department Scope</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">Department Scope</label>
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           >
             <option value="ALL">All Departments (Entire Organization)</option>
             <option value="ENGINEERING">Engineering</option>
@@ -106,20 +106,20 @@ export const BatchPayrollModal: React.FC<Props> = ({ isOpen, onClose, onSuccess 
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Disbursement Notes</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">Disbursement Notes</label>
           <input
             type="text"
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           />
         </div>
 
-        <div className="p-3.5 rounded-xl bg-amber-950/40 border border-amber-500/30 text-xs text-amber-200">
+        <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
           ⚠️ <strong>Financial Notice:</strong> This action creates permanent, auditable payslip records from the latest versioned salary structure and notifies all eligible employees.
         </div>
 
-        <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
           <Button variant="ghost" size="sm" type="button" onClick={onClose} disabled={loading}>
             Cancel
           </Button>

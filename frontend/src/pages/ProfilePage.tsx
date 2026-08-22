@@ -102,17 +102,17 @@ export const ProfilePage: React.FC = () => {
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-white flex items-center gap-2">
-          <User className="w-5 h-5 text-indigo-400" /> Account & Profile Settings
+        <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-display">
+          <User className="w-5 h-5 text-blue-600" /> Account & Profile Settings
         </h2>
-        <p className="text-xs text-slate-400 mt-0.5">
+        <p className="text-xs text-slate-500 mt-0.5">
           View organizational credentials, update contact information, access verified documents, and manage security credentials.
         </p>
       </div>
 
       {/* Main Profile Card */}
-      <div className="bg-slate-900 border border-white/[0.08] rounded-3xl p-6 shadow-xl backdrop-blur-2xl">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-5 border-b border-white/[0.08] pb-6 mb-6">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-5 border-b border-slate-100 pb-6 mb-6">
           <div className="flex items-center gap-4">
             <img
               src={
@@ -120,12 +120,12 @@ export const ProfilePage: React.FC = () => {
                 `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`
               }
               alt="Avatar"
-              className="w-16 h-16 rounded-2xl bg-slate-800 border border-white/[0.1] object-cover"
+              className="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 object-cover"
             />
 
             <div className="text-left">
               <div className="flex flex-wrap items-center gap-2">
-                <h3 className="text-lg font-bold text-white">
+                <h3 className="text-lg font-bold text-slate-900 font-display">
                   {profile?.firstName} {profile?.lastName}
                 </h3>
                 <Badge variant="primary" size="sm">
@@ -135,7 +135,7 @@ export const ProfilePage: React.FC = () => {
                   {user?.role}
                 </Badge>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">{profile?.designation}</p>
+              <p className="text-xs text-slate-600 mt-0.5">{profile?.designation}</p>
               <p className="text-[11px] text-slate-400 mt-0.5">
                 Department of {profile?.department} &bull; Joined {profile?.dateOfJoining ? new Date(profile.dateOfJoining).toLocaleDateString() : '2022'}
               </p>
@@ -151,7 +151,7 @@ export const ProfilePage: React.FC = () => {
               setEmergencyContact(profile?.emergencyContact || '');
               setIsEditing(!isEditing);
             }}
-            leftIcon={<Edit2 className="w-3.5 h-3.5 text-indigo-400" />}
+            leftIcon={<Edit2 className="w-3.5 h-3.5 text-blue-600" />}
           >
             {isEditing ? 'Cancel Editing' : 'Edit Contact Info'}
           </Button>
@@ -162,36 +162,36 @@ export const ProfilePage: React.FC = () => {
           <form onSubmit={handleUpdateInfo} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Phone Number</label>
                 <input
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+1 (555) 019-2831"
-                  className="w-full bg-slate-950 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Emergency Contact</label>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Emergency Contact</label>
                 <input
                   type="text"
                   value={emergencyContact}
                   onChange={(e) => setEmergencyContact(e.target.value)}
                   placeholder="e.g. John Doe (+1 555-019-9999)"
-                  className="w-full bg-slate-950 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Primary Residential Address</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Primary Residential Address</label>
               <input
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="742 Evergreen Terrace, San Francisco, CA"
-                className="w-full bg-slate-950 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
               />
             </div>
 
@@ -207,47 +207,47 @@ export const ProfilePage: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
             <div className="space-y-4">
-              <h4 className="font-bold text-slate-200 uppercase tracking-wider text-[11px] border-b border-white/[0.06] pb-2">
+              <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] border-b border-slate-100 pb-2">
                 Contact & Residency
               </h4>
 
               <div>
-                <span className="text-slate-400 block text-[11px]">Corporate Email Address</span>
-                <span className="font-semibold text-slate-200 flex items-center gap-1.5 mt-0.5">
-                  <Mail className="w-3.5 h-3.5 text-indigo-400" /> {user?.email}
+                <span className="text-slate-500 block text-[11px]">Corporate Email Address</span>
+                <span className="font-bold text-slate-800 flex items-center gap-1.5 mt-0.5">
+                  <Mail className="w-3.5 h-3.5 text-blue-600" /> {user?.email}
                 </span>
               </div>
 
               <div>
-                <span className="text-slate-400 block text-[11px]">Direct Phone Line</span>
-                <span className="font-semibold text-slate-200 flex items-center gap-1.5 mt-0.5">
-                  <Phone className="w-3.5 h-3.5 text-indigo-400" /> {profile?.phone || '+1 (555) 019-2831'}
+                <span className="text-slate-500 block text-[11px]">Direct Phone Line</span>
+                <span className="font-bold text-slate-800 flex items-center gap-1.5 mt-0.5">
+                  <Phone className="w-3.5 h-3.5 text-blue-600" /> {profile?.phone || '+1 (555) 019-2831'}
                 </span>
               </div>
 
               <div>
-                <span className="text-slate-400 block text-[11px]">Primary Address</span>
-                <span className="font-semibold text-slate-200 mt-0.5 block">
+                <span className="text-slate-500 block text-[11px]">Primary Address</span>
+                <span className="font-semibold text-slate-800 mt-0.5 block">
                   {profile?.address || 'San Francisco Bay Area, CA'}
                 </span>
               </div>
             </div>
 
             <div className="space-y-4">
-              <h4 className="font-bold text-slate-200 uppercase tracking-wider text-[11px] border-b border-white/[0.06] pb-2">
+              <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] border-b border-slate-100 pb-2">
                 Organization & Leadership
               </h4>
 
               <div>
-                <span className="text-slate-400 block text-[11px]">Department Division</span>
-                <span className="font-semibold text-slate-200 flex items-center gap-1.5 mt-0.5">
-                  <Building className="w-3.5 h-3.5 text-indigo-400" /> {profile?.department}
+                <span className="text-slate-500 block text-[11px]">Department Division</span>
+                <span className="font-bold text-slate-800 flex items-center gap-1.5 mt-0.5">
+                  <Building className="w-3.5 h-3.5 text-blue-600" /> {profile?.department}
                 </span>
               </div>
 
               <div>
-                <span className="text-slate-400 block text-[11px]">Reporting Manager</span>
-                <span className="font-semibold text-slate-200 mt-0.5 block">
+                <span className="text-slate-500 block text-[11px]">Reporting Manager</span>
+                <span className="font-semibold text-slate-800 mt-0.5 block">
                   {profile?.reportingManager
                     ? `${profile.reportingManager.firstName} ${profile.reportingManager.lastName} (${profile.reportingManager.designation})`
                     : 'Executive Leadership'}
@@ -255,8 +255,8 @@ export const ProfilePage: React.FC = () => {
               </div>
 
               <div>
-                <span className="text-slate-400 block text-[11px]">Emergency Contact</span>
-                <span className="font-semibold text-slate-200 mt-0.5 block">
+                <span className="text-slate-500 block text-[11px]">Emergency Contact</span>
+                <span className="font-semibold text-slate-800 mt-0.5 block">
                   {profile?.emergencyContact || 'Verified on HR Vault'}
                 </span>
               </div>
@@ -266,11 +266,11 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Verified Documents & HR Vault */}
-      <div className="bg-slate-900 border border-white/[0.08] rounded-3xl p-6 shadow-xl backdrop-blur-2xl">
-        <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 mb-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
           <div className="flex items-center gap-2">
-            <FileCheck className="w-4 h-4 text-emerald-400" />
-            <h4 className="text-sm font-bold text-white">Verified HR Documents & Contracts</h4>
+            <FileCheck className="w-4 h-4 text-emerald-600" />
+            <h4 className="text-sm font-bold text-slate-900 font-display">Verified HR Documents & Contracts</h4>
           </div>
           <Badge variant="success" size="sm">Vault Synced</Badge>
         </div>
@@ -279,15 +279,15 @@ export const ProfilePage: React.FC = () => {
           {parsedDocs.map((doc, idx) => (
             <div
               key={idx}
-              className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex items-center justify-between text-xs hover:border-white/[0.12] transition-colors"
+              className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs hover:border-slate-300 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-indigo-500/10 text-indigo-400">
+                <div className="p-2 rounded-xl bg-blue-50 text-blue-600">
                   <FileText className="w-4 h-4" />
                 </div>
                 <div>
-                  <div className="font-semibold text-slate-200">{doc.name}</div>
-                  <div className="text-[10px] text-slate-400">
+                  <div className="font-bold text-slate-800">{doc.name}</div>
+                  <div className="text-[10px] text-slate-500">
                     Category: {doc.type} &bull; Uploaded: {doc.uploadDate}
                   </div>
                 </div>
@@ -302,12 +302,12 @@ export const ProfilePage: React.FC = () => {
       </div>
 
       {/* Security & Password Reset Card */}
-      <div className="bg-slate-900 border border-white/[0.08] rounded-3xl p-6 shadow-xl backdrop-blur-2xl">
-        <div className="flex items-center gap-2 border-b border-white/[0.08] pb-4 mb-4">
-          <Lock className="w-4 h-4 text-indigo-400" />
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <div className="flex items-center gap-2 border-b border-slate-100 pb-4 mb-4">
+          <Lock className="w-4 h-4 text-blue-600" />
           <div>
-            <h4 className="text-sm font-bold text-white">Security & Password Management</h4>
-            <p className="text-[11px] text-slate-400">
+            <h4 className="text-sm font-bold text-slate-900 font-display">Security & Password Management</h4>
+            <p className="text-[11px] text-slate-500">
               Update your account credentials. Passwords are encrypted with Bcrypt Cost 12.
             </p>
           </div>
@@ -315,36 +315,36 @@ export const ProfilePage: React.FC = () => {
 
         <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Current Password</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Current Password</label>
             <input
               type="password"
               required
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              className="w-full bg-slate-950 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">New Password</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">New Password</label>
               <input
                 type="password"
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Confirm Password</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Confirm Password</label>
               <input
                 type="password"
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full bg-slate-950 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
               />
             </div>
           </div>

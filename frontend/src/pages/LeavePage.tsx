@@ -12,8 +12,6 @@ import {
   ShieldCheck,
   PlusCircle,
   Clock,
-  CheckCircle2,
-  XCircle,
   Ban,
 } from 'lucide-react';
 import { LeaveBalance, LeaveRequest, LeaveType } from '../types';
@@ -110,10 +108,10 @@ export const LeavePage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <CalendarCheck className="w-5 h-5 text-indigo-400" /> Leave Management
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-display">
+            <CalendarCheck className="w-5 h-5 text-blue-600" /> Leave Management
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Annual quota allocations, employee requests, and managerial approval workflows.
           </p>
         </div>
@@ -130,13 +128,13 @@ export const LeavePage: React.FC = () => {
 
       {/* Tabs */}
       {isAdminOrHr && (
-        <div className="flex border-b border-slate-800 gap-4">
+        <div className="flex border-b border-slate-200 gap-4">
           <button
             onClick={() => setActiveTab('admin-approvals')}
-            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors ${
+            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
               activeTab === 'admin-approvals'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
             <ShieldCheck className="w-4 h-4" /> Managerial Approval Queue
@@ -144,10 +142,10 @@ export const LeavePage: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('my-leaves')}
-            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors ${
+            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
               activeTab === 'my-leaves'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
             <Calendar className="w-4 h-4" /> My Personal Leave Quotas
@@ -159,16 +157,16 @@ export const LeavePage: React.FC = () => {
       {activeTab === 'admin-approvals' && isAdminOrHr && (
         <div className="space-y-6">
           {/* Status Filter */}
-          <div className="flex items-center justify-between bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm">
+          <div className="flex items-center justify-between bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
             <div className="flex gap-2">
               {['PENDING', 'APPROVED', 'REJECTED', 'ALL'].map((st) => (
                 <button
                   key={st}
                   onClick={() => setAdminStatusFilter(st)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                     adminStatusFilter === st
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                      : 'bg-slate-800 text-slate-400 hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-sm shadow-blue-600/30'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                   }`}
                 >
                   {st === 'ALL' ? 'All Applications' : st}
@@ -176,16 +174,16 @@ export const LeavePage: React.FC = () => {
               ))}
             </div>
 
-            <span className="text-xs text-slate-400">
+            <span className="text-xs font-semibold text-slate-500">
               {adminRequests.length} applications in queue
             </span>
           </div>
 
           {/* Queue Table */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950/60 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
                   <tr>
                     <th className="py-3.5 px-4">Applicant</th>
                     <th className="py-3.5 px-4">Leave Type</th>
@@ -195,22 +193,22 @@ export const LeavePage: React.FC = () => {
                     <th className="py-3.5 px-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-slate-500">
+                      <td colSpan={6} className="py-12 text-center text-slate-400">
                         Loading requests queue...
                       </td>
                     </tr>
                   ) : adminRequests.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center text-slate-500">
+                      <td colSpan={6} className="py-12 text-center text-slate-400">
                         No leave applications found matching filter criteria.
                       </td>
                     </tr>
                   ) : (
                     adminRequests.map((req) => (
-                      <tr key={req.id} className="hover:bg-slate-800/40 transition-colors">
+                      <tr key={req.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-3.5 px-4">
                           <div className="flex items-center gap-2.5">
                             <img
@@ -219,13 +217,13 @@ export const LeavePage: React.FC = () => {
                                 `https://api.dicebear.com/7.x/avataaars/svg?seed=${req.employee?.firstName}`
                               }
                               alt="Avatar"
-                              className="w-7 h-7 rounded-full bg-slate-800 border border-slate-700"
+                              className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200"
                             />
                             <div>
-                              <div className="font-bold text-slate-100">
+                              <div className="font-bold text-slate-900">
                                 {req.employee?.firstName} {req.employee?.lastName}
                               </div>
-                              <div className="text-[10px] text-slate-400">
+                              <div className="text-[10px] text-slate-500 font-medium">
                                 {req.employee?.department} &bull; {req.employee?.designation}
                               </div>
                             </div>
@@ -233,22 +231,22 @@ export const LeavePage: React.FC = () => {
                         </td>
 
                         <td className="py-3.5 px-4">
-                          <span className="font-semibold text-slate-200">{req.leaveType?.name}</span>
-                          <span className="text-[10px] text-indigo-400 block font-mono">
+                          <span className="font-bold text-slate-800">{req.leaveType?.name}</span>
+                          <span className="text-[10px] text-blue-600 block font-mono font-semibold">
                             {req.leaveType?.code}
                           </span>
                         </td>
 
                         <td className="py-3.5 px-4">
-                          <div className="font-semibold text-slate-200">
+                          <div className="font-bold text-slate-900">
                             {new Date(req.startDate).toLocaleDateString()} &rarr; {new Date(req.endDate).toLocaleDateString()}
                           </div>
-                          <div className="text-[10px] text-indigo-300 font-mono mt-0.5">
+                          <div className="text-[10px] text-blue-700 font-mono mt-0.5 font-bold">
                             {req.totalDays} Day(s)
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 max-w-xs truncate text-slate-300">
+                        <td className="py-3.5 px-4 max-w-xs truncate text-slate-600">
                           {req.reason}
                         </td>
 
@@ -269,7 +267,7 @@ export const LeavePage: React.FC = () => {
                               Review & Decision
                             </Button>
                           ) : (
-                            <span className="text-[11px] text-slate-500 italic">
+                            <span className="text-[11px] text-slate-400 italic">
                               Reviewed on {req.reviewedAt ? new Date(req.reviewedAt).toLocaleDateString() : 'N/A'}
                             </span>
                           )}
@@ -295,16 +293,16 @@ export const LeavePage: React.FC = () => {
           </div>
 
           {/* My Applications History */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg p-5">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Clock className="w-4 h-4 text-indigo-400" /> My Leave Application History
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm p-5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-blue-600" /> My Leave Application History
               </h3>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950/60 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
                   <tr>
                     <th className="py-3 px-4">Category</th>
                     <th className="py-3 px-4">Dates</th>
@@ -314,33 +312,33 @@ export const LeavePage: React.FC = () => {
                     <th className="py-3 px-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-slate-100">
                   {myRequests.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-slate-500">
+                      <td colSpan={6} className="py-8 text-center text-slate-400">
                         You have not submitted any leave requests.
                       </td>
                     </tr>
                   ) : (
                     myRequests.map((req) => (
-                      <tr key={req.id} className="hover:bg-slate-800/40 transition-colors">
-                        <td className="py-3.5 px-4 font-semibold text-slate-200">
+                      <tr key={req.id} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="py-3.5 px-4 font-bold text-slate-800">
                           {req.leaveType?.name}
                         </td>
-                        <td className="py-3.5 px-4">
+                        <td className="py-3.5 px-4 font-medium text-slate-700">
                           {new Date(req.startDate).toLocaleDateString()} &rarr; {new Date(req.endDate).toLocaleDateString()}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-indigo-300 font-mono">
+                        <td className="py-3.5 px-4 font-bold text-blue-700 font-mono">
                           {req.totalDays} Day(s)
                         </td>
-                        <td className="py-3.5 px-4 max-w-xs truncate text-slate-400">
+                        <td className="py-3.5 px-4 max-w-xs truncate text-slate-600">
                           {req.reason}
                         </td>
                         <td className="py-3.5 px-4">
                           <div>
                             {getStatusBadge(req.status)}
                             {req.adminRemarks && (
-                              <div className="text-[10px] text-slate-400 italic mt-0.5">
+                              <div className="text-[10px] text-slate-500 italic mt-0.5">
                                 Note: "{req.adminRemarks}"
                               </div>
                             )}
@@ -351,14 +349,14 @@ export const LeavePage: React.FC = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="text-rose-400 hover:text-rose-300"
+                              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50"
                               onClick={() => handleCancelRequest(req.id)}
                               leftIcon={<Ban className="w-3.5 h-3.5" />}
                             >
                               Cancel Request
                             </Button>
                           ) : (
-                            <span className="text-[11px] text-slate-500">—</span>
+                            <span className="text-[11px] text-slate-400">—</span>
                           )}
                         </td>
                       </tr>

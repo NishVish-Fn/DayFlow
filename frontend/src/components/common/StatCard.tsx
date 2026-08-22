@@ -7,9 +7,9 @@ interface StatCardProps {
   icon: React.ReactNode;
   trend?: {
     value: string;
-    isPositive?: boolean;
+    isPositive: boolean;
   };
-  variant?: 'indigo' | 'emerald' | 'amber' | 'rose' | 'purple' | 'cyan';
+  variant?: 'indigo' | 'emerald' | 'amber' | 'purple' | 'blue';
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -18,36 +18,47 @@ export const StatCard: React.FC<StatCardProps> = ({
   subtitle,
   icon,
   trend,
-  variant = 'indigo',
+  variant = 'blue',
 }) => {
-  const glowColors = {
-    indigo: 'from-indigo-500/10 to-transparent border-indigo-500/20 text-indigo-400',
-    emerald: 'from-emerald-500/10 to-transparent border-emerald-500/20 text-emerald-400',
-    amber: 'from-amber-500/10 to-transparent border-amber-500/20 text-amber-400',
-    rose: 'from-rose-500/10 to-transparent border-rose-500/20 text-rose-400',
-    purple: 'from-purple-500/10 to-transparent border-purple-500/20 text-purple-400',
-    cyan: 'from-cyan-500/10 to-transparent border-cyan-500/20 text-cyan-400',
+  const iconVariants = {
+    blue: 'bg-blue-50 text-blue-600 border-blue-100',
+    indigo: 'bg-indigo-50 text-indigo-600 border-indigo-100',
+    emerald: 'bg-emerald-50 text-emerald-600 border-emerald-100',
+    amber: 'bg-amber-50 text-amber-600 border-amber-100',
+    purple: 'bg-purple-50 text-purple-600 border-purple-100',
   };
 
   return (
-    <div className={`relative overflow-hidden bg-slate-900/90 border rounded-2xl p-5 bg-gradient-to-br ${glowColors[variant]} shadow-lg`}>
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{title}</span>
-        <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/50">{icon}</div>
-      </div>
-      <div className="mt-3 flex items-baseline gap-2">
-        <span className="text-2xl lg:text-3xl font-extrabold text-white tracking-tight">{value}</span>
-        {trend && (
-          <span
-            className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-              trend.isPositive ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
-            }`}
-          >
-            {trend.value}
+    <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow">
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
+            {title}
           </span>
-        )}
+          <div className="text-2xl font-extrabold text-slate-900 font-sans tracking-tight">
+            {value}
+          </div>
+        </div>
+
+        <div className={`p-2.5 rounded-xl border ${iconVariants[variant]} shadow-sm`}>
+          {icon}
+        </div>
       </div>
-      {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
+
+      {(subtitle || trend) && (
+        <div className="mt-3 flex items-center justify-between text-xs pt-3 border-t border-slate-100">
+          {subtitle && <span className="text-slate-500 text-[11px]">{subtitle}</span>}
+          {trend && (
+            <span
+              className={`font-bold text-[11px] ${
+                trend.isPositive ? 'text-emerald-600' : 'text-rose-600'
+              }`}
+            >
+              {trend.isPositive ? '↑' : '↓'} {trend.value}
+            </span>
+          )}
+        </div>
+      )}
     </div>
   );
 };

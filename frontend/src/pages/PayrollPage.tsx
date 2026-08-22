@@ -10,11 +10,7 @@ import {
   CreditCard,
   FileText,
   PlayCircle,
-  Download,
-  Building2,
   Filter,
-  DollarSign,
-  Printer,
   ShieldCheck,
 } from 'lucide-react';
 import { PayrollRecord, SalaryStructure } from '../types';
@@ -95,10 +91,10 @@ export const PayrollPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-indigo-400" /> Payroll & Compensation Engine
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-display">
+            <CreditCard className="w-5 h-5 text-blue-600" /> Payroll & Compensation Engine
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Auditable salary versioning, automated monthly batch disbursements, and downloadable payslips.
           </p>
         </div>
@@ -117,13 +113,13 @@ export const PayrollPage: React.FC = () => {
 
       {/* Tabs */}
       {isAdminOrHr && (
-        <div className="flex border-b border-slate-800 gap-4">
+        <div className="flex border-b border-slate-200 gap-4">
           <button
             onClick={() => setActiveTab('admin-payroll')}
-            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors ${
+            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
               activeTab === 'admin-payroll'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
             <ShieldCheck className="w-4 h-4" /> Organization Payroll Ledger
@@ -131,10 +127,10 @@ export const PayrollPage: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('my-payslips')}
-            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors ${
+            className={`flex items-center gap-2 py-3 text-xs font-bold border-b-2 transition-colors cursor-pointer ${
               activeTab === 'my-payslips'
-                ? 'border-indigo-500 text-indigo-400'
-                : 'border-transparent text-slate-400 hover:text-slate-200'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-slate-500 hover:text-slate-800'
             }`}
           >
             <CreditCard className="w-4 h-4" /> My Personal Payslips & Salary
@@ -146,13 +142,13 @@ export const PayrollPage: React.FC = () => {
       {activeTab === 'admin-payroll' && isAdminOrHr && (
         <div className="space-y-6">
           {/* Filter Bar */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <Filter className="w-4 h-4 text-indigo-400" />
+              <Filter className="w-4 h-4 text-blue-600" />
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(parseInt(e.target.value, 10))}
-                className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:border-blue-600"
               >
                 {monthNames.map((name, i) => (
                   <option key={name} value={i + 1}>
@@ -164,7 +160,7 @@ export const PayrollPage: React.FC = () => {
               <select
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(parseInt(e.target.value, 10))}
-                className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:border-blue-600"
               >
                 <option value={2025}>2025</option>
                 <option value={2026}>2026</option>
@@ -176,7 +172,7 @@ export const PayrollPage: React.FC = () => {
               <select
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
-                className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 font-medium focus:outline-none focus:border-blue-600"
               >
                 <option value="ALL">All Departments</option>
                 <option value="ENGINEERING">Engineering</option>
@@ -192,10 +188,10 @@ export const PayrollPage: React.FC = () => {
           </div>
 
           {/* Payslips Table */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950/60 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
                   <tr>
                     <th className="py-3.5 px-4">Employee</th>
                     <th className="py-3.5 px-4">Cycle</th>
@@ -206,50 +202,50 @@ export const PayrollPage: React.FC = () => {
                     <th className="py-3.5 px-4 text-right">Receipt</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="py-12 text-center text-slate-500">
+                      <td colSpan={7} className="py-12 text-center text-slate-400">
                         Loading payroll ledger...
                       </td>
                     </tr>
                   ) : adminPayslips.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="py-12 text-center text-slate-500">
+                      <td colSpan={7} className="py-12 text-center text-slate-400">
                         No payslip records found for this billing cycle. Run a batch payroll above!
                       </td>
                     </tr>
                   ) : (
                     adminPayslips.map((p) => (
-                      <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
+                      <tr key={p.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-3.5 px-4">
-                          <div className="font-bold text-slate-100">
+                          <div className="font-bold text-slate-900">
                             {p.employee?.firstName} {p.employee?.lastName}
                           </div>
-                          <div className="text-[10px] text-slate-400">
+                          <div className="text-[10px] text-slate-500">
                             {p.employee?.department} &bull; {p.employee?.user?.employeeId}
                           </div>
                         </td>
 
-                        <td className="py-3.5 px-4 font-semibold text-slate-200">
+                        <td className="py-3.5 px-4 font-semibold text-slate-700">
                           {monthNames[p.month - 1]} {p.year}
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono font-semibold text-emerald-400">
+                        <td className="py-3.5 px-4 font-mono font-bold text-emerald-700">
                           ${p.grossAmount.toLocaleString()}
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono text-rose-400">
+                        <td className="py-3.5 px-4 font-mono text-rose-600 font-medium">
                           -${(p.grossAmount - p.netAmount).toLocaleString()}
                         </td>
 
-                        <td className="py-3.5 px-4 font-mono font-black text-indigo-300 text-sm">
+                        <td className="py-3.5 px-4 font-mono font-extrabold text-blue-700 text-sm">
                           ${p.netAmount.toLocaleString()}
                         </td>
 
                         <td className="py-3.5 px-4">
                           <Badge variant="success" size="sm">{p.status}</Badge>
-                          <div className="text-[10px] text-slate-500 font-mono mt-0.5">
+                          <div className="text-[10px] text-slate-400 font-mono mt-0.5">
                             {p.transactionReference || 'ACH-DIRECT'}
                           </div>
                         </td>
@@ -262,7 +258,7 @@ export const PayrollPage: React.FC = () => {
                               setSelectedPayslip(p);
                               setIsPayslipOpen(true);
                             }}
-                            leftIcon={<FileText className="w-3.5 h-3.5 text-indigo-400" />}
+                            leftIcon={<FileText className="w-3.5 h-3.5 text-blue-600" />}
                           >
                             View Slip
                           </Button>
@@ -284,16 +280,16 @@ export const PayrollPage: React.FC = () => {
           <SalaryBreakdownCard structure={mySalaryStructure} />
 
           {/* Historical Payslips Archive */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg p-5">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <FileText className="w-4 h-4 text-indigo-400" /> Historical Payslips Archive
+          <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm p-5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2 font-display">
+                <FileText className="w-4 h-4 text-blue-600" /> Historical Payslips Archive
               </h3>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-950/60 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
                   <tr>
                     <th className="py-3 px-4">Period</th>
                     <th className="py-3 px-4">Gross Salary</th>
@@ -303,29 +299,29 @@ export const PayrollPage: React.FC = () => {
                     <th className="py-3 px-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-slate-100">
                   {myPayslips.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-8 text-center text-slate-500">
+                      <td colSpan={6} className="py-8 text-center text-slate-400">
                         No payslips found in your archive.
                       </td>
                     </tr>
                   ) : (
                     myPayslips.map((p) => (
-                      <tr key={p.id} className="hover:bg-slate-800/40 transition-colors">
-                        <td className="py-3.5 px-4 font-bold text-slate-100">
+                      <tr key={p.id} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="py-3.5 px-4 font-bold text-slate-900">
                           {monthNames[p.month - 1]} {p.year}
                         </td>
-                        <td className="py-3.5 px-4 font-mono text-emerald-400 font-semibold">
+                        <td className="py-3.5 px-4 font-mono text-emerald-700 font-bold">
                           ${p.grossAmount.toLocaleString()}
                         </td>
-                        <td className="py-3.5 px-4 font-mono text-rose-400">
+                        <td className="py-3.5 px-4 font-mono text-rose-600 font-medium">
                           -${(p.grossAmount - p.netAmount).toLocaleString()}
                         </td>
-                        <td className="py-3.5 px-4 font-mono font-black text-indigo-300 text-sm">
+                        <td className="py-3.5 px-4 font-mono font-extrabold text-blue-700 text-sm">
                           ${p.netAmount.toLocaleString()}
                         </td>
-                        <td className="py-3.5 px-4 text-slate-300">
+                        <td className="py-3.5 px-4 text-slate-600">
                           {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : 'Pending'}
                         </td>
                         <td className="py-3.5 px-4 text-right">
@@ -336,7 +332,7 @@ export const PayrollPage: React.FC = () => {
                               setSelectedPayslip({ ...p, employee: user?.profile });
                               setIsPayslipOpen(true);
                             }}
-                            leftIcon={<FileText className="w-3.5 h-3.5 text-indigo-400" />}
+                            leftIcon={<FileText className="w-3.5 h-3.5 text-blue-600" />}
                           >
                             View & Print PDF
                           </Button>

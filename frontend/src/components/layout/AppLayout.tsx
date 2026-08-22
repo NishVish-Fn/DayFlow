@@ -5,14 +5,15 @@ import { Navbar } from './Navbar';
 
 export const AppLayout: React.FC = () => {
   return (
-    <div className="flex min-h-screen bg-slate-950 text-slate-100">
-      {/* Sidebar */}
+    <div className="flex min-h-screen bg-[#f7f9fb] font-sans antialiased text-[#191c1e]">
+      {/* Sidebar Navigation */}
       <Sidebar />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         <Navbar />
-        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto overflow-y-auto">
+
+        <main className="flex-1 p-6 sm:p-8 max-w-7xl w-full mx-auto">
           <Outlet />
         </main>
       </div>

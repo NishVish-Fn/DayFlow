@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Lock, Mail, ArrowRight, User, Building, BadgeCheck, Shield } from 'lucide-react';
+import {
+  Zap,
+  Lock,
+  Mail,
+  ArrowRight,
+  User,
+  Building2,
+  ShieldCheck,
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Sparkles,
+  Users,
+  CreditCard,
+  Clock,
+  Briefcase,
+} from 'lucide-react';
 import { Button } from '../components/common/Button';
 
 export const LoginPage: React.FC = () => {
@@ -10,6 +26,7 @@ export const LoginPage: React.FC = () => {
   // Sign In State
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Sign Up State
   const [firstName, setFirstName] = useState('');
@@ -31,7 +48,7 @@ export const LoginPage: React.FC = () => {
       await login(identifier, password);
       navigate('/');
     } catch (error) {
-      // Handled in context
+      // Handled in context toast
     } finally {
       setLoading(false);
     }
@@ -52,219 +69,372 @@ export const LoginPage: React.FC = () => {
       });
       navigate('/');
     } catch (error) {
-      // Handled in context
+      // Handled in context toast
     } finally {
       setLoading(false);
     }
   };
 
+  const setQuickFill = (roleEmail: string, roleBadge: string) => {
+    setMode('signin');
+    setIdentifier(roleEmail);
+    setPassword('Password@123');
+  };
+
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-6 relative selection:bg-indigo-500 selection:text-white">
-      {/* Subtle Background Glow */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-indigo-600/10 rounded-full blur-[140px] pointer-events-none" />
+    <div className="min-h-screen bg-[#f7f9fb] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-sans selection:bg-blue-600 selection:text-white">
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-12 bg-white rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden min-h-[640px]">
+        
+        {/* ================================================================= */}
+        {/* LEFT HERO & CORPORATE SHOWCASE PANEL (Google / Microsoft 365 vibe) */}
+        {/* ================================================================= */}
+        <div className="lg:col-span-6 bg-gradient-to-br from-slate-900 via-[#0f172a] to-[#1e3a8a] p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden text-white">
+          {/* Subtle Geometric Background Elements */}
+          <div className="absolute top-0 right-0 -mr-16 -mt-16 w-80 h-80 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-80 h-80 rounded-full bg-indigo-500/10 blur-3xl pointer-events-none" />
 
-      {/* Main Container */}
-      <div className="max-w-md w-full z-10 space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-white shadow-2xl backdrop-blur-xl">
-            <Zap className="w-6 h-6 fill-indigo-400 text-indigo-400" />
+          {/* Top Brand Header */}
+          <div className="relative z-10 space-y-3">
+            <div className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/15 backdrop-blur-md">
+              <div className="w-6 h-6 rounded-lg bg-blue-500 flex items-center justify-center text-white shadow-sm">
+                <Zap className="w-3.5 h-3.5 fill-current" />
+              </div>
+              <span className="text-xs font-bold tracking-wide uppercase text-blue-200">
+                Dayflow HRMS &bull; Enterprise 2.0
+              </span>
+            </div>
+
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white font-display leading-tight">
+              Workforce intelligence, <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 via-indigo-200 to-sky-300">
+                simplified & auditable.
+              </span>
+            </h1>
+
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-md">
+              A unified operating system for real-time punch clock attendance, auditable versioned payroll, annual leave quotas, and biometric workforce governance.
+            </p>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white font-sans">
-            Dayflow
-          </h1>
-          <p className="text-xs text-slate-400">
-            Enterprise Workforce & People Operations Platform
-          </p>
+
+          {/* Center Interactive Live Pulse Cards */}
+          <div className="my-8 space-y-3 relative z-10">
+            <div className="p-4 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300">
+                  <Clock className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Live Attendance & Punch Clock</div>
+                  <div className="text-[11px] text-slate-300">Compound unique constraints &bull; 0% duplicate entries</div>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-[10px] font-bold uppercase">
+                Active
+              </span>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-white/10 border border-white/15 backdrop-blur-md flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-blue-300">
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-white">Versioned Salary Architecture</div>
+                  <div className="text-[11px] text-slate-300">Immutable revisions &bull; 1-click HTML/PDF payslips</div>
+                </div>
+              </div>
+              <span className="px-2.5 py-1 rounded-lg bg-blue-500/20 text-blue-300 text-[10px] font-bold uppercase">
+                Audited
+              </span>
+            </div>
+          </div>
+
+          {/* Bottom Trust & Compliance Footer */}
+          <div className="relative z-10 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-300">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-blue-400" />
+              <span>Bcrypt Cost 12 &bull; JWT Token Rotation</span>
+            </div>
+            <div className="flex items-center gap-1 text-[11px] text-slate-400">
+              <span>PostgreSQL Normalized 3NF</span>
+            </div>
+          </div>
         </div>
 
-        {/* Segmented Control (Sign In / Sign Up) */}
-        <div className="flex p-1 rounded-2xl bg-white/[0.03] border border-white/[0.08] backdrop-blur-xl">
-          <button
-            type="button"
-            onClick={() => setMode('signin')}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
-              mode === 'signin'
-                ? 'bg-white/[0.08] text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Sign In
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('signup')}
-            className={`flex-1 py-2 text-xs font-semibold rounded-xl transition-all ${
-              mode === 'signup'
-                ? 'bg-white/[0.08] text-white shadow-sm'
-                : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Create Account
-          </button>
-        </div>
-
-        {/* Form Container */}
-        <div className="bg-white/[0.02] border border-white/[0.08] rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-2xl">
-          {mode === 'signin' ? (
-            <form onSubmit={handleSignIn} className="space-y-4">
+        {/* ================================================================= */}
+        {/* RIGHT AUTH CARD (Microsoft / Google Modern Clean Design) */}
+        {/* ================================================================= */}
+        <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-between bg-white">
+          <div className="space-y-6">
+            
+            {/* Top Switcher Segmented Control */}
+            <div className="flex items-center justify-between">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                  Corporate Email or Badge ID
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <h2 className="text-xl font-bold text-slate-900 tracking-tight font-display">
+                  {mode === 'signin' ? 'Sign in to your workplace' : 'Create new corporate profile'}
+                </h2>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {mode === 'signin' ? 'Access your employee portal and dashboard' : 'Join your organization on Dayflow'}
+                </p>
+              </div>
+
+              {/* Segmented Pill */}
+              <div className="flex p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setMode('signin')}
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                    mode === 'signin'
+                      ? 'bg-white text-blue-700 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode('signup')}
+                  className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                    mode === 'signup'
+                      ? 'bg-white text-blue-700 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Register
+                </button>
+              </div>
+            </div>
+
+            {/* FORM: SIGN IN */}
+            {mode === 'signin' && (
+              <form onSubmit={handleSignIn} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    Corporate Email or Badge ID
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                    <input
+                      type="text"
+                      required
+                      value={identifier}
+                      onChange={(e) => setIdentifier(e.target.value)}
+                      placeholder="e.g. admin@dayflow.internal or EMP-0001"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3.5 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all font-medium"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-700">Password</label>
+                    <span className="text-[11px] text-blue-600 hover:text-blue-700 cursor-pointer font-medium">
+                      Forgot Password?
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      required
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••••••"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-10 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition-all font-medium"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 text-slate-400 hover:text-slate-600"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-slate-600 pt-1">
+                  <label className="flex items-center gap-2 cursor-pointer select-none">
+                    <input type="checkbox" defaultChecked className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                    <span>Remember this device</span>
+                  </label>
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-600/20"
+                  isLoading={loading}
+                  rightIcon={<ArrowRight className="w-4 h-4" />}
+                >
+                  Sign In to Dayflow
+                </Button>
+              </form>
+            )}
+
+            {/* FORM: REGISTER / SIGN UP */}
+            {mode === 'signup' && (
+              <form onSubmit={handleSignUp} className="space-y-3.5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">First Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="Alex"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Last Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={lastName}
+                      onChange={(e) => setLastName(e.target.value)}
+                      placeholder="Chen"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Corporate Email</label>
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@dayflow.internal"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Staff Badge ID</label>
+                    <input
+                      type="text"
+                      required
+                      value={employeeId}
+                      onChange={(e) => setEmployeeId(e.target.value)}
+                      placeholder="EMP-1008"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-700 mb-1">Department</label>
+                    <select
+                      value={department}
+                      onChange={(e) => setDepartment(e.target.value)}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
+                    >
+                      <option value="ENGINEERING">Engineering</option>
+                      <option value="PRODUCT">Product</option>
+                      <option value="DESIGN">Design</option>
+                      <option value="HUMAN_RESOURCES">Human Resources</option>
+                      <option value="MARKETING">Marketing</option>
+                      <option value="SALES">Sales</option>
+                      <option value="FINANCE">Finance</option>
+                      <option value="OPERATIONS">Operations</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Designation</label>
                   <input
                     type="text"
                     required
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="e.g. alex.chen@dayflow.internal or EMP-1001"
-                    className="w-full bg-slate-900/80 border border-white/[0.08] rounded-2xl pl-10 pr-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/40 transition-all"
+                    value={designation}
+                    onChange={(e) => setDesignation(e.target.value)}
+                    placeholder="e.g. Senior Software Engineer"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                  Password
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">Password</label>
                   <input
                     type="password"
                     required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••••••"
-                    className="w-full bg-slate-900/80 border border-white/[0.08] rounded-2xl pl-10 pr-3.5 py-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500/60 focus:ring-1 focus:ring-indigo-500/40 transition-all"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    placeholder="Min 8 chars, 1 uppercase, 1 number"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
                   />
                 </div>
-              </div>
 
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                className="w-full mt-2 rounded-2xl"
-                isLoading={loading}
-                rightIcon={<ArrowRight className="w-4 h-4" />}
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  className="w-full rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md shadow-blue-600/20 mt-1"
+                  isLoading={loading}
+                  rightIcon={<ArrowRight className="w-4 h-4" />}
+                >
+                  Create Corporate Account
+                </Button>
+              </form>
+            )}
+          </div>
+
+          {/* Quick-Fill Persona Selector (Convenience for testing) */}
+          <div className="pt-6 border-t border-slate-100 mt-6 space-y-2">
+            <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              <span>Quick Test Personas (1-Click Fill)</span>
+              <span className="font-normal lowercase text-slate-400">pwd: Password@123</span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button
+                type="button"
+                onClick={() => setQuickFill('admin@dayflow.internal', 'EMP-0001')}
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all group"
               >
-                Sign In
-              </Button>
-            </form>
-          ) : (
-            <form onSubmit={handleSignUp} className="space-y-3.5">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">First Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Alex"
-                    className="w-full bg-slate-900/80 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/60"
-                  />
+                <div className="font-bold text-[11px] text-slate-800 group-hover:text-blue-700 flex items-center gap-1">
+                  👑 Admin
                 </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Last Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Chen"
-                    className="w-full bg-slate-900/80 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/60"
-                  />
-                </div>
-              </div>
+                <div className="text-[10px] text-slate-500 truncate">Sarah Connor</div>
+              </button>
 
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Corporate Email</label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@dayflow.internal"
-                  className="w-full bg-slate-900/80 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/60"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Staff Badge ID</label>
-                  <input
-                    type="text"
-                    required
-                    value={employeeId}
-                    onChange={(e) => setEmployeeId(e.target.value)}
-                    placeholder="EMP-1008"
-                    className="w-full bg-slate-900/80 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/60"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1">Department</label>
-                  <select
-                    value={department}
-                    onChange={(e) => setDepartment(e.target.value)}
-                    className="w-full bg-slate-900/80 border border-white/[0.08] rounded-xl px-2.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/60"
-                  >
-                    <option value="ENGINEERING">Engineering</option>
-                    <option value="PRODUCT">Product</option>
-                    <option value="DESIGN">Design</option>
-                    <option value="HUMAN_RESOURCES">Human Resources</option>
-                    <option value="MARKETING">Marketing</option>
-                    <option value="SALES">Sales</option>
-                    <option value="FINANCE">Finance</option>
-                    <option value="OPERATIONS">Operations</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Designation</label>
-                <input
-                  type="text"
-                  required
-                  value={designation}
-                  onChange={(e) => setDesignation(e.target.value)}
-                  placeholder="e.g. Senior Software Engineer"
-                  className="w-full bg-slate-900/80 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/60"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">Password</label>
-                <input
-                  type="password"
-                  required
-                  value={signupPassword}
-                  onChange={(e) => setSignupPassword(e.target.value)}
-                  placeholder="Min 8 chars, 1 uppercase, 1 number"
-                  className="w-full bg-slate-900/80 border border-white/[0.08] rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500/60"
-                />
-              </div>
-
-              <Button
-                type="submit"
-                variant="primary"
-                size="lg"
-                className="w-full mt-3 rounded-2xl"
-                isLoading={loading}
-                rightIcon={<ArrowRight className="w-4 h-4" />}
+              <button
+                type="button"
+                onClick={() => setQuickFill('hr@dayflow.internal', 'EMP-0002')}
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all group"
               >
-                Create Account & Join
-              </Button>
-            </form>
-          )}
-        </div>
+                <div className="font-bold text-[11px] text-slate-800 group-hover:text-blue-700 flex items-center gap-1">
+                  💼 HR Lead
+                </div>
+                <div className="text-[10px] text-slate-500 truncate">Marcus Vance</div>
+              </button>
 
-        {/* Footer Security Note */}
-        <div className="text-center text-[11px] text-slate-500 flex items-center justify-center gap-1.5">
-          <Shield className="w-3.5 h-3.5 text-slate-600" />
-          <span>Encrypted with SHA-256 and Bcrypt Cost 12</span>
+              <button
+                type="button"
+                onClick={() => setQuickFill('alex.chen@dayflow.internal', 'EMP-1001')}
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all group"
+              >
+                <div className="font-bold text-[11px] text-slate-800 group-hover:text-blue-700 flex items-center gap-1">
+                  💻 Engineer
+                </div>
+                <div className="text-[10px] text-slate-500 truncate">Alex Chen</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setQuickFill('elena.rodriguez@dayflow.internal', 'EMP-1002')}
+                className="p-2 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-left transition-all group"
+              >
+                <div className="font-bold text-[11px] text-slate-800 group-hover:text-blue-700 flex items-center gap-1">
+                  🎨 Designer
+                </div>
+                <div className="text-[10px] text-slate-500 truncate">Elena Rodriguez</div>
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

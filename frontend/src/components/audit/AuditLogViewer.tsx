@@ -30,30 +30,30 @@ export const AuditLogViewer: React.FC<{ logs: AuditLog[] }> = ({ logs }) => {
         return (
           <div
             key={log.id}
-            className="bg-slate-900/80 border border-slate-800 rounded-xl p-4 shadow-sm hover:border-slate-700 transition-all text-xs"
+            className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-slate-300 transition-all text-xs"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-slate-800 text-slate-300">
-                  <Shield className="w-4 h-4 text-indigo-400" />
+                <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
+                  <Shield className="w-4 h-4" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-100">{log.action}</span>
+                    <span className="font-bold text-slate-900">{log.action}</span>
                     <Badge variant={getActionBadgeVariant(log.action)} size="sm">
                       {log.resourceType}
                     </Badge>
                   </div>
-                  <div className="flex items-center gap-3 text-[11px] text-slate-400 mt-1">
+                  <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-1">
                     <span className="flex items-center gap-1">
-                      <User className="w-3 h-3 text-slate-500" /> {log.userEmail || 'System / Anonymous'}
+                      <User className="w-3 h-3 text-slate-400" /> {log.userEmail || 'System / Anonymous'}
                     </span>
                     <span className="flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-slate-500" /> {new Date(log.createdAt).toLocaleString()}
+                      <Clock className="w-3 h-3 text-slate-400" /> {new Date(log.createdAt).toLocaleString()}
                     </span>
                     {log.ipAddress && (
                       <span className="flex items-center gap-1">
-                        <Globe className="w-3 h-3 text-slate-500" /> {log.ipAddress}
+                        <Globe className="w-3 h-3 text-slate-400" /> {log.ipAddress}
                       </span>
                     )}
                   </div>
@@ -63,7 +63,7 @@ export const AuditLogViewer: React.FC<{ logs: AuditLog[] }> = ({ logs }) => {
               {parsedDiff && (
                 <button
                   onClick={() => setExpandedId(isExpanded ? null : log.id)}
-                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 transition-colors text-[11px]"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 transition-colors text-[11px] font-semibold border border-slate-200 cursor-pointer"
                 >
                   {isExpanded ? 'Hide Payload Diff' : 'View Payload Diff'}
                   {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -73,11 +73,11 @@ export const AuditLogViewer: React.FC<{ logs: AuditLog[] }> = ({ logs }) => {
 
             {/* Expandable JSON Diff */}
             {isExpanded && parsedDiff && (
-              <div className="mt-3 pt-3 border-t border-slate-800/80">
-                <div className="text-[10px] uppercase font-bold text-slate-400 mb-1.5">
+              <div className="mt-3 pt-3 border-t border-slate-100">
+                <div className="text-[10px] uppercase font-bold text-slate-500 mb-1.5">
                   State Mutation Snapshot (JSON Diff):
                 </div>
-                <pre className="bg-slate-950 p-3 rounded-lg border border-slate-800 text-indigo-300 font-mono text-[11px] overflow-x-auto">
+                <pre className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-slate-800 font-mono text-[11px] overflow-x-auto">
                   {JSON.stringify(parsedDiff, null, 2)}
                 </pre>
               </div>

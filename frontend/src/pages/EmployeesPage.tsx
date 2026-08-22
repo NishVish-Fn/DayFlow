@@ -74,10 +74,10 @@ export const EmployeesPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Users className="w-5 h-5 text-indigo-400" /> Employee Directory
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2 font-display">
+            <Users className="w-5 h-5 text-blue-600" /> Employee Directory
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-500 mt-0.5">
             Browse and manage organizational profiles, roles, and compensation structures.
           </p>
         </div>
@@ -95,15 +95,15 @@ export const EmployeesPage: React.FC = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-3">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row gap-3">
         <form onSubmit={handleSearchSubmit} className="relative flex-1">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
           <input
             type="text"
             placeholder="Search by name, role, email, or badge ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           />
         </form>
 
@@ -111,7 +111,7 @@ export const EmployeesPage: React.FC = () => {
           <select
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 font-medium focus:outline-none focus:border-blue-600"
           >
             <option value="ALL">All Departments</option>
             <option value="ENGINEERING">Engineering</option>
@@ -127,7 +127,7 @@ export const EmployeesPage: React.FC = () => {
           <select
             value={status}
             onChange={(e) => setStatus(e.target.value)}
-            className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 font-medium focus:outline-none focus:border-blue-600"
           >
             <option value="ALL">All Statuses</option>
             <option value="ACTIVE">Active</option>
@@ -138,10 +138,10 @@ export const EmployeesPage: React.FC = () => {
       </div>
 
       {/* Employees Table Grid */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950/60 border-b border-slate-800 text-slate-400 uppercase font-semibold">
+            <thead className="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase font-bold tracking-wider text-[11px]">
               <tr>
                 <th className="py-3.5 px-4">Employee</th>
                 <th className="py-3.5 px-4">Badge / Role</th>
@@ -151,16 +151,16 @@ export const EmployeesPage: React.FC = () => {
                 <th className="py-3.5 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/80">
+            <tbody className="divide-y divide-slate-100">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500">
+                  <td colSpan={6} className="py-12 text-center text-slate-400">
                     Loading directory...
                   </td>
                 </tr>
               ) : employees.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500">
+                  <td colSpan={6} className="py-12 text-center text-slate-400">
                     No employees matching filter criteria found.
                   </td>
                 </tr>
@@ -168,7 +168,7 @@ export const EmployeesPage: React.FC = () => {
                 employees.map((emp) => (
                   <tr
                     key={emp.id}
-                    className="hover:bg-slate-800/40 transition-colors cursor-pointer"
+                    className="hover:bg-slate-50/70 transition-colors cursor-pointer"
                     onClick={() => handleOpenDetail(emp.id)}
                   >
                     {/* Employee Profile */}
@@ -180,14 +180,14 @@ export const EmployeesPage: React.FC = () => {
                             `https://api.dicebear.com/7.x/avataaars/svg?seed=${emp.firstName}_${emp.lastName}`
                           }
                           alt="Avatar"
-                          className="w-9 h-9 rounded-xl bg-slate-800 border border-indigo-500/20 object-cover"
+                          className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 object-cover"
                         />
                         <div>
-                          <div className="font-bold text-slate-100">
+                          <div className="font-bold text-slate-900">
                             {emp.firstName} {emp.lastName}
                           </div>
-                          <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                            <Mail className="w-3 h-3 text-slate-500" />
+                          <div className="text-[11px] text-slate-500 flex items-center gap-1 mt-0.5">
+                            <Mail className="w-3 h-3 text-slate-400" />
                             {emp.user?.email}
                           </div>
                         </div>
@@ -196,8 +196,8 @@ export const EmployeesPage: React.FC = () => {
 
                     {/* Badge & Role */}
                     <td className="py-3.5 px-4">
-                      <div className="font-mono text-indigo-300 font-semibold">{emp.user?.employeeId}</div>
-                      <div className="text-[11px] text-slate-400">{emp.designation}</div>
+                      <div className="font-mono text-blue-700 font-bold">{emp.user?.employeeId}</div>
+                      <div className="text-[11px] text-slate-600">{emp.designation}</div>
                     </td>
 
                     {/* Department */}
@@ -211,15 +211,15 @@ export const EmployeesPage: React.FC = () => {
                     <td className="py-3.5 px-4">
                       {emp.currentSalary ? (
                         <div>
-                          <span className="font-bold text-slate-200">
+                          <span className="font-bold text-slate-900">
                             ${emp.currentSalary.grossSalary.toLocaleString()}/mo
                           </span>
-                          <div className="text-[10px] text-slate-400">
+                          <div className="text-[10px] text-slate-500">
                             Net: ${emp.currentSalary.netSalary.toLocaleString()}
                           </div>
                         </div>
                       ) : (
-                        <span className="text-slate-500 text-[11px]">Unassigned</span>
+                        <span className="text-slate-400 text-[11px]">Unassigned</span>
                       )}
                     </td>
 
@@ -239,7 +239,7 @@ export const EmployeesPage: React.FC = () => {
                         variant="secondary"
                         size="sm"
                         onClick={() => handleOpenDetail(emp.id)}
-                        leftIcon={<Eye className="w-3.5 h-3.5 text-indigo-400" />}
+                        leftIcon={<Eye className="w-3.5 h-3.5 text-blue-600" />}
                       >
                         View 360
                       </Button>

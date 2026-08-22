@@ -74,12 +74,12 @@ export const ManualAttendanceModal: React.FC<Props> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Select Employee</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">Select Employee</label>
           <select
             value={employeeId}
             onChange={(e) => setEmployeeId(e.target.value)}
             required
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           >
             <option value="">-- Choose Employee --</option>
             {employees.map((emp) => (
@@ -92,22 +92,22 @@ export const ManualAttendanceModal: React.FC<Props> = ({
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Date</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Date</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               required
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Status</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as any)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
             >
               <option value="PRESENT">PRESENT</option>
               <option value="HALF_DAY">HALF DAY</option>
@@ -120,32 +120,32 @@ export const ManualAttendanceModal: React.FC<Props> = ({
         {(status === 'PRESENT' || status === 'HALF_DAY') && (
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Check In Time</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Check In Time</label>
               <input
                 type="time"
                 value={checkInTime}
                 onChange={(e) => setCheckInTime(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">Check Out Time</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Check Out Time</label>
               <input
                 type="time"
                 value={checkOutTime}
                 onChange={(e) => setCheckOutTime(e.target.value)}
-                className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
               />
             </div>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Work Mode</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">Work Mode</label>
           <select
             value={workMode}
             onChange={(e) => setWorkMode(e.target.value as any)}
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           >
             <option value="OFFICE">OFFICE</option>
             <option value="REMOTE">REMOTE</option>
@@ -154,7 +154,7 @@ export const ManualAttendanceModal: React.FC<Props> = ({
         </div>
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">
+          <label className="block text-xs font-semibold text-slate-700 mb-1">
             Mandatory Justification / Note
           </label>
           <textarea
@@ -163,11 +163,11 @@ export const ManualAttendanceModal: React.FC<Props> = ({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             required
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
           <Button variant="ghost" size="sm" type="button" onClick={onClose}>
             Cancel
           </Button>

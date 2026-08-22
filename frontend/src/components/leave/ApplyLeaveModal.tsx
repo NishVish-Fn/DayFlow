@@ -88,12 +88,12 @@ export const ApplyLeaveModal: React.FC<Props> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Leave Category</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">Leave Category</label>
           <select
             value={leaveTypeId}
             onChange={(e) => setLeaveTypeId(e.target.value)}
             required
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           >
             {leaveTypes.map((t) => {
               const bal = leaveBalances.find((b) => b.leaveTypeId === t.id);
@@ -107,56 +107,56 @@ export const ApplyLeaveModal: React.FC<Props> = ({
         </div>
 
         {selectedBalance && (
-          <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/60 text-xs flex justify-between items-center">
-            <span className="text-slate-400">Available Quota for this type:</span>
-            <span className="font-bold text-emerald-400">{selectedBalance.remainingDays} Days</span>
+          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs flex justify-between items-center">
+            <span className="text-slate-500 font-medium">Available Quota for this type:</span>
+            <span className="font-bold text-emerald-700">{selectedBalance.remainingDays} Days</span>
           </div>
         )}
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">Start Date</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Start Date</label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               required
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">End Date</label>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">End Date</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               required
-              className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
             />
           </div>
         </div>
 
         {requestedDays > 0 && (
-          <div className="text-xs text-indigo-300 font-semibold bg-indigo-950/40 p-2.5 rounded-xl border border-indigo-500/20 flex justify-between">
-            <span>Duration:</span>
+          <div className="text-xs text-blue-700 font-bold bg-blue-50 p-2.5 rounded-xl border border-blue-200 flex justify-between">
+            <span>Requested Duration:</span>
             <span>{requestedDays} Day(s)</span>
           </div>
         )}
 
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-1">Reason / Notes</label>
+          <label className="block text-xs font-semibold text-slate-700 mb-1">Reason / Notes</label>
           <textarea
             rows={3}
             placeholder="Please detail your reason for taking leave..."
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             required
-            className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600"
           />
         </div>
 
-        <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
+        <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
           <Button variant="ghost" size="sm" type="button" onClick={onClose}>
             Cancel
           </Button>

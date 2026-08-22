@@ -20,6 +20,7 @@ import {
   Sparkles,
   Shield,
   Briefcase,
+  TrendingUp,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -68,10 +69,10 @@ export const DashboardPage: React.FC = () => {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-20 bg-slate-900 rounded-2xl border border-slate-800" />
+        <div className="h-24 bg-white rounded-2xl border border-slate-200" />
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-32 bg-slate-900 rounded-2xl border border-slate-800" />
+            <div key={i} className="h-32 bg-white rounded-2xl border border-slate-200" />
           ))}
         </div>
       </div>
@@ -79,25 +80,25 @@ export const DashboardPage: React.FC = () => {
   }
 
   // --------------------------------------------------------------------------
-  // ADMIN & HR COMMAND CENTER
+  // ADMIN & HR EXECUTIVE DASHBOARD
   // --------------------------------------------------------------------------
   if (isAdminOrHr && adminData) {
     return (
-      <div className="space-y-8">
-        {/* Welcome Banner */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-indigo-950/60 via-slate-900 to-slate-900 border border-indigo-500/20 shadow-xl">
+      <div className="space-y-6">
+        {/* Welcome Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
                 Executive Command Center
               </span>
-              <Badge variant="primary" size="sm">HQ LIVE</Badge>
+              <Badge variant="success" size="sm">HQ Operational</Badge>
             </div>
-            <h2 className="text-2xl font-black text-white mt-1">
+            <h2 className="text-2xl font-extrabold text-slate-900 mt-1 font-display tracking-tight">
               Welcome back, {user?.profile?.firstName}
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Organization workforce metrics, live attendance rates, and pending approval queues.
+            <p className="text-xs text-slate-500 mt-0.5">
+              Live organizational workforce metrics, real-time presence roll, and pending approvals queue.
             </p>
           </div>
 
@@ -106,7 +107,7 @@ export const DashboardPage: React.FC = () => {
               variant="secondary"
               size="sm"
               onClick={() => setIsBatchPayrollOpen(true)}
-              leftIcon={<PlayCircle className="w-4 h-4 text-indigo-400" />}
+              leftIcon={<PlayCircle className="w-4 h-4 text-blue-600" />}
             >
               Run Batch Payroll
             </Button>
@@ -129,7 +130,7 @@ export const DashboardPage: React.FC = () => {
             value={adminData.headcount}
             subtitle="Active full-time & contract staff"
             icon={<Users className="w-5 h-5" />}
-            variant="indigo"
+            variant="blue"
           />
 
           <StatCard
@@ -161,12 +162,12 @@ export const DashboardPage: React.FC = () => {
         {/* Section 2: Department Distribution & Quick Approvals */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Department Breakdown */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-indigo-400" /> Department Distribution
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-blue-600" /> Department Distribution
               </h3>
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] font-semibold text-slate-400">
                 {adminData.departmentBreakdown.length} Departments
               </span>
             </div>
@@ -177,12 +178,12 @@ export const DashboardPage: React.FC = () => {
                 return (
                   <div key={dept.department} className="space-y-1">
                     <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-slate-300">{dept.department}</span>
-                      <span className="text-slate-400">{dept.count} ({percentage}%)</span>
+                      <span className="text-slate-700">{dept.department}</span>
+                      <span className="text-slate-500">{dept.count} ({percentage}%)</span>
                     </div>
-                    <div className="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
                       <div
-                        className="bg-indigo-500 h-1.5 rounded-full"
+                        className="bg-blue-600 h-2 rounded-full transition-all"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
@@ -193,40 +194,40 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           {/* Today's Operational Status */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-emerald-400" /> Today's Presence Roll
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-emerald-600" /> Today's Presence Roll
                 </h3>
                 <Badge variant="success" size="sm">LIVE TODAY</Badge>
               </div>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <div className="text-slate-400">Clocked In (Office)</div>
-                  <div className="text-xl font-bold text-white mt-1">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="text-slate-500 font-medium">Clocked In (Office)</div>
+                  <div className="text-xl font-bold text-slate-900 mt-1">
                     {adminData.attendance?.officeCount}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <div className="text-slate-400">Clocked In (Remote)</div>
-                  <div className="text-xl font-bold text-indigo-300 mt-1">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="text-slate-500 font-medium">Clocked In (Remote)</div>
+                  <div className="text-xl font-bold text-blue-700 mt-1">
                     {adminData.attendance?.remoteCount}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <div className="text-slate-400">On Approved Leave</div>
-                  <div className="text-xl font-bold text-amber-300 mt-1">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="text-slate-500 font-medium">On Approved Leave</div>
+                  <div className="text-xl font-bold text-amber-700 mt-1">
                     {adminData.attendance?.onLeaveCount}
                   </div>
                 </div>
 
-                <div className="p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-                  <div className="text-slate-400">Unaccounted / Absent</div>
-                  <div className="text-xl font-bold text-rose-400 mt-1">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="text-slate-500 font-medium">Unaccounted / Absent</div>
+                  <div className="text-xl font-bold text-rose-600 mt-1">
                     {adminData.attendance?.absentCount}
                   </div>
                 </div>
@@ -244,18 +245,18 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           {/* Pending Approval Shortcut Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
             <div>
-              <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-                <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                  <CalendarCheck className="w-4 h-4 text-amber-400" /> Pending Workflows
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <CalendarCheck className="w-4 h-4 text-amber-600" /> Pending Workflows
                 </h3>
                 <Badge variant="warning" size="sm">
                   {adminData.pendingLeaveApprovals} Pending
                 </Badge>
               </div>
 
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Employees have submitted leave requests that require managerial verification of quotas and scheduling overlap checks.
               </p>
             </div>
@@ -278,29 +279,29 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           {/* Recent Audit Trail Snippet */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-3">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-indigo-400" /> Recent System Audit Logs
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-blue-600" /> Recent System Audit Logs
               </h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/audit-logs')}>
                 View All
               </Button>
             </div>
 
-            <div className="space-y-2.5 max-h-64 overflow-y-auto">
+            <div className="space-y-2 max-h-64 overflow-y-auto">
               {adminData.recentActivity?.map((act: any) => (
                 <div
                   key={act.id}
-                  className="p-2.5 rounded-xl bg-slate-800/40 border border-slate-700/40 text-xs"
+                  className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs"
                 >
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-slate-200">{act.action}</span>
-                    <span className="text-[10px] text-slate-500 font-mono">
+                    <span className="font-bold text-slate-800">{act.action}</span>
+                    <span className="text-[10px] text-slate-400 font-mono">
                       {new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <div className="text-[11px] text-slate-400 mt-0.5">{act.userEmail || 'System'}</div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">{act.userEmail || 'System'}</div>
                 </div>
               ))}
             </div>
@@ -322,21 +323,21 @@ export const DashboardPage: React.FC = () => {
   // EMPLOYEE SELF-SERVICE DASHBOARD
   // --------------------------------------------------------------------------
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 shadow-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
               Employee Portal
             </span>
             <Badge variant="primary" size="sm">{user?.profile?.department}</Badge>
           </div>
-          <h2 className="text-2xl font-black text-white mt-1">
+          <h2 className="text-2xl font-extrabold text-slate-900 mt-1 font-display tracking-tight">
             Welcome back, {user?.profile?.firstName}!
           </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Staff Badge: <span className="font-mono text-slate-300">{user?.employeeId}</span> &bull; {user?.profile?.designation}
+          <p className="text-xs text-slate-500 mt-0.5">
+            Staff Badge: <span className="font-mono text-slate-700 font-semibold">{user?.employeeId}</span> &bull; {user?.profile?.designation}
           </p>
         </div>
 
@@ -357,9 +358,9 @@ export const DashboardPage: React.FC = () => {
 
       {/* Leave Balances Grid */}
       <div>
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-white flex items-center gap-2">
-            <CalendarCheck className="w-5 h-5 text-indigo-400" /> My Annual Leave Quotas
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 font-display">
+            <CalendarCheck className="w-5 h-5 text-blue-600" /> My Annual Leave Quotas
           </h3>
           <Button variant="ghost" size="sm" onClick={() => navigate('/leave')}>
             Manage Leaves &rarr;
@@ -376,11 +377,11 @@ export const DashboardPage: React.FC = () => {
       {/* Bottom Grid: Recent Payslips & Public Holidays */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Payslips */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-indigo-400" /> Recent Payslips
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-blue-600" /> Recent Payslips
               </h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/payroll')}>
                 View All
@@ -391,18 +392,18 @@ export const DashboardPage: React.FC = () => {
               {employeeData?.recentPayslips?.map((p: any) => (
                 <div
                   key={p.id}
-                  className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/40 flex items-center justify-between text-xs"
+                  className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
                 >
                   <div>
-                    <span className="font-bold text-slate-100">
+                    <span className="font-bold text-slate-800">
                       Period: {p.month}/{p.year}
                     </span>
-                    <div className="text-[11px] text-slate-400 mt-0.5">
+                    <div className="text-[11px] text-slate-500 mt-0.5">
                       Disbursed on {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : 'Pending'}
                     </div>
                   </div>
                   <div className="text-right">
-                    <span className="text-sm font-black text-indigo-300 block font-mono">
+                    <span className="text-sm font-black text-slate-900 block font-mono">
                       ${p.netAmount.toLocaleString()}
                     </span>
                     <Badge variant="success" size="sm">{p.status}</Badge>
@@ -424,23 +425,23 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         {/* Upcoming Holidays */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
-            <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-400" /> Company Public Holidays
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-500" /> Company Public Holidays
             </h3>
             <Badge variant="neutral" size="sm">2026 Calendar</Badge>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {employeeData?.holidays?.map((h: any) => (
               <div
                 key={h.name}
-                className="p-3 rounded-xl bg-slate-800/40 border border-slate-700/40 flex items-center justify-between text-xs"
+                className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
               >
                 <div>
-                  <span className="font-semibold text-slate-200">{h.name}</span>
-                  <div className="text-[11px] text-slate-400 mt-0.5">Official Company Holiday</div>
+                  <span className="font-bold text-slate-800">{h.name}</span>
+                  <div className="text-[11px] text-slate-500 mt-0.5">Official Company Holiday</div>
                 </div>
                 <Badge variant="purple" size="sm">
                   {new Date(h.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}

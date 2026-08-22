@@ -80,12 +80,6 @@ export const PayslipModal: React.FC<Props> = ({ isOpen, onClose, payslip }) => {
     }
   };
 
-  const openInNewTab = () => {
-    const token = localStorage.getItem('dayflow_access_token');
-    const url = `/api/v1/payroll/payslips/${payslip.id}/pdf${token ? `?token=${encodeURIComponent(token)}` : ''}`;
-    window.open(url, '_blank');
-  };
-
   return (
     <Modal
       isOpen={isOpen}
@@ -96,14 +90,14 @@ export const PayslipModal: React.FC<Props> = ({ isOpen, onClose, payslip }) => {
     >
       <div className="space-y-6">
         {/* Company Header */}
-        <div className="flex items-start justify-between border-b border-white/[0.08] pb-4">
+        <div className="flex items-start justify-between border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400">
+            <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-base font-bold text-white tracking-tight">DAYFLOW</div>
-              <div className="text-[11px] text-slate-400">Cupertino &bull; Global Payroll Operations</div>
+              <div className="text-base font-bold text-slate-900 tracking-tight font-display">DAYFLOW HRMS</div>
+              <div className="text-[11px] text-slate-500">Enterprise Workforce &bull; Global Payroll Operations</div>
             </div>
           </div>
 
@@ -111,52 +105,52 @@ export const PayslipModal: React.FC<Props> = ({ isOpen, onClose, payslip }) => {
             <Badge variant="success" size="md">
               {payslip.status}
             </Badge>
-            <div className="text-[11px] text-slate-400 mt-1">
+            <div className="text-[11px] text-slate-500 mt-1">
               Disbursed: {payslip.paymentDate ? new Date(payslip.paymentDate).toLocaleDateString() : 'Direct Transfer'}
             </div>
           </div>
         </div>
 
         {/* Employee Details Grid */}
-        <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] text-xs">
+        <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-semibold tracking-wider">Employee</span>
-            <span className="font-semibold text-slate-100 mt-0.5 block">
+            <span className="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Employee</span>
+            <span className="font-bold text-slate-900 mt-0.5 block">
               {payslip.employee?.firstName} {payslip.employee?.lastName}
             </span>
-            <span className="text-slate-400 text-[11px]">Badge: {payslip.employee?.user?.employeeId}</span>
+            <span className="text-slate-500 text-[11px]">Badge: {payslip.employee?.user?.employeeId}</span>
           </div>
 
           <div>
-            <span className="text-slate-400 block text-[10px] uppercase font-semibold tracking-wider">Department</span>
-            <span className="font-semibold text-slate-100 mt-0.5 block">{payslip.employee?.designation}</span>
-            <span className="text-slate-400 text-[11px]">Division: {payslip.employee?.department}</span>
+            <span className="text-slate-500 block text-[10px] uppercase font-bold tracking-wider">Department</span>
+            <span className="font-bold text-slate-900 mt-0.5 block">{payslip.employee?.designation}</span>
+            <span className="text-slate-500 text-[11px]">Division: {payslip.employee?.department}</span>
           </div>
         </div>
 
         {/* Itemized Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Earnings */}
-          <div className="p-4 rounded-2xl bg-slate-900/60 border border-emerald-500/20">
-            <h5 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-3 border-b border-emerald-500/10 pb-1.5">
+          <div className="p-4 rounded-2xl bg-emerald-50/40 border border-emerald-200">
+            <h5 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 border-b border-emerald-200 pb-1.5">
               Earnings
             </h5>
             <div className="space-y-2 text-xs">
-              <div className="flex justify-between text-slate-300">
+              <div className="flex justify-between text-slate-700">
                 <span>Basic Salary</span>
                 <span className="font-semibold">${payslip.baseAmount.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-slate-300">
+              <div className="flex justify-between text-slate-700">
                 <span>House Rent Allowance</span>
                 <span className="font-semibold">${payslip.hraAmount.toLocaleString()}</span>
               </div>
               {Object.entries(allowances).map(([k, v]) => (
-                <div key={k} className="flex justify-between text-slate-300 capitalize">
+                <div key={k} className="flex justify-between text-slate-700 capitalize">
                   <span>{k}</span>
                   <span className="font-semibold">${Number(v).toLocaleString()}</span>
                 </div>
               ))}
-              <div className="flex justify-between text-emerald-400 font-bold border-t border-white/[0.06] pt-2 mt-2">
+              <div className="flex justify-between text-emerald-800 font-bold border-t border-emerald-200 pt-2 mt-2">
                 <span>Gross Earnings</span>
                 <span>${payslip.grossAmount.toLocaleString()}</span>
               </div>
@@ -164,18 +158,18 @@ export const PayslipModal: React.FC<Props> = ({ isOpen, onClose, payslip }) => {
           </div>
 
           {/* Deductions */}
-          <div className="p-4 rounded-2xl bg-slate-900/60 border border-rose-500/20">
-            <h5 className="text-xs font-bold text-rose-400 uppercase tracking-wider mb-3 border-b border-rose-500/10 pb-1.5">
+          <div className="p-4 rounded-2xl bg-rose-50/40 border border-rose-200">
+            <h5 className="text-xs font-bold text-rose-800 uppercase tracking-wider mb-3 border-b border-rose-200 pb-1.5">
               Deductions
             </h5>
             <div className="space-y-2 text-xs">
               {Object.entries(deductions).map(([k, v]) => (
-                <div key={k} className="flex justify-between text-slate-300 capitalize">
+                <div key={k} className="flex justify-between text-slate-700 capitalize">
                   <span>{k}</span>
-                  <span className="font-semibold text-rose-400">-${Number(v).toLocaleString()}</span>
+                  <span className="font-semibold text-rose-600">-${Number(v).toLocaleString()}</span>
                 </div>
               ))}
-              <div className="flex justify-between text-rose-400 font-bold border-t border-white/[0.06] pt-2 mt-2">
+              <div className="flex justify-between text-rose-800 font-bold border-t border-rose-200 pt-2 mt-2">
                 <span>Total Deductions</span>
                 <span>-${(payslip.grossAmount - payslip.netAmount).toLocaleString()}</span>
               </div>
@@ -184,20 +178,20 @@ export const PayslipModal: React.FC<Props> = ({ isOpen, onClose, payslip }) => {
         </div>
 
         {/* Net Take-Home Highlight */}
-        <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-between">
           <div>
-            <div className="text-xs text-indigo-300 uppercase font-semibold tracking-wider">Net Amount</div>
-            <div className="text-[11px] text-slate-400">
-              Transfer Ref: <span className="font-mono">{payslip.transactionReference || 'ACH-DIRECT'}</span>
+            <div className="text-xs text-blue-800 uppercase font-bold tracking-wider">Net Disbursed</div>
+            <div className="text-[11px] text-slate-500">
+              Transfer Ref: <span className="font-mono font-semibold">{payslip.transactionReference || 'ACH-DIRECT'}</span>
             </div>
           </div>
-          <div className="text-2xl font-bold text-white font-mono">
+          <div className="text-2xl font-black text-blue-700 font-mono">
             ${payslip.netAmount.toLocaleString()}
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-white/[0.08]">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100">
           <Button variant="ghost" size="sm" onClick={onClose}>
             Done
           </Button>
@@ -208,7 +202,7 @@ export const PayslipModal: React.FC<Props> = ({ isOpen, onClose, payslip }) => {
               size="sm"
               onClick={handlePrint}
               isLoading={printing}
-              leftIcon={<Printer className="w-3.5 h-3.5" />}
+              leftIcon={<Printer className="w-3.5 h-3.5 text-blue-600" />}
             >
               Print / Save PDF
             </Button>
