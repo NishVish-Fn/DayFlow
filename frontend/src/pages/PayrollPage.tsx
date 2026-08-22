@@ -303,15 +303,15 @@ export const PayrollPage: React.FC = () => {
                       </td>
 
                       <td className="py-3.5 px-4 font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                        ${Number(p.grossAmount || 0).toLocaleString()}
+                        ₹{Number(p.grossAmount || 0).toLocaleString()}
                       </td>
 
                       <td className="py-3.5 px-4 font-mono text-rose-600 dark:text-rose-400 font-medium">
-                        -${Number((p.grossAmount || 0) - (p.netAmount || 0)).toLocaleString()}
+                        -₹{Number((p.grossAmount || 0) - (p.netAmount || 0)).toLocaleString()}
                       </td>
 
                       <td className="py-3.5 px-4 font-mono font-extrabold text-[#0071e3] dark:text-[#2997ff] text-sm">
-                        ${Number(p.netAmount || 0).toLocaleString()}
+                        ₹{Number(p.netAmount || 0).toLocaleString()}
                       </td>
 
                       <td className="py-3.5 px-4">
@@ -376,13 +376,13 @@ export const PayrollPage: React.FC = () => {
                         {monthNames[(p.month ? p.month - 1 : 7) % 12]} {p.year || 2026}
                       </td>
                       <td className="py-3.5 px-4 font-mono text-emerald-600 dark:text-emerald-400 font-bold">
-                        ${Number(p.grossAmount || 0).toLocaleString()}
+                        ₹{Number(p.grossAmount || 0).toLocaleString()}
                       </td>
                       <td className="py-3.5 px-4 font-mono text-rose-600 dark:text-rose-400 font-medium">
-                        -${Number((p.grossAmount || 0) - (p.netAmount || 0)).toLocaleString()}
+                        -₹{Number((p.grossAmount || 0) - (p.netAmount || 0)).toLocaleString()}
                       </td>
                       <td className="py-3.5 px-4 font-mono font-extrabold text-[#0071e3] dark:text-[#2997ff] text-sm">
-                        ${Number(p.netAmount || 0).toLocaleString()}
+                        ₹{Number(p.netAmount || 0).toLocaleString()}
                       </td>
                       <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300">
                         {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : 'Direct Transfer'}
