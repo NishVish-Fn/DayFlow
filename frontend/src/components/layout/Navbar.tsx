@@ -52,14 +52,14 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+      <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 bg-[#0a0d14]/90 backdrop-blur-xl border-b border-white/10 text-white shadow-sm">
         {/* Corporate Logo & World Status */}
         <div className="flex items-center gap-4">
           <CorporateGlobeLogo size="sm" showText={false} />
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs font-black text-slate-900 tracking-tight font-display">
-              DAYFLOW <span className="text-blue-600 font-extrabold uppercase text-[10px] bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">Global HRMS</span>
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className="text-xs font-black tracking-tight font-display text-white">
+              DAYFLOW <span className="text-cyan-400 font-extrabold uppercase text-[10px] bg-cyan-950/60 px-2 py-0.5 rounded-md border border-cyan-500/30">AI Workforce OS</span>
             </span>
           </div>
         </div>
@@ -69,35 +69,35 @@ export const Navbar: React.FC = () => {
           {/* Dayflow AI Copilot Button */}
           <button
             onClick={() => setIsAIOpen(true)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold text-xs shadow-md shadow-blue-600/20 hover:shadow-blue-600/35 transition-all cursor-pointer group"
+            className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 text-slate-950 font-extrabold text-xs shadow-md shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all cursor-pointer group"
           >
-            <Sparkles className="w-3.5 h-3.5 text-cyan-300 animate-pulse" />
-            <span>Ask Dayflow AI</span>
+            <Sparkles className="w-3.5 h-3.5 text-slate-950 animate-pulse" />
+            <span>Ask Open-Source AI</span>
           </button>
 
           {/* Notifications Bell */}
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 transition-all cursor-pointer shadow-sm"
+              className="relative p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 hover:text-white transition-all cursor-pointer"
               title="Notifications"
             >
               <Bell className="w-4 h-4" />
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-[10px] font-extrabold text-white shadow-md">
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-cyan-400 text-[10px] font-extrabold text-slate-950 shadow-md">
                   {unreadCount}
                 </span>
               )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-white border border-slate-200 shadow-2xl p-3.5 z-50 animate-in fade-in zoom-in-95">
-                <div className="flex items-center justify-between px-2 pb-2.5 border-b border-slate-100">
-                  <span className="text-xs font-black text-slate-900">Notifications Center</span>
+              <div className="absolute right-0 mt-2 w-80 rounded-2xl bg-[#0f172a] border border-white/10 shadow-2xl p-3.5 z-50 animate-in fade-in zoom-in-95">
+                <div className="flex items-center justify-between px-2 pb-2.5 border-b border-white/10">
+                  <span className="text-xs font-bold text-white">Notifications Center</span>
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllRead}
-                      className="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:text-blue-700 cursor-pointer"
+                      className="flex items-center gap-1 text-[11px] font-bold text-cyan-400 hover:text-cyan-300 cursor-pointer"
                     >
                       <CheckCheck className="w-3.5 h-3.5" /> Mark all read
                     </button>
@@ -106,19 +106,19 @@ export const Navbar: React.FC = () => {
 
                 <div className="flex flex-col gap-1.5 max-h-72 overflow-y-auto mt-2">
                   {notifications.length === 0 ? (
-                    <div className="py-6 text-center text-xs text-slate-400 font-medium">No new notifications</div>
+                    <div className="py-6 text-center text-xs text-slate-500 font-medium">No new notifications</div>
                   ) : (
                     notifications.map((n) => (
                       <div
                         key={n.id}
                         className={`p-2.5 rounded-xl border text-xs transition-colors ${
                           n.isRead
-                            ? 'bg-slate-50/50 border-slate-100 text-slate-500'
-                            : 'bg-gradient-to-r from-blue-50 to-indigo-50/60 border-blue-200 text-slate-900 font-semibold'
+                            ? 'bg-white/[0.02] border-white/5 text-slate-400'
+                            : 'bg-gradient-to-r from-blue-950/60 to-indigo-950/60 border-cyan-500/30 text-white font-semibold'
                         }`}
                       >
-                        <div className="font-extrabold text-slate-900">{n.title}</div>
-                        <div className="text-[11px] mt-0.5 text-slate-600 font-normal">{n.message}</div>
+                        <div className="font-extrabold text-white">{n.title}</div>
+                        <div className="text-[11px] mt-0.5 text-slate-300 font-normal">{n.message}</div>
                       </div>
                     ))
                   )}
@@ -127,31 +127,29 @@ export const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* User Badge Profile */}
-          <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
+          {/* User Profile Badge */}
+          <div className="flex items-center gap-3 pl-3 border-l border-white/10">
             <img
               src={
                 user?.profile?.avatarUrl ||
                 `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`
               }
               alt="Avatar"
-              className="w-9 h-9 rounded-xl border-2 border-blue-500/30 bg-slate-100 object-cover shadow-sm"
+              className="w-9 h-9 rounded-xl border border-cyan-500/30 bg-slate-800 object-cover"
             />
             <div className="hidden sm:block text-left">
-              <div className="text-xs font-black text-slate-900 leading-tight">
+              <div className="text-xs font-bold text-white leading-tight">
                 {user?.profile?.firstName} {user?.profile?.lastName}
               </div>
-              <div className="flex items-center gap-1 mt-0.5">
-                <Badge variant={getRoleBadgeVariant(user?.role)} size="sm">
-                  {user?.role}
-                </Badge>
+              <div className="text-[10px] text-cyan-400 font-mono mt-0.5">
+                {user?.role}
               </div>
             </div>
 
             <button
               onClick={() => logout()}
               title="Sign Out"
-              className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1 cursor-pointer"
+              className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors ml-1 cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
             </button>

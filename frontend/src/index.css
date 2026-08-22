@@ -4,50 +4,57 @@
 
 @layer base {
   body {
-    @apply bg-[#f7f9fb] text-[#191c1e] antialiased font-sans;
+    @apply bg-[#07090e] text-slate-100 antialiased font-sans selection:bg-cyan-500 selection:text-slate-950;
+    background-color: #07090e;
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(249, 115, 22, 0.10) 0%, transparent 40%),
+      radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 0);
+    background-size: 100% 100%, 100% 100%, 24px 24px;
   }
 }
 
-/* Crisp Clean Scrollbars */
+/* Futuristic Cyber Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f4f8;
+  background: #0a0d14;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 6px;
+  background: #1e293b;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #38bdf8;
 }
 
-/* Interactive Card & Surface Utilities */
-.corporate-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+/* Cyber Glass Card Utilities */
+.cyber-card {
+  background: rgba(13, 17, 26, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+  transition: all 0.2s ease;
 }
 
-.corporate-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.05);
+.cyber-card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+  box-shadow: 0 12px 40px -8px rgba(56, 189, 248, 0.15);
 }
 
 .subtle-table th {
-  @apply bg-slate-50/80 text-slate-500 font-semibold uppercase tracking-wider text-[11px] py-3 px-4 border-b border-slate-200;
+  @apply bg-slate-900/90 text-slate-400 font-bold uppercase tracking-wider text-[11px] py-3.5 px-4 border-b border-slate-800;
 }
 
 .subtle-table td {
-  @apply py-3.5 px-4 border-b border-slate-100 text-xs text-slate-700;
+  @apply py-3.5 px-4 border-b border-slate-800/60 text-xs text-slate-200;
 }
 
 .subtle-table tr:hover td {
-  @apply bg-slate-50/60;
+  @apply bg-white/[0.03];
 }
