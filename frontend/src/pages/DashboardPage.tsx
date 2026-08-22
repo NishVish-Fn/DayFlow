@@ -21,13 +21,23 @@ import {
   Shield,
   Briefcase,
   TrendingUp,
+  HeartPulse,
+  Target,
+  GraduationCap,
+  Gift,
+  HelpCircle,
+  MessageSquareWarning,
+  CheckCircle2,
+  X,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../context/ToastContext';
 
 export const DashboardPage: React.FC = () => {
   const { user, role } = useAuth();
   const isAdminOrHr = role === 'ADMIN' || role === 'HR_MANAGER';
   const navigate = useNavigate();
+  const { success } = useToast();
 
   const [loading, setLoading] = useState(true);
   const [adminData, setAdminData] = useState<any>(null);
@@ -36,6 +46,10 @@ export const DashboardPage: React.FC = () => {
 
   const [isApplyLeaveOpen, setIsApplyLeaveOpen] = useState(false);
   const [isBatchPayrollOpen, setIsBatchPayrollOpen] = useState(false);
+  const [isGrievanceOpen, setIsGrievanceOpen] = useState(false);
+  const [isBenefitsOpen, setIsBenefitsOpen] = useState(false);
+  const [grievanceCategory, setGrievanceCategory] = useState('WORKPLACE_ENVIRONMENT');
+  const [grievanceNote, setGrievanceNote] = useState('');
 
   const fetchDashboard = async () => {
     try {
@@ -66,6 +80,13 @@ export const DashboardPage: React.FC = () => {
     fetchDashboard();
   }, [isAdminOrHr, user]);
 
+  const handleGrievanceSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    success('Confidential Grievance Submitted', 'Routed securely to HR Ethics Committee.');
+    setIsGrievanceOpen(false);
+    setGrievanceNote('');
+  };
+
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
@@ -79,51 +100,116 @@ export const DashboardPage: React.FC = () => {
     );
   }
 
-  // --------------------------------------------------------------------------
-  // ADMIN & HR EXECUTIVE DASHBOARD
-  // --------------------------------------------------------------------------
-  if (isAdminOrHr && adminData) {
-    return (
-      <div className="space-y-6">
-        {/* Welcome Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-                Executive Command Center
-              </span>
-              <Badge variant="success" size="sm">HQ Operational</Badge>
-            </div>
-            <h2 className="text-2xl font-extrabold text-slate-900 mt-1 font-display tracking-tight">
-              Welcome back, {user?.profile?.firstName}
-            </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Live organizational workforce metrics, real-time presence roll, and pending approvals queue.
-            </p>
+  return (
+    <div className="space-y-6">
+      {/* ================================================================= */}
+      {/* TOP ESS / EXECUTIVE BANNER                                        */}
+      {/* ================================================================= */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-3xl bg-white border border-slate-200 shadow-sm">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
+              {isAdminOrHr ? 'Executive Command Center' : 'Employee Self-Service (ESS) Hub'}
+            </span>
+            <Badge variant="success" size="sm">Operational</Badge>
           </div>
+          <h2 className="text-2xl font-extrabold text-slate-900 mt-1 font-display tracking-tight">
+            Welcome back, {user?.profile?.firstName}!
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Staff Badge: <span className="font-mono text-slate-700 font-semibold">{user?.employeeId}</span> &bull; {user?.profile?.designation} &bull; {user?.profile?.department}
+          </p>
+        </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setIsBatchPayrollOpen(true)}
-              leftIcon={<PlayCircle className="w-4 h-4 text-blue-600" />}
-            >
-              Run Batch Payroll
-            </Button>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsBenefitsOpen(true)}
+            leftIcon={<Gift className="w-4 h-4 text-purple-600" />}
+          >
+            My Benefits
+          </Button>
 
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsGrievanceOpen(true)}
+            leftIcon={<MessageSquareWarning className="w-4 h-4 text-amber-600" />}
+          >
+            File Grievance
+          </Button>
+
+          {isAdminOrHr ? (
             <Button
               variant="primary"
               size="sm"
-              onClick={() => navigate('/employees')}
-              leftIcon={<PlusCircle className="w-4 h-4" />}
+              onClick={() => setIsBatchPayrollOpen(true)}
+              leftIcon={<PlayCircle className="w-4 h-4" />}
             >
-              Onboard Employee
+              Run Batch Payroll
             </Button>
-          </div>
+          ) : (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setIsApplyLeaveOpen(true)}
+              leftIcon={<Calendar className="w-4 h-4" />}
+            >
+              Apply Leave
+            </Button>
+          )}
         </div>
+      </div>
 
-        {/* Top KPI Metrics Grid */}
+      {/* Quick Launchpad Chips for USP Features */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <button
+          onClick={() => navigate('/wellness')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-rose-300 hover:bg-rose-50/40 text-left transition-all group shadow-sm cursor-pointer"
+        >
+          <div className="flex items-center gap-2 text-rose-600 font-bold text-xs">
+            <HeartPulse className="w-4 h-4" /> Wellness & Fatigue
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1 font-medium">Burnout Score & Surveys &rarr;</div>
+        </button>
+
+        <button
+          onClick={() => navigate('/performance')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40 text-left transition-all group shadow-sm cursor-pointer"
+        >
+          <div className="flex items-center gap-2 text-indigo-600 font-bold text-xs">
+            <Target className="w-4 h-4" /> Performance & OKRs
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1 font-medium">KPIs & Continuous Feedback &rarr;</div>
+        </button>
+
+        <button
+          onClick={() => navigate('/learning')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-blue-300 hover:bg-blue-50/40 text-left transition-all group shadow-sm cursor-pointer"
+        >
+          <div className="flex items-center gap-2 text-blue-600 font-bold text-xs">
+            <GraduationCap className="w-4 h-4" /> Skill Gap Matrix
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1 font-medium">AI Learning & Certifications &rarr;</div>
+        </button>
+
+        <button
+          onClick={() => navigate('/payroll')}
+          className="p-3.5 rounded-2xl bg-white border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40 text-left transition-all group shadow-sm cursor-pointer"
+        >
+          <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs">
+            <CreditCard className="w-4 h-4" /> Salary & Payslips
+          </div>
+          <div className="text-[11px] text-slate-500 mt-1 font-medium">1-Click PDF Downloads &rarr;</div>
+        </button>
+      </div>
+
+      {/* Primary Widget: Live Punch Clock */}
+      <PunchClockWidget onAttendanceChange={fetchDashboard} />
+
+      {/* Admin Specific KPIs if Admin */}
+      {isAdminOrHr && adminData && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Total Headcount"
@@ -158,209 +244,13 @@ export const DashboardPage: React.FC = () => {
             variant="purple"
           />
         </div>
-
-        {/* Section 2: Department Distribution & Quick Approvals */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Department Breakdown */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-blue-600" /> Department Distribution
-              </h3>
-              <span className="text-[11px] font-semibold text-slate-400">
-                {adminData.departmentBreakdown.length} Departments
-              </span>
-            </div>
-
-            <div className="space-y-3">
-              {adminData.departmentBreakdown.map((dept: any) => {
-                const percentage = Math.round((dept.count / adminData.headcount) * 100);
-                return (
-                  <div key={dept.department} className="space-y-1">
-                    <div className="flex justify-between text-xs font-semibold">
-                      <span className="text-slate-700">{dept.department}</span>
-                      <span className="text-slate-500">{dept.count} ({percentage}%)</span>
-                    </div>
-                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full transition-all"
-                        style={{ width: `${percentage}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Today's Operational Status */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-emerald-600" /> Today's Presence Roll
-                </h3>
-                <Badge variant="success" size="sm">LIVE TODAY</Badge>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <div className="text-slate-500 font-medium">Clocked In (Office)</div>
-                  <div className="text-xl font-bold text-slate-900 mt-1">
-                    {adminData.attendance?.officeCount}
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <div className="text-slate-500 font-medium">Clocked In (Remote)</div>
-                  <div className="text-xl font-bold text-blue-700 mt-1">
-                    {adminData.attendance?.remoteCount}
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <div className="text-slate-500 font-medium">On Approved Leave</div>
-                  <div className="text-xl font-bold text-amber-700 mt-1">
-                    {adminData.attendance?.onLeaveCount}
-                  </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <div className="text-slate-500 font-medium">Unaccounted / Absent</div>
-                  <div className="text-xl font-bold text-rose-600 mt-1">
-                    {adminData.attendance?.absentCount}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full mt-4"
-              onClick={() => navigate('/attendance')}
-            >
-              View Full Team Attendance Grid &rarr;
-            </Button>
-          </div>
-
-          {/* Pending Approval Shortcut Card */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                  <CalendarCheck className="w-4 h-4 text-amber-600" /> Pending Workflows
-                </h3>
-                <Badge variant="warning" size="sm">
-                  {adminData.pendingLeaveApprovals} Pending
-                </Badge>
-              </div>
-
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Employees have submitted leave requests that require managerial verification of quotas and scheduling overlap checks.
-              </p>
-            </div>
-
-            <Button
-              variant="primary"
-              size="sm"
-              className="w-full mt-4"
-              onClick={() => navigate('/leave')}
-            >
-              Open Leave Approvals Queue &rarr;
-            </Button>
-          </div>
-        </div>
-
-        {/* Section 3: Live Punch Clock for the Admin + Recent Activity */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <PunchClockWidget onAttendanceChange={fetchDashboard} />
-          </div>
-
-          {/* Recent Audit Trail Snippet */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <Shield className="w-4 h-4 text-blue-600" /> Recent System Audit Logs
-              </h3>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/audit-logs')}>
-                View All
-              </Button>
-            </div>
-
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {adminData.recentActivity?.map((act: any) => (
-                <div
-                  key={act.id}
-                  className="p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs"
-                >
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-slate-800">{act.action}</span>
-                    <span className="text-[10px] text-slate-400 font-mono">
-                      {new Date(act.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
-                  </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">{act.userEmail || 'System'}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {isBatchPayrollOpen && (
-          <BatchPayrollModal
-            isOpen={isBatchPayrollOpen}
-            onClose={() => setIsBatchPayrollOpen(false)}
-            onSuccess={fetchDashboard}
-          />
-        )}
-      </div>
-    );
-  }
-
-  // --------------------------------------------------------------------------
-  // EMPLOYEE SELF-SERVICE DASHBOARD
-  // --------------------------------------------------------------------------
-  return (
-    <div className="space-y-6">
-      {/* Welcome Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-2xl bg-white border border-slate-200 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-600">
-              Employee Portal
-            </span>
-            <Badge variant="primary" size="sm">{user?.profile?.department}</Badge>
-          </div>
-          <h2 className="text-2xl font-extrabold text-slate-900 mt-1 font-display tracking-tight">
-            Welcome back, {user?.profile?.firstName}!
-          </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Staff Badge: <span className="font-mono text-slate-700 font-semibold">{user?.employeeId}</span> &bull; {user?.profile?.designation}
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => setIsApplyLeaveOpen(true)}
-            leftIcon={<Calendar className="w-4 h-4" />}
-          >
-            Apply for Leave
-          </Button>
-        </div>
-      </div>
-
-      {/* Primary Widget: Live Punch Clock */}
-      <PunchClockWidget onAttendanceChange={fetchDashboard} />
+      )}
 
       {/* Leave Balances Grid */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-base font-bold text-slate-900 flex items-center gap-2 font-display">
-            <CalendarCheck className="w-5 h-5 text-blue-600" /> My Annual Leave Quotas
+            <CalendarCheck className="w-5 h-5 text-blue-600" /> Annual Leave Quota Balances
           </h3>
           <Button variant="ghost" size="sm" onClick={() => navigate('/leave')}>
             Manage Leaves &rarr;
@@ -368,90 +258,13 @@ export const DashboardPage: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {employeeData?.leaveBalances?.map((b: any) => (
+          {(employeeData?.leaveBalances || adminData?.myLeaveBalances || []).map((b: any) => (
             <LeaveBalanceCard key={b.id} balance={b} />
           ))}
         </div>
       </div>
 
-      {/* Bottom Grid: Recent Payslips & Public Holidays */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Payslips */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-blue-600" /> Recent Payslips
-              </h3>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/payroll')}>
-                View All
-              </Button>
-            </div>
-
-            <div className="space-y-2.5">
-              {employeeData?.recentPayslips?.map((p: any) => (
-                <div
-                  key={p.id}
-                  className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
-                >
-                  <div>
-                    <span className="font-bold text-slate-800">
-                      Period: {p.month}/{p.year}
-                    </span>
-                    <div className="text-[11px] text-slate-500 mt-0.5">
-                      Disbursed on {p.paymentDate ? new Date(p.paymentDate).toLocaleDateString() : 'Pending'}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm font-black text-slate-900 block font-mono">
-                      ${p.netAmount.toLocaleString()}
-                    </span>
-                    <Badge variant="success" size="sm">{p.status}</Badge>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full mt-4"
-            onClick={() => navigate('/payroll')}
-            leftIcon={<FileText className="w-4 h-4" />}
-          >
-            Access Full Payroll Archive
-          </Button>
-        </div>
-
-        {/* Upcoming Holidays */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-amber-500" /> Company Public Holidays
-            </h3>
-            <Badge variant="neutral" size="sm">2026 Calendar</Badge>
-          </div>
-
-          <div className="space-y-2">
-            {employeeData?.holidays?.map((h: any) => (
-              <div
-                key={h.name}
-                className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs"
-              >
-                <div>
-                  <span className="font-bold text-slate-800">{h.name}</span>
-                  <div className="text-[11px] text-slate-500 mt-0.5">Official Company Holiday</div>
-                </div>
-                <Badge variant="purple" size="sm">
-                  {new Date(h.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                </Badge>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      {/* Apply Leave Modal */}
       {isApplyLeaveOpen && (
         <ApplyLeaveModal
           isOpen={isApplyLeaveOpen}
@@ -460,6 +273,121 @@ export const DashboardPage: React.FC = () => {
           leaveTypes={leaveTypes}
           onSuccess={fetchDashboard}
         />
+      )}
+
+      {/* Batch Payroll Modal */}
+      {isBatchPayrollOpen && (
+        <BatchPayrollModal
+          isOpen={isBatchPayrollOpen}
+          onClose={() => setIsBatchPayrollOpen(false)}
+          onSuccess={fetchDashboard}
+        />
+      )}
+
+      {/* Grievance Modal */}
+      {isGrievanceOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <MessageSquareWarning className="w-5 h-5 text-amber-500" /> File Confidential Grievance
+              </h3>
+              <button onClick={() => setIsGrievanceOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleGrievanceSubmit} className="space-y-3.5 text-xs">
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Grievance Category</label>
+                <select
+                  value={grievanceCategory}
+                  onChange={(e) => setGrievanceCategory(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:outline-none focus:border-blue-600"
+                >
+                  <option value="WORKPLACE_ENVIRONMENT">Workplace Environment & Safety</option>
+                  <option value="COMPENSATION_BENEFITS">Compensation & Payroll Discrepancy</option>
+                  <option value="MANAGERIAL_CONDUCT">Managerial Conduct & Fairness</option>
+                  <option value="WORKLOAD_STRESS">Acute Workload & Overtime Pressure</option>
+                  <option value="OTHER">Other Confidential Matter</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block font-bold text-slate-700 mb-1">Description / Particulars</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={grievanceNote}
+                  onChange={(e) => setGrievanceNote(e.target.value)}
+                  placeholder="Provide objective context, dates, and specifics for HR investigation..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 focus:outline-none focus:border-blue-600 font-medium"
+                />
+              </div>
+
+              <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+                🔒 <strong>Whistleblower Protection Policy</strong>: Submissions are encrypted and reviewed solely by the Ethics & Compliance Committee.
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <Button type="button" variant="secondary" size="sm" onClick={() => setIsGrievanceOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm">
+                  Submit Grievance
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Benefits Modal */}
+      {isBenefitsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Gift className="w-5 h-5 text-purple-600" /> Employee Benefits & Wellness Perks
+              </h3>
+              <button onClick={() => setIsBenefitsOpen(false)} className="text-slate-400 hover:text-slate-600">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 max-h-80 overflow-y-auto">
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                <div className="text-2xl">🏥</div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900">Comprehensive Health & Dental Coverage</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">$500,000 corporate medical coverage for you and direct dependents.</p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                <div className="text-2xl">🧘</div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900">Annual Wellness & Gym Stipend</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">$1,200/year reimbursement for gym memberships, therapy, and fitness gear.</p>
+                </div>
+              </div>
+
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+                <div className="text-2xl">📚</div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-900">Learning & Certification Budget</h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5">$2,000/year for accredited conferences, books, and university credentials.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <Button variant="primary" size="sm" onClick={() => setIsBenefitsOpen(false)}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

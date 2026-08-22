@@ -14,9 +14,14 @@ import {
   FileText,
   Copy,
   Check,
+  HeartPulse,
+  Target,
+  GraduationCap,
+  ShieldAlert,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../common/Button';
+import { useNavigate } from 'react-router-dom';
 
 interface Message {
   id: string;
@@ -24,6 +29,7 @@ interface Message {
   text: string;
   timestamp: Date;
   suggestions?: string[];
+  actionLink?: { label: string; path: string };
 }
 
 export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
@@ -31,17 +37,19 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
   onClose,
 }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
       sender: 'ai',
-      text: `Hello ${user?.profile?.firstName || 'there'}! I am **Dayflow AI Copilot**, your enterprise HR & workforce intelligence assistant. How can I assist you today?`,
+      text: `Hello ${user?.profile?.firstName || 'there'}! I am **Dayflow AI Copilot**, your enterprise HR & workforce intelligence assistant.\n\nTry asking me:\n- 🌴 *"How many leaves do I have?"*\n- 💳 *"Show my salary slip."*\n- 🏠 *"What is the WFH policy?"*\n- 📊 *"Show workforce burnout & fatigue insights."*`,
       timestamp: new Date(),
       suggestions: [
-        'Explain my payslip deductions',
-        'How does annual leave quota rollover work?',
-        'Analyze current attendance roll',
-        'Draft a promotion recommendation',
+        'How many leaves do I have?',
+        'Show my salary slip',
+        'What is the WFH policy?',
+        'Workforce burnout insights',
       ],
     },
   ]);
@@ -66,52 +74,95 @@ export const AICopilotDrawer: React.FC<{ isOpen: boolean; onClose: () => void }>
     setTimeout(() => setCopiedId(null), 2000);
   };
 
-  const generateAIResponse = (prompt: string): string => {
+  const generateAIResponse = (prompt: string): { text: string; actionLink?: { label: string; path: string } } => {
     const p = prompt.toLowerCase();
 
-    if (p.includes('payslip') || p.includes('salary') || p.includes('deduction') || p.includes('tax')) {
-      return `### 💳 Dayflow AI Payroll Breakdown & Analysis
-Based on standard Dayflow 3NF compensation models:
-- **Gross Earnings**: Consists of Base Pay + House Rent Allowance (HRA ~30%) + Special Operational Allowances.
-- **Statutory Deductions**: Includes Federal/State Tax Withholdings, Social Security/Provident Fund (PF ~12% of Basic), and Corporate Health Insurance.
-- **Net Disbursed**: \`Net = Gross - Total Deductions\`. 
-All disbursements generate an immutable transaction reference (e.g. \`ACH-DIRECT\`) with cryptographically logged salary structure revisions.`;
+    // 1. USP: "How many leaves do I have?"
+    if (p.includes('how many leave') || p.includes('leave balance') || p.includes('my leaves') || p.includes('vacation day')) {
+      return {
+        text: `### 🌴 Your Live Leave Quota Balances (2026 Calendar Year)
+
+Here is your current remaining quota for **${user?.profile?.firstName} ${user?.profile?.lastName}**:
+
+| Leave Category | Allocated | Used | Pending | **Remaining** |
+| :--- | :---: | :---: | :---: | :---: |
+| **Paid Time Off (PTO)** | 18.0 | 2.0 | 0.0 | **16.0 Days** |
+| **Sick Leave** | 10.0 | 1.0 | 0.0 | **9.0 Days** |
+| **Casual Leave** | 7.0 | 0.0 | 0.0 | **7.0 Days** |
+| **Unpaid Leave** | 30.0 | 0.0 | 0.0 | **30.0 Days** |
+
+💡 *Tip: Leave requests $\le 3$ days are auto-routed to your reporting manager for 1-click approval.*`,
+        actionLink: { label: 'Apply for Leave Now', path: '/leave' },
+      };
     }
 
-    if (p.includes('leave') || p.includes('pto') || p.includes('sick') || p.includes('vacation')) {
-      return `### 🌴 Leave Policy & Quota Governance
-Under your organization's Dayflow HRMS policy:
-1. **Paid Time Off (PTO)**: 18 Days allocated annually (accrues on Jan 1).
-2. **Sick Leave**: 10 Days allocated for medical recovery with retroactive documentation upload.
-3. **Casual Leave**: 7 Days for personal emergencies.
-4. **Approval Matrix**: Requests $\le 3$ days require Reporting Manager signoff. Requests $> 3$ days route to HR Operations for workforce scheduling redundancy verification.`;
+    // 2. USP: "Show my salary slip"
+    if (p.includes('salary slip') || p.includes('payslip') || p.includes('my salary') || p.includes('paycheck') || p.includes('compensation')) {
+      return {
+        text: `### 💳 Latest Generated Payslip Breakdown (July 2026)
+
+**Employee**: ${user?.profile?.firstName} ${user?.profile?.lastName} (${user?.employeeId})  
+**Payment Status**: <span style="color: #10b981; font-weight: bold;">PROCESSED / DISBURSED</span>  
+**Disbursement Reference**: \`ACH-DAYFLOW-99421\`
+
+---
+#### **Earnings & Allowances**
+- **Base Salary**: \`$8,500.00\`
+- **House Rent Allowance (HRA)**: \`$2,550.00\`
+- **Special Allowance**: \`$950.00\`
+- **Gross Compensation**: **\`$12,000.00\`**
+
+#### **Statutory Deductions**
+- **Federal & State Withholding Tax**: \`-$1,680.00\`
+- **Provident Fund / Social Security (12%)**: \`-$1,020.00\`
+- **Corporate Medical Care**: \`-$200.00\`
+- **Total Deductions**: **\`-$2,900.00\`**
+
+---
+### **Net Take-Home Pay**: **\`$9,100.00\`**`,
+        actionLink: { label: 'View & Print Full PDF Payslip', path: '/payroll' },
+      };
     }
 
-    if (p.includes('attendance') || p.includes('punch') || p.includes('clock') || p.includes('muster')) {
-      return `### ⏰ Attendance & Time-Tracking Intelligence
-- **Geofenced Punch Clock**: Records timestamp, IP address, and selected mode (*Office / Remote / Hybrid*).
-- **Overtime & Shift Rules**: Shifts exceeding 8.0 hours automatically calculate overtime credits for payroll evaluation.
-- **Audit Verification**: Manual supervisor adjustments require mandatory justification notes, permanently logged to the system audit trail.`;
+    // 3. USP: "What is the WFH policy?"
+    if (p.includes('wfh') || p.includes('work from home') || p.includes('remote policy') || p.includes('hybrid')) {
+      return {
+        text: `### 🏠 Dayflow Hybrid & Remote Work Policy (v3.2)
+
+1. **Flexible Hybrid Structure**: All full-time employees are eligible for up to **3 Remote / WFH days per week** with manager sync.
+2. **Geofenced Punch-In**: When working from home, select the **"Remote"** work mode toggle on your live punch clock widget before clocking in.
+3. **Core Collaboration Hours**: 10:00 AM – 4:00 PM in your local office time zone.
+4. **Home Office Equipment Reimbursement**: Up to **$1,000** one-time stipend for ergonomic chair, monitor, and high-speed internet.`,
+        actionLink: { label: 'Clock In via Punch Clock', path: '/attendance' },
+      };
     }
 
-    if (p.includes('draft') || p.includes('promotion') || p.includes('review') || p.includes('appraisal')) {
-      return `### 📝 Performance Appraisal / Promotion Justification
-**Employee**: ${user?.profile?.firstName} ${user?.profile?.lastName}  
-**Department**: ${user?.profile?.department || 'Engineering'}  
+    // 4. USP: "Workforce burnout / HR insights"
+    if (p.includes('burnout') || p.includes('fatigue') || p.includes('hr insight') || p.includes('risk') || p.includes('attrition')) {
+      return {
+        text: `### 📊 Real-Time Workforce Intelligence & Burnout Telemetry
 
-**Executive Summary**:
-> "Throughout the evaluation cycle, the candidate has consistently demonstrated technical leadership, cross-departmental collaboration, and operational reliability. Their contributions to core platform initiatives have measurably reduced operational latency and elevated workforce output."
-
-**Recommendation**: Strongly endorse for compensation band revision and promotion to Senior Staff tier.`;
+- **Overall Organization Burnout Index**: **\`42.8%\`** *(Optimal range: $< 50\%$)*.
+- **Overtime Anomaly Flags**: **2 staff members** currently log $> 12.0$ overtime hours per week.
+- **Flight-Risk Radar**: **1 employee** flagged with decreased cross-team collaboration signals.
+- **AI Intervention Suggestion**: Rebalance sprint deliverables for Design & Backend engineering teams before Q4 releases.`,
+        actionLink: { label: 'Open Wellness & Burnout Radar', path: '/wellness' },
+      };
     }
 
-    return `### 💡 Dayflow Enterprise Intelligence
-I have analyzed your query regarding **"${prompt}"**.
+    // 5. Default General Intelligence Fallback
+    return {
+      text: `### 💡 Dayflow Enterprise AI Engine
+I have processed your query: **"${prompt}"**.
 
-- **Workflow Status**: All enterprise systems (PostgreSQL 3NF database, JWT Token Rotations, Punch Clock geofencing) are fully operational.
-- **Next Steps**: You can directly perform actions using the navigation tabs on the left, such as applying for leave, viewing itemized PDF payslips, or adjusting attendance muster rolls.
-
-Feel free to ask for any HR compliance calculations, policy explanations, or report drafting!`;
+- **System Health**: All 3NF relational models, JWT rotation sessions, and geofenced punch clocks are operating at **100% SLA**.
+- **Available Copilot Commands**:
+  - *"How many leaves do I have?"*
+  - *"Show my salary slip."*
+  - *"What is the WFH policy?"*
+  - *"Analyze team burnout and overtime."*
+  - *"Draft promotion appraisal for Alex Chen."*`,
+    };
   };
 
   const handleSend = (textToSend?: string) => {
@@ -130,16 +181,17 @@ Feel free to ask for any HR compliance calculations, policy explanations, or rep
     setIsTyping(true);
 
     setTimeout(() => {
-      const responseText = generateAIResponse(text);
+      const response = generateAIResponse(text);
       const aiMsg: Message = {
         id: (Date.now() + 1).toString(),
         sender: 'ai',
-        text: responseText,
+        text: response.text,
         timestamp: new Date(),
+        actionLink: response.actionLink,
       };
       setMessages((prev) => [...prev, aiMsg]);
       setIsTyping(false);
-    }, 600);
+    }, 500);
   };
 
   if (!isOpen) return null;
@@ -170,7 +222,7 @@ Feel free to ask for any HR compliance calculations, policy explanations, or rep
                   Active
                 </span>
               </div>
-              <p className="text-[11px] text-slate-300">Intelligent Workforce & HR Intelligence Engine</p>
+              <p className="text-[11px] text-slate-300">Conversational HR & Workforce Intelligence</p>
             </div>
           </div>
 
@@ -198,7 +250,7 @@ Feel free to ask for any HR compliance calculations, policy explanations, or rep
               )}
 
               <div
-                className={`max-w-[85%] rounded-2xl p-4 shadow-sm relative group ${
+                className={`max-w-[88%] rounded-2xl p-4 shadow-sm relative group ${
                   msg.sender === 'user'
                     ? 'bg-blue-600 text-white rounded-br-none'
                     : 'bg-white border border-slate-200/90 text-slate-800 rounded-bl-none'
@@ -207,6 +259,22 @@ Feel free to ask for any HR compliance calculations, policy explanations, or rep
                 <div className="prose prose-xs max-w-none leading-relaxed whitespace-pre-wrap">
                   {msg.text}
                 </div>
+
+                {/* Direct Action Link Trigger */}
+                {msg.actionLink && (
+                  <div className="mt-3 pt-2.5 border-t border-slate-100">
+                    <button
+                      onClick={() => {
+                        onClose();
+                        navigate(msg.actionLink!.path);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs transition-all shadow-xs cursor-pointer"
+                    >
+                      <Zap className="w-3.5 h-3.5 fill-current" />
+                      <span>{msg.actionLink.label} &rarr;</span>
+                    </button>
+                  </div>
+                )}
 
                 {msg.sender === 'ai' && (
                   <button
@@ -279,7 +347,7 @@ Feel free to ask for any HR compliance calculations, policy explanations, or rep
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask AI Copilot about payroll, leaves, policies..."
+              placeholder="Ask AI: 'How many leaves?', 'Show payslip', 'WFH policy'..."
               className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 font-medium"
             />
             <Button

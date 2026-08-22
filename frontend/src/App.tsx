@@ -11,6 +11,10 @@ import { LeavePage } from './pages/LeavePage';
 import { PayrollPage } from './pages/PayrollPage';
 import { AuditLogsPage } from './pages/AuditLogsPage';
 import { ProfilePage } from './pages/ProfilePage';
+import { WellnessPage } from './pages/WellnessPage';
+import { PerformancePage } from './pages/PerformancePage';
+import { LearningPage } from './pages/LearningPage';
+import { HRRiskRadarPage } from './pages/HRRiskRadarPage';
 
 // Protected Route Guard
 const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean }> = ({
@@ -21,9 +25,9 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; adminOnly?: boolean 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
           <span className="text-xs text-slate-400 font-semibold tracking-wider uppercase">
             Loading Dayflow HRMS...
           </span>
@@ -64,6 +68,17 @@ export const App: React.FC = () => {
               <Route path="attendance" element={<AttendancePage />} />
               <Route path="leave" element={<LeavePage />} />
               <Route path="payroll" element={<PayrollPage />} />
+              <Route path="wellness" element={<WellnessPage />} />
+              <Route path="performance" element={<PerformancePage />} />
+              <Route path="learning" element={<LearningPage />} />
+              <Route
+                path="risk-radar"
+                element={
+                  <ProtectedRoute>
+                    <HRRiskRadarPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="audit-logs"
                 element={
