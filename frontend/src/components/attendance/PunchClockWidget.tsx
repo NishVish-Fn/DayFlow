@@ -28,16 +28,12 @@ export const PunchClockWidget: React.FC<{ onAttendanceChange?: () => void }> = (
     return user?.email || user?.employeeId || user?.id || localStorage.getItem('dayflow_last_user_email') || 'active_user';
   }, [user]);
 
-  // Read persistent attendance punch state for this specific user
+  // Read persistent attendance punch state strictly for this specific user
   const loadLocalPunchState = (): TodayAttendanceData => {
     try {
       const userSpecific = localStorage.getItem(`worknest_punch_${userKey}`);
       if (userSpecific) {
         return JSON.parse(userSpecific);
-      }
-      const globalActive = localStorage.getItem('worknest_punch_current');
-      if (globalActive) {
-        return JSON.parse(globalActive);
       }
     } catch (e) {
       // fallback
