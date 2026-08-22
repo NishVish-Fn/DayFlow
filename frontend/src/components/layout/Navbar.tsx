@@ -32,33 +32,36 @@ export const Navbar: React.FC = () => {
   const [isAIOpen, setIsAIOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Systray-style quick check-in state
-  const todayStr = new Date().toISOString().slice(0, 10);
-  const storageKey = `worknest_attendance_${user?.employeeId || user?.id || 'default'}_${todayStr}`;
+  // Systray-style quick check-in state (persists across logouts)
+  const userKey = user?.email || user?.employeeId || user?.id || localStorage.getItem('dayflow_last_user_email') || 'active_user';
 
-  const [isCheckedIn, setIsCheckedIn] = useState<boolean>(() => {
+  const readIsCheckedIn = () => {
     try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        return JSON.parse(saved).isCheckedIn === true;
+      const userSpecific = localStorage.getItem(`worknest_punch_${userKey}`);
+      if (userSpecific) {
+        return JSON.parse(userSpecific).isCheckedIn === true;
+      }
+      const globalActive = localStorage.getItem('worknest_punch_current');
+      if (globalActive) {
+        return JSON.parse(globalActive).isCheckedIn === true;
       }
     } catch (e) {}
     return false;
-  });
+  };
+
+  const [isCheckedIn, setIsCheckedIn] = useState<boolean>(readIsCheckedIn);
 
   const fetchAttendanceStatus = async () => {
     try {
-      const saved = localStorage.getItem(storageKey);
-      if (saved) {
-        setIsCheckedIn(JSON.parse(saved).isCheckedIn === true);
-      }
+      setIsCheckedIn(readIsCheckedIn());
       const res = await api.get('/attendance/today');
       if (res.data?.data) {
-        setIsCheckedIn(res.data.data.isCheckedIn);
-        localStorage.setItem(storageKey, JSON.stringify(res.data.data));
+        if (res.data.data.isCheckedIn || res.data.data.isCheckedOut) {
+          setIsCheckedIn(res.data.data.isCheckedIn);
+        }
       }
     } catch (e) {
-      // Ignore
+      // Keep persistent local state
     }
   };
 
@@ -99,7 +102,8 @@ export const Navbar: React.FC = () => {
         isCheckedOut: false,
         record: { checkInTime: new Date().toISOString(), status: 'PRESENT', workMode: 'OFFICE', totalHours: 0 },
       };
-      localStorage.setItem(storageKey, JSON.stringify(updateData));
+      localStorage.setItem(`worknest_punch_${userKey}`, JSON.stringify(updateData));
+      localStorage.setItem('worknest_punch_current', JSON.stringify(updateData));
       window.dispatchEvent(new Event('attendance-sync'));
       success('Checked In', 'Recorded office attendance.');
       try {
@@ -112,7 +116,8 @@ export const Navbar: React.FC = () => {
         isCheckedOut: true,
         record: { checkOutTime: new Date().toISOString(), status: 'PRESENT', workMode: 'OFFICE', totalHours: 8.0 },
       };
-      localStorage.setItem(storageKey, JSON.stringify(updateData));
+      localStorage.setItem(`worknest_punch_${userKey}`, JSON.stringify(updateData));
+      localStorage.setItem('worknest_punch_current', JSON.stringify(updateData));
       window.dispatchEvent(new Event('attendance-sync'));
       success('Checked Out', 'Shift attendance finalized for today.');
       try {
